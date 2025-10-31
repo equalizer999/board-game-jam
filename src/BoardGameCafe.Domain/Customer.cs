@@ -1,0 +1,20 @@
+namespace BoardGameCafe.Domain;
+
+public class Customer
+{
+    public Guid Id { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string? PhoneNumber { get; set; }
+    public DateTime RegistrationDate { get; set; }
+    public int LoyaltyPoints { get; set; }
+    public MembershipTier MembershipTier { get; set; }
+}
+
+public enum MembershipTier
+{
+    Bronze,
+    Silver,
+    Gold
+}
