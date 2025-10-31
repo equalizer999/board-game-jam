@@ -590,6 +590,19 @@ Progressive implementation stages:
   - Created and applied EF migration
   - Seeded database with 5 tables, 3 customers, 2 reservations
 
+- ✅ **Issue #8**: Implement Order and MenuItem Entities with Pricing Logic
+  - Created MenuItem entity with all required properties (Id, Name, Description, Category, Price, IsAvailable, PreparationTimeMinutes, AllergenInfo, IsVegetarian, IsVegan, IsGlutenFree)
+  - Created Order entity with properties (Id, CustomerId, ReservationId, OrderDate, Status, Subtotal, DiscountAmount, TaxAmount, TotalAmount, PaymentMethod)
+  - Created OrderItem entity (Id, OrderId, MenuItemId, Quantity, UnitPrice, SpecialInstructions)
+  - Configured relationships: Order 1-to-many OrderItems, Customer 1-to-many Orders
+  - Added computed properties and pricing logic methods:
+    - Tax calculation: 8% on food, 10% on alcohol
+    - Member discounts: Bronze 5%, Silver 10%, Gold 15%
+    - UnitPrice snapshot in OrderItem for price history
+  - Seeded 22 themed menu items across all categories (Coffee, Tea, Snacks, Meals, Desserts, Alcohol)
+  - Created 10 comprehensive unit tests for order pricing calculations
+  - All tests passing (17 unit + 2 integration)
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:
