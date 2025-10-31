@@ -55,8 +55,6 @@ public class AppDbContext : DbContext
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
             entity.HasIndex(e => e.Email).IsUnique();
-            // Note: Case-insensitive uniqueness is handled at the database level via collation
-            // SQLite uses NOCASE collation by default for TEXT columns with COLLATE NOCASE in the index
         });
 
         // Reservation entity configuration
