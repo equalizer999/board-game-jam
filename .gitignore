@@ -1,0 +1,24 @@
+# Build
+bin/
+obj/
+
+# Node
+client/node_modules/
+client/.vite/
+
+# SQLite
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Logs
+logs/
+*.log
+
+# Playwright
+playwright-report/
+.test-results/
+
+# IDE
+.vscode/
+.DS_Store
