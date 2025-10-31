@@ -26,7 +26,6 @@ _NCrunch_*
 *.DotSettings.user
 
 ## EF Core
-**/Migrations/
 data/*.db
 data/*.db-shm
 data/*.db-wal
