@@ -590,6 +590,23 @@ Progressive implementation stages:
   - Created and applied EF migration
   - Seeded database with 5 tables, 3 customers, 2 reservations
 
+- ✅ **Issue #4**: Build Reservations REST API with Availability Checking
+  - Created Features/Reservations folder with vertical slice architecture
+  - Implemented DTOs: ReservationDto, CreateReservationRequest, UpdateReservationRequest, AvailabilityQuery, AvailableTableDto
+  - Implemented all 7 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/reservations - List customer's reservations
+    - GET /api/v1/reservations/{id} - Get single reservation
+    - POST /api/v1/reservations - Create reservation with validation
+    - PUT /api/v1/reservations/{id} - Update reservation
+    - DELETE /api/v1/reservations/{id} - Cancel reservation
+    - POST /api/v1/reservations/{id}/check-in - Mark as checked in
+    - GET /api/v1/reservations/availability - Query available tables
+  - Implemented reservation conflict detection with 15-minute buffer between reservations
+  - Added business validation: party size ≤ table capacity, future dates only, valid time ranges
+  - Proper error handling: 400 Bad Request, 404 Not Found, 409 Conflict for double-booking
+  - Created 18 comprehensive integration tests (all passing)
+  - Total test coverage: 27 tests (7 unit + 20 integration)
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:
