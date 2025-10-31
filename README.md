@@ -7,6 +7,9 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+
+> 📖 **Documentation:** For detailed information about issue dependencies and assignment order, see [docs/DEPENDENCY_SETUP.md](docs/DEPENDENCY_SETUP.md)
+
 ## 🎯 Purpose
 
 This repository provides a **fork-friendly demo environment** for Test Engineers to explore GitHub Copilot's capabilities across:
