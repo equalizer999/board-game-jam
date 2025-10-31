@@ -45,6 +45,21 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+// Seed database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        SeedData.Initialize(services);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding the database.");
+    }
+}
+
 // Configure middleware
 app.UseSwagger();
 app.UseSwaggerUI(c =>
