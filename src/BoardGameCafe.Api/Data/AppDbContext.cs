@@ -13,6 +13,12 @@ public class AppDbContext : DbContext
     public DbSet<Table> Tables => Set<Table>();
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<MenuItem> MenuItems => Set<MenuItem>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<Event> Events => Set<Event>();
+    public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
+    public DbSet<GameSession> GameSessions => Set<GameSession>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,6 +68,90 @@ public class AppDbContext : DbContext
                 .HasForeignKey(e => e.TableId)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(e => new { e.TableId, e.ReservationDate, e.StartTime });
+        });
+
+        // MenuItem entity configuration
+        modelBuilder.Entity<MenuItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Price).HasPrecision(10, 2);
+        });
+
+        // Order entity configuration
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Customer)
+                .WithMany()
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Reservation)
+                .WithMany()
+                .HasForeignKey(e => e.ReservationId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasMany(e => e.Items)
+                .WithOne(e => e.Order)
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(e => e.Subtotal).HasPrecision(10, 2);
+            entity.Property(e => e.DiscountAmount).HasPrecision(10, 2);
+            entity.Property(e => e.TaxAmount).HasPrecision(10, 2);
+            entity.Property(e => e.TotalAmount).HasPrecision(10, 2);
+            entity.HasIndex(e => new { e.CustomerId, e.OrderDate });
+        });
+
+        // OrderItem entity configuration
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.MenuItem)
+                .WithMany()
+                .HasForeignKey(e => e.MenuItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.UnitPrice).HasPrecision(10, 2);
+        });
+
+        // Event entity configuration
+        modelBuilder.Entity<Event>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(2000);
+            entity.Property(e => e.TicketPrice).HasPrecision(10, 2);
+            entity.HasMany(e => e.Registrations)
+                .WithOne(e => e.Event)
+                .HasForeignKey(e => e.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(e => e.EventDate);
+            entity.ToTable(t => t.HasCheckConstraint("CK_Event_Capacity", "[CurrentParticipants] <= [MaxParticipants]"));
+        });
+
+        // EventRegistration entity configuration
+        modelBuilder.Entity<EventRegistration>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Customer)
+                .WithMany()
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // GameSession entity configuration
+        modelBuilder.Entity<GameSession>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Game)
+                .WithMany()
+                .HasForeignKey(e => e.GameId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(e => e.Reservation)
+                .WithMany()
+                .HasForeignKey(e => e.ReservationId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.LateFeeApplied).HasPrecision(10, 2);
+            entity.HasIndex(e => new { e.GameId, e.ReturnedAt });
         });
     }
 }
