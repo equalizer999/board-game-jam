@@ -203,139 +203,204 @@ To maximize GitHub Copilot effectiveness, follow this dependency-based assignmen
 1. Issue #1 → #2 → #6 → Then choose parallel tracks below
 
 ### Phase 1: Foundation (Sequential) 🏗️
-```
-#1 (Solution Structure)
-  ↓
-#2 (Domain Entities)
-  ↓
-#6 (Database Context)
-  ↓
-#5 #7 #8 (Can be assigned in parallel)
+
+```mermaid
+graph TB
+    Start([Start Here]) --> I1[#1 Solution Structure]
+    I1 --> I2[#2 Domain Entities]
+    I2 --> I6[#6 DB Context]
+    I6 --> I5[#5 Game Entity]
+    I6 --> I7[#7 Table/Reservation/Customer]
+    I6 --> I8[#8 Order/MenuItem]
+    
+    style Start fill:#90EE90,stroke:#228B22,stroke-width:3px
+    style I1 fill:#E6F3FF,stroke:#0066CC,stroke-width:2px
+    style I2 fill:#E6F3FF,stroke:#0066CC,stroke-width:2px
+    style I6 fill:#E6F3FF,stroke:#0066CC,stroke-width:2px
+    style I5 fill:#FFE6E6,stroke:#CC0000,stroke-width:2px
+    style I7 fill:#FFE6E6,stroke:#CC0000,stroke-width:2px
+    style I8 fill:#FFE6E6,stroke:#CC0000,stroke-width:2px
+    
+    classDef parallel fill:#FFE6E6,stroke:#CC0000,stroke-width:2px,stroke-dasharray: 5 5
+    class I5,I7,I8 parallel
 ```
 
-- **#1** - Initialize .NET 9 Solution Structure
-  - No dependencies - START HERE
-- **#2** - Add Remaining Domain Entities
-  - Depends on: #1
-- **#6** - Setup .NET 9 Solution Structure with Project References
-  - Depends on: #1, #2
-- **#5** - Create Game Domain Entity
-  - Depends on: #6
-- **#7** - Create Table, Reservation, Customer Entities
-  - Depends on: #6
-- **#8** - Implement Order and MenuItem Entities
-  - Depends on: #6
+**Legend:** 🔵 Sequential | 🔴 Can parallelize after #6
 
-### Phase 2: REST APIs (Can parallelize after Phase 1) 🚀
-```
-#10 (Games API) ← depends on #5
-#4 (Reservations API) ← depends on #7
-#9 (Orders API) ← depends on #8
-#27 (Menu API) ← depends on #8
-#12 (Events API) ← depends on #7
-#14 (Game Sessions) ← depends on #10
-#28 (Loyalty Points) ← depends on #9, #27
+### Phase 2: REST APIs (Parallelize after Phase 1) 🚀
+
+```mermaid
+graph TB
+    subgraph "After Phase 1"
+        I5[#5 Game Entity]
+        I7[#7 Table/Reservation/Customer]
+        I8[#8 Order/MenuItem]
+    end
+    
+    I5 --> I10[#10 Games API]
+    I7 --> I4[#4 Reservations API]
+    I7 --> I12[#12 Events API]
+    I8 --> I9[#9 Orders API]
+    I8 --> I27[#27 Menu API]
+    I10 --> I14[#14 Game Sessions]
+    I9 --> I28[#28 Loyalty Points]
+    I27 --> I28
+    
+    I10 -.-> I3[#3 Games API Swagger]
+    
+    style I5 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I7 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I8 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I10 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style I4 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style I12 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style I9 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style I27 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style I14 fill:#E6F0FF,stroke:#0066CC,stroke-width:2px
+    style I28 fill:#E6F0FF,stroke:#0066CC,stroke-width:2px
+    style I3 fill:#FFFACD,stroke:#FFD700,stroke-width:1px,stroke-dasharray: 3 3
 ```
 
-- **#10** - Build Games CRUD REST API
-  - Depends on: #5
-- **#3** - Build Games CRUD REST API Endpoints with Swagger
-  - Depends on: #10 (duplicate of #10, use #10 instead)
-- **#4** - Build Reservations REST API
-  - Depends on: #7
-- **#9** - Build Orders REST API
-  - Depends on: #8
-- **#27** - Build Menu REST API
-  - Depends on: #8
-- **#12** - Build Event Management System
-  - Depends on: #7
-- **#14** - Create Game Checkout/Return Workflow
-  - Depends on: #10
-- **#28** - Implement Loyalty Points System
-  - Depends on: #9, #27
+**Legend:** ⚪ Prerequisites | 🟣 Core APIs (can parallelize) | 🔵 Dependent APIs | ⚠️ #3 is duplicate of #10
 
 ### Phase 3: Backend Testing (After Phase 2) 🧪
-```
-All Phase 2 APIs completed
-  ↓
-#17 (Unit Test Infrastructure)
-#16 (Integration Tests)
-#11 (Seed Data)
+
+```mermaid
+graph LR
+    subgraph "Phase 2 APIs Complete"
+        P2[#10, #4, #9, #27, #12, #14, #28]
+    end
+    
+    P2 --> I17[#17 Unit Tests]
+    P2 --> I16[#16 Integration Tests]
+    P2 --> I11[#11 Seed Data]
+    
+    style P2 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I17 fill:#E6FFE6,stroke:#00CC00,stroke-width:2px
+    style I16 fill:#E6FFE6,stroke:#00CC00,stroke-width:2px
+    style I11 fill:#E6FFE6,stroke:#00CC00,stroke-width:2px
 ```
 
-- **#17** - Setup Unit Testing Infrastructure
-  - Depends on: Phase 2 complete (#10, #4, #9, #27, #12, #14, #28)
-- **#16** - Create Integration Tests
-  - Depends on: Phase 2 complete
-- **#11** - Create Comprehensive Seed Data
-  - Depends on: Phase 2 complete
+**Note:** All three can be assigned in parallel
 
-### Phase 4: Frontend (Can start after #10, #4, #9) 🎨
-```
-#13 (React Setup)
-  ↓
-#15 (Game Catalog) ← needs #10
-#18 (Reservation Flow) ← needs #4
+### Phase 4: Frontend (Can start after APIs exist) 🎨
+
+```mermaid
+graph TB
+    I10[#10 Games API] --> I13[#13 React Setup]
+    I13 --> I15[#15 Game Catalog]
+    I13 --> I18[#18 Reservation Flow]
+    I10 -.-> I15
+    I4[#4 Reservations API] -.-> I18
+    
+    style I10 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I4 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I13 fill:#FFF0E6,stroke:#FF6600,stroke-width:2px
+    style I15 fill:#FFE6CC,stroke:#FF8800,stroke-width:2px
+    style I18 fill:#FFE6CC,stroke:#FF8800,stroke-width:2px
 ```
 
-- **#13** - Initialize React + TypeScript Frontend
-  - Depends on: #10 (can start when at least one API exists)
-- **#15** - Build Game Catalog UI
-  - Depends on: #13, #10
-- **#18** - Build Reservation Booking Flow
-  - Depends on: #13, #4
+**Legend:** ⚪ Prerequisites | 🟠 Foundation | 🟡 Features (can parallelize)
 
 ### Phase 5: E2E Testing (After Phase 4) 🎭
-```
-#19 (Playwright Setup) ← needs #13
-  ↓
-#20 (E2E Tests) ← needs #15, #18
+
+```mermaid
+graph TB
+    I13[#13 React Setup] --> I19[#19 Playwright Setup]
+    I15[#15 Game Catalog] --> I20[#20 E2E Tests]
+    I18[#18 Reservation Flow] --> I20
+    I19 --> I20
+    
+    style I13 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I15 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I18 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I19 fill:#F0E6FF,stroke:#6600CC,stroke-width:2px
+    style I20 fill:#E6CCFF,stroke:#9933FF,stroke-width:2px
 ```
 
-- **#19** - Setup Playwright E2E Infrastructure
-  - Depends on: #13
-- **#20** - Create Complete E2E Test Suite
-  - Depends on: #19, #15, #18
+### Phase 6: Bug Demonstrations (Manual) 🐛
 
-### Phase 6: Bug Demonstrations (Manual - After Phase 2 & 4) 🐛
-```
-#21 - MANUAL TASK, do not assign to Copilot initially
+```mermaid
+graph TB
+    subgraph "Prerequisites"
+        P2[Phase 2: APIs]
+        P4[Phase 4: Frontend]
+    end
+    
+    P2 --> I21[#21 Bug Branches]
+    P4 --> I21
+    
+    I21 -.->|Creates| B1[bug/midnight-reservation]
+    I21 -.->|Creates| B2[bug/double-discount]
+    I21 -.->|Creates| B3[bug/vanishing-game]
+    I21 -.->|Creates| B4[bug/table-time-traveler]
+    I21 -.->|Creates| B5[bug/order-item-duplication]
+    I21 -.->|Creates| B6[bug/case-sensitive-email]
+    I21 -.->|Creates| B7[bug/event-registration-race]
+    I21 -.->|Creates| B8[bug/loyalty-points-reversal]
+    
+    style P2 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style P4 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I21 fill:#FFE6E6,stroke:#CC0000,stroke-width:3px
+    style B1 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B2 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B3 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B4 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B5 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B6 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B7 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
+    style B8 fill:#FFF5F5,stroke:#999999,stroke-width:1px,stroke-dasharray: 3 3
 ```
 
-- **#21** - Create Bug Demonstration Branches
-  - Depends on: Phase 2 (#10, #4, #9), Phase 4 (#13, #15, #18)
-  - ⚠️ **DO NOT assign to Copilot** - requires manual bug introduction
+**⚠️ WARNING:** This is a MANUAL task - do NOT assign to Copilot initially!
 
 ### Phase 7: CI/CD (Can parallelize) 🔄
-```
-#23 (Devcontainer) - no dependencies
-#22 (Backend CI) ← needs Phase 3
-#24 (E2E CI) ← needs #20
-#25 (PR Validation) ← needs Phase 2
+
+```mermaid
+graph TB
+    Standalone([#23 Devcontainer<br/>No Dependencies]) 
+    
+    I17[#17 Unit Tests] --> I22[#22 Backend CI]
+    I16[#16 Integration Tests] --> I22
+    I20[#20 E2E Tests] --> I24[#24 E2E CI]
+    
+    subgraph "Phase 2 Complete"
+        P2[All APIs]
+    end
+    P2 --> I25[#25 PR Validation]
+    
+    style Standalone fill:#90EE90,stroke:#228B22,stroke-width:3px
+    style I17 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I16 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I20 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style P2 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I22 fill:#E6F3FF,stroke:#0099CC,stroke-width:2px
+    style I24 fill:#E6F3FF,stroke:#0099CC,stroke-width:2px
+    style I25 fill:#E6F3FF,stroke:#0099CC,stroke-width:2px
 ```
 
-- **#23** - Configure VS Code Devcontainer
-  - No dependencies (can start anytime)
-- **#22** - Create GitHub Actions CI Workflow
-  - Depends on: #17, #16 (backend tests)
-- **#24** - Create E2E Workflow for Playwright
-  - Depends on: #20
-- **#25** - Create PR Validation Workflow
-  - Depends on: Phase 2 complete
+**Note:** #23 can start anytime, others can parallelize with their dependencies met
 
-### Phase 8: Workshop Materials (Final phase) 📚
-```
-#26 (Workshop Docs) ← needs everything
-#29 (Exercises) ← needs everything
-#30 (Copilot Guide) - no code dependencies
+### Phase 8: Workshop Materials (Final Phase) 📚
+
+```mermaid
+graph TB
+    I22[#22 Backend CI] --> I26[#26 Workshop Docs]
+    I24[#24 E2E CI] --> I26
+    I21[#21 Bug Branches] --> I26
+    I26 --> I29[#29 Exercises]
+    
+    Standalone([#30 Copilot Guide<br/>No Dependencies])
+    
+    style I22 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I24 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I21 fill:#E6E6E6,stroke:#666666,stroke-width:1px
+    style I26 fill:#FFFACD,stroke:#FFD700,stroke-width:2px
+    style I29 fill:#FFFACD,stroke:#FFD700,stroke-width:2px
+    style Standalone fill:#90EE90,stroke:#228B22,stroke-width:3px
 ```
 
-- **#26** - Create Workshop Documentation
-  - Depends on: All previous phases
-- **#29** - Create Exercise Templates
-  - Depends on: All previous phases
-- **#30** - Document Copilot Agent Assignment
-  - No code dependencies (documentation only)
+
 
 ### Optimal Assignment Strategy
 
@@ -348,58 +413,127 @@ All Phase 2 APIs completed
 #### For Linear/Learning Path:
 Follow the phase order strictly: Phase 1 → Phase 2 → Phase 3 → Phase 4 → Phase 5 → Phase 6 → Phase 7 → Phase 8
 
-### Visual Dependency Graph
+### Complete Dependency Overview
+
+Below is the complete dependency graph showing all 30 issues and their relationships across 8 phases:
 
 ```mermaid
 graph TD
-    A[#1 Solution] --> B[#2 Domain Entities]
-    B --> C[#6 DB Context]
-    C --> D[#5 Game Entity]
-    C --> E[#7 Table/Reservation/Customer]
-    C --> F[#8 Order/MenuItem]
+    subgraph Phase1["Phase 1: Foundation 🏗️"]
+        I1[#1 Solution] --> I2[#2 Domain Entities]
+        I2 --> I6[#6 DB Context]
+        I6 --> I5[#5 Game Entity]
+        I6 --> I7[#7 Table/Reservation/Customer]
+        I6 --> I8[#8 Order/MenuItem]
+    end
     
-    D --> G[#10 Games API]
-    E --> H[#4 Reservations API]
-    E --> I[#12 Events API]
-    F --> J[#9 Orders API]
-    F --> K[#27 Menu API]
-    G --> L[#14 Game Sessions]
-    J --> M[#28 Loyalty Points]
-    K --> M
+    subgraph Phase2["Phase 2: REST APIs 🚀"]
+        I5 --> I10[#10 Games API]
+        I7 --> I4[#4 Reservations API]
+        I7 --> I12[#12 Events API]
+        I8 --> I9[#9 Orders API]
+        I8 --> I27[#27 Menu API]
+        I10 --> I14[#14 Game Sessions]
+        I9 --> I28[#28 Loyalty Points]
+        I27 --> I28
+        I10 -.->|duplicate| I3[#3 Swagger]
+    end
     
-    G --> N[#17 Unit Tests]
-    H --> N
-    J --> N
-    N --> O[#16 Integration Tests]
-    N --> P[#11 Seed Data]
+    subgraph Phase3["Phase 3: Backend Testing 🧪"]
+        I10 --> I17[#17 Unit Tests]
+        I4 --> I17
+        I9 --> I17
+        I17 --> I16[#16 Integration Tests]
+        I10 --> I11[#11 Seed Data]
+        I4 --> I11
+        I9 --> I11
+        I27 --> I11
+        I12 --> I11
+        I14 --> I11
+        I28 --> I11
+    end
     
-    G --> Q[#13 React Setup]
-    Q --> R[#15 Game Catalog]
-    G --> R
-    Q --> S[#18 Reservation Flow]
-    H --> S
+    subgraph Phase4["Phase 4: Frontend 🎨"]
+        I10 --> I13[#13 React Setup]
+        I13 --> I15[#15 Game Catalog]
+        I10 --> I15
+        I13 --> I18[#18 Reservation Flow]
+        I4 --> I18
+    end
     
-    Q --> T[#19 Playwright Setup]
-    T --> U[#20 E2E Tests]
-    R --> U
-    S --> U
+    subgraph Phase5["Phase 5: E2E Testing 🎭"]
+        I13 --> I19[#19 Playwright Setup]
+        I19 --> I20[#20 E2E Tests]
+        I15 --> I20
+        I18 --> I20
+    end
     
-    N --> V[#22 Backend CI]
-    U --> W[#24 E2E CI]
-    H --> X[#25 PR Validation]
+    subgraph Phase6["Phase 6: Bug Demos 🐛"]
+        I10 --> I21[#21 Bug Branches<br/>⚠️ MANUAL]
+        I4 --> I21
+        I9 --> I21
+        I13 --> I21
+        I15 --> I21
+        I18 --> I21
+    end
     
-    Y[#23 Devcontainer] -.-> Z[Standalone]
+    subgraph Phase7["Phase 7: CI/CD 🔄"]
+        I23[#23 Devcontainer<br/>🟢 Independent]
+        I17 --> I22[#22 Backend CI]
+        I16 --> I22
+        I20 --> I24[#24 E2E CI]
+        I10 --> I25[#25 PR Validation]
+        I4 --> I25
+        I9 --> I25
+        I27 --> I25
+        I12 --> I25
+        I14 --> I25
+        I28 --> I25
+    end
     
-    G --> AA[#21 Bug Branches]
-    H --> AA
-    R --> AA
+    subgraph Phase8["Phase 8: Workshop Materials 📚"]
+        I22 --> I26[#26 Workshop Docs]
+        I24 --> I26
+        I21 --> I26
+        I26 --> I29[#29 Exercises]
+        I30[#30 Copilot Guide<br/>🟢 Independent]
+    end
     
-    V --> AB[#26 Workshop Docs]
-    W --> AB
-    AA --> AB
-    AB --> AC[#29 Exercises]
-    AD[#30 Copilot Guide] -.-> AE[Independent]
+    %% Styling
+    style Phase1 fill:#E6F3FF,stroke:#0066CC,stroke-width:2px
+    style Phase2 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
+    style Phase3 fill:#E6FFE6,stroke:#00CC00,stroke-width:2px
+    style Phase4 fill:#FFF0E6,stroke:#FF6600,stroke-width:2px
+    style Phase5 fill:#F0E6FF,stroke:#6600CC,stroke-width:2px
+    style Phase6 fill:#FFE6E6,stroke:#CC0000,stroke-width:2px
+    style Phase7 fill:#E6F3FF,stroke:#0099CC,stroke-width:2px
+    style Phase8 fill:#FFFACD,stroke:#FFD700,stroke-width:2px
+    
+    style I1 fill:#B3D9FF,stroke:#0066CC,stroke-width:2px
+    style I21 fill:#FFB3B3,stroke:#CC0000,stroke-width:3px
+    style I23 fill:#90EE90,stroke:#228B22,stroke-width:2px
+    style I30 fill:#90EE90,stroke:#228B22,stroke-width:2px
+    style I3 fill:#FFFACD,stroke:#FFD700,stroke-width:1px,stroke-dasharray: 3 3
+    
+    linkStyle default stroke:#666,stroke-width:1px
 ```
+
+**Color Legend:**
+- 🔵 **Phase 1**: Foundation - Project structure and database
+- 🟣 **Phase 2**: REST APIs - Backend endpoints
+- 🟢 **Phase 3**: Backend Testing - Unit & integration tests
+- 🟠 **Phase 4**: Frontend - React components
+- 🟣 **Phase 5**: E2E Testing - Playwright automation
+- 🔴 **Phase 6**: Bug Demos - Workshop practice scenarios
+- 🔵 **Phase 7**: CI/CD - Automated workflows
+- 🟡 **Phase 8**: Workshop Materials - Documentation
+
+**Special Markers:**
+- 🟢 **Green nodes**: Independent (no dependencies)
+- 🔴 **Red highlight**: Manual task (#21)
+- ⚠️ **Dashed**: Duplicate issue (#3)
+
+
 
 ### Issue Chaining with GitHub
 
