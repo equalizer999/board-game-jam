@@ -579,6 +579,17 @@ Progressive implementation stages:
 - 🥈 Silver Strategist (500-1999 points) - 10% discount + early event access
 - 🥇 Gold Grandmaster (2000+ points) - 15% discount + free monthly rental
 
+## 📊 Implementation Status
+
+### Completed Issues
+- ✅ **Issue #7**: Create Table, Reservation, and Customer Domain Entities
+  - Updated Table entity with SeatingCapacity (2-8), IsWindowSeat, IsAccessible, HourlyRate, and Status enum
+  - Updated Customer entity with Email (unique, case-insensitive), Phone, MembershipTier (None/Bronze/Silver/Gold), LoyaltyPoints, JoinedDate, and TotalVisits
+  - Updated Reservation entity with proper relationships and indexes
+  - Configured cascade delete: Customer cascade, Table restrict
+  - Created and applied EF migration
+  - Seeded database with 5 tables, 3 customers, 2 reservations
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:

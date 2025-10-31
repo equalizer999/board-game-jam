@@ -43,6 +43,8 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.TableNumber).IsRequired().HasMaxLength(20);
             entity.HasIndex(e => e.TableNumber).IsUnique();
+            entity.Property(e => e.HourlyRate).HasPrecision(10, 2);
+            entity.ToTable(t => t.HasCheckConstraint("CK_Table_SeatingCapacity", "[SeatingCapacity] >= 2 AND [SeatingCapacity] <= 8"));
         });
 
         // Customer entity configuration
@@ -62,11 +64,14 @@ public class AppDbContext : DbContext
             entity.HasOne(e => e.Customer)
                 .WithMany()
                 .HasForeignKey(e => e.CustomerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
             entity.HasOne(e => e.Table)
                 .WithMany()
                 .HasForeignKey(e => e.TableId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => e.ReservationDate);
+            entity.HasIndex(e => e.CustomerId);
+            entity.HasIndex(e => e.TableId);
             entity.HasIndex(e => new { e.TableId, e.ReservationDate, e.StartTime });
         });
 
