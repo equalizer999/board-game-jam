@@ -1,0 +1,7 @@
+# Source Code
+
+Will contain:
+- BoardGameCafe.Api/
+- BoardGameCafe.Domain/
+- BoardGameCafe.Tests.Unit/
+- BoardGameCafe.Tests.Integration/

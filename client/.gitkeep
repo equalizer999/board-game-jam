@@ -1,0 +1,5 @@
+# Frontend Client
+
+Will contain:
+- React + TypeScript + Vite application
+- tests/e2e/ (Playwright tests)

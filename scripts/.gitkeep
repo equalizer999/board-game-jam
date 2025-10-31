@@ -1,0 +1,6 @@
+# Scripts
+
+Utility scripts:
+- reset-db.sh
+- seed-db.sh
+- generate-openapi-client.sh

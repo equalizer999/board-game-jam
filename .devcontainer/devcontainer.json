@@ -1,16 +1,21 @@
 {
-  "name": "Board Game Café Dev",
-  "image": "mcr.microsoft.com/devcontainers/dotnet:9.0",
+  "name": "Board Game Café Dev Environment",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "ghcr.io/devcontainers/features/node:1": { "version": "lts" }
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "9.0"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
   },
-  "postCreateCommand": "bash scripts/devcontainer-post-create.sh",
-  "forwardPorts": [5000, 5001, 5173],
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
         "GitHub.copilot",
+        "GitHub.copilot-chat",
         "ms-playwright.playwright",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
@@ -21,9 +26,36 @@
       ],
       "settings": {
         "editor.formatOnSave": true,
-        "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-        "files.trimTrailingWhitespace": true
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": "explicit"
+        },
+        "typescript.tsdk": "node_modules/typescript/lib",
+        "[csharp]": {
+          "editor.tabSize": 4
+        },
+        "[typescript]": {
+          "editor.tabSize": 2
+        },
+        "[typescriptreact]": {
+          "editor.tabSize": 2
+        }
       }
     }
-  }
+  },
+  "forwardPorts": [5000, 5001, 5173],
+  "portsAttributes": {
+    "5000": {
+      "label": "API (HTTP)"
+    },
+    "5001": {
+      "label": "API (HTTPS)",
+      "protocol": "https"
+    },
+    "5173": {
+      "label": "Frontend (Vite)"
+    }
+  },
+  "updateContentCommand": "echo 'Restoring dependencies...' && cd src/BoardGameCafe.Api && dotnet restore && cd ../../client && npm ci",
+  "postCreateCommand": "bash scripts/setup.sh",
+  "remoteUser": "vscode"
 }
