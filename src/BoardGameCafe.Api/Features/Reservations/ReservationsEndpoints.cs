@@ -82,12 +82,15 @@ public static class ReservationsEndpoints
             .Include(r => r.Customer)
             .Include(r => r.Table)
             .Where(r => r.CustomerId == customerId)
+            .ToListAsync(ct);
+
+        var dtos = reservations
             .OrderByDescending(r => r.ReservationDate)
             .ThenByDescending(r => r.StartTime)
             .Select(r => ToDto(r))
-            .ToListAsync(ct);
+            .ToList();
 
-        return TypedResults.Ok(reservations);
+        return TypedResults.Ok(dtos);
     }
 
     /// <summary>
@@ -579,14 +582,11 @@ public static class ReservationsEndpoints
 
     private static bool HasTimeOverlap(TimeSpan start1, TimeSpan end1, TimeSpan start2, TimeSpan end2)
     {
-        // Add buffer to both reservations
-        var bufferedStart1 = start1 > ReservationBuffer ? start1 - ReservationBuffer : TimeSpan.Zero;
+        // Add buffer after end times only (15 minutes between reservations)
         var bufferedEnd1 = end1 + ReservationBuffer;
-        
-        var bufferedStart2 = start2 > ReservationBuffer ? start2 - ReservationBuffer : TimeSpan.Zero;
         var bufferedEnd2 = end2 + ReservationBuffer;
 
-        // Check for overlap
-        return bufferedStart1 < bufferedEnd2 && bufferedStart2 < bufferedEnd1;
+        // Check for overlap with buffer
+        return start1 < bufferedEnd2 && start2 < bufferedEnd1;
     }
 }
