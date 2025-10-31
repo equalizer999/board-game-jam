@@ -353,13 +353,10 @@ public static class SeedData
     private static void SeedSampleOrders(AppDbContext context)
     {
         // Only seed orders if we have customers
-        var customers = context.Customers.ToList();
-        if (!customers.Any()) return;
+        if (!context.Customers.Any())
+            return;
 
-        var menuItems = context.MenuItems.ToList();
-        if (!menuItems.Any()) return;
-
-        var customer = customers.First();
+        var customer = context.Customers.First();
 
         // Sample Order 1: Coffee and snacks
         var order1 = new Order
@@ -372,8 +369,8 @@ public static class SeedData
             Items = new List<OrderItem>()
         };
 
-        var meepleMocha = menuItems.FirstOrDefault(m => m.Name == "Meeple Mocha");
-        var nachos = menuItems.FirstOrDefault(m => m.Name == "Game Night Nachos");
+        var meepleMocha = context.MenuItems.FirstOrDefault(m => m.Name == "Meeple Mocha");
+        var nachos = context.MenuItems.FirstOrDefault(m => m.Name == "Game Night Nachos");
 
         if (meepleMocha != null)
         {
@@ -412,9 +409,9 @@ public static class SeedData
             Items = new List<OrderItem>()
         };
 
-        var pizza = menuItems.FirstOrDefault(m => m.Name == "Pandemic Pizza");
-        var wings = menuItems.FirstOrDefault(m => m.Name == "Wingspan Wings");
-        var beer = menuItems.FirstOrDefault(m => m.Name == "Board Game Brew IPA");
+        var pizza = context.MenuItems.FirstOrDefault(m => m.Name == "Pandemic Pizza");
+        var wings = context.MenuItems.FirstOrDefault(m => m.Name == "Wingspan Wings");
+        var beer = context.MenuItems.FirstOrDefault(m => m.Name == "Board Game Brew IPA");
 
         if (pizza != null)
         {
