@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.EnsureCreated(); // Ensure database is created
+        context.Database.Migrate(); // Apply pending migrations
         SeedData.Initialize(context);
     }
     catch (Exception ex)

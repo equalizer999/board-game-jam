@@ -17,7 +17,6 @@ public static class SeedData
         {
             new Game
             {
-                Id = Guid.NewGuid(),
                 Title = "Catan",
                 Publisher = "Catan Studio",
                 MinPlayers = 3,
@@ -34,7 +33,6 @@ public static class SeedData
             },
             new Game
             {
-                Id = Guid.NewGuid(),
                 Title = "Ticket to Ride",
                 Publisher = "Days of Wonder",
                 MinPlayers = 2,
@@ -51,7 +49,6 @@ public static class SeedData
             },
             new Game
             {
-                Id = Guid.NewGuid(),
                 Title = "Pandemic",
                 Publisher = "Z-Man Games",
                 MinPlayers = 2,
@@ -68,7 +65,6 @@ public static class SeedData
             },
             new Game
             {
-                Id = Guid.NewGuid(),
                 Title = "Codenames",
                 Publisher = "Czech Games",
                 MinPlayers = 4,
@@ -85,7 +81,6 @@ public static class SeedData
             },
             new Game
             {
-                Id = Guid.NewGuid(),
                 Title = "Azul",
                 Publisher = "Plan B Games",
                 MinPlayers = 2,
