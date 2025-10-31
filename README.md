@@ -582,6 +582,15 @@ Progressive implementation stages:
 ## 📊 Implementation Status
 
 ### Completed Issues
+- ✅ **Issue #5**: Create Game Domain Entity and Repository Pattern
+  - Created Game entity with all required properties (Id, Title, Publisher, MinPlayers, MaxPlayers, PlayTimeMinutes, AgeRating, Complexity, Category, CopiesOwned, CopiesInUse, DailyRentalFee, Description, ImageUrl)
+  - Added data annotations for validation (Required, MaxLength, Range constraints)
+  - Configured entity in DbContext with fluent API
+  - Added indexes on Title and Category for performance
+  - Added check constraint: CopiesInUse <= CopiesOwned
+  - Implemented IsAvailable computed property (CopiesOwned > CopiesInUse)
+  - Created and applied EF migration for Game table
+  - Seeded database with 5 sample games (Catan, Ticket to Ride, Pandemic, Codenames, Azul)
 - ✅ **Issue #7**: Create Table, Reservation, and Customer Domain Entities
   - Updated Table entity with SeatingCapacity (2-8), IsWindowSeat, IsAccessible, HourlyRate, and Status enum
   - Updated Customer entity with Email (unique, case-insensitive), Phone, MembershipTier (None/Bronze/Silver/Gold), LoyaltyPoints, JoinedDate, and TotalVisits

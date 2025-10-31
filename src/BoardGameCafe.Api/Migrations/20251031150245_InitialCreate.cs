@@ -35,7 +35,7 @@ namespace BoardGameCafe.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Publisher = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
+                    Publisher = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     MinPlayers = table.Column<int>(type: "INTEGER", nullable: false),
                     MaxPlayers = table.Column<int>(type: "INTEGER", nullable: false),
                     PlayTimeMinutes = table.Column<int>(type: "INTEGER", nullable: false),
@@ -45,7 +45,7 @@ namespace BoardGameCafe.Api.Migrations
                     CopiesOwned = table.Column<int>(type: "INTEGER", nullable: false),
                     CopiesInUse = table.Column<int>(type: "INTEGER", nullable: false),
                     DailyRentalFee = table.Column<decimal>(type: "TEXT", precision: 10, scale: 2, nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 1000, nullable: true),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
