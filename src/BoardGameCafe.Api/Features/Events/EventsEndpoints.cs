@@ -225,11 +225,11 @@ public static class EventsEndpoints
                 return TypedResults.NotFound();
             }
 
-            // Check if customer is already registered (including cancelled)
-            var existingRegistration = eventEntity.Registrations
-                .FirstOrDefault(r => r.CustomerId == request.CustomerId);
+            // Check if customer is already registered (excluding cancelled)
+            var isAlreadyRegistered = eventEntity.Registrations
+                .Any(r => r.CustomerId == request.CustomerId && r.Status != RegistrationStatus.Cancelled);
 
-            if (existingRegistration != null && existingRegistration.Status != RegistrationStatus.Cancelled)
+            if (isAlreadyRegistered)
             {
                 return TypedResults.Conflict(new ProblemDetails
                 {
@@ -276,14 +276,25 @@ public static class EventsEndpoints
 
             return TypedResults.Created($"/api/v1/events/{id}/participants", registrationDto);
         }
-        catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("UNIQUE") == true)
+        catch (DbUpdateException ex) 
         {
             // Handle unique constraint violation (race condition)
-            return TypedResults.Conflict(new ProblemDetails
+            // Check if it's the EventId+CustomerId unique constraint
+            var isUniqueConstraintViolation = ex.InnerException?.Message.Contains("UNIQUE") == true ||
+                                               ex.InnerException?.Message.Contains("IX_EventRegistrations_EventId_CustomerId") == true;
+            
+            if (isUniqueConstraintViolation)
             {
-                Title = "Already registered",
-                Detail = "Customer is already registered for this event"
-            });
+                return TypedResults.Conflict(new ProblemDetails
+                {
+                    Title = "Already registered",
+                    Detail = "Customer is already registered for this event"
+                });
+            }
+            
+            // For other DB exceptions, rollback and rethrow
+            await transaction.RollbackAsync(ct);
+            throw;
         }
         catch
         {
