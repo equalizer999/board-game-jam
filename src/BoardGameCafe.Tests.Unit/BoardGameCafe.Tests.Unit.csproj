@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BoardGameCafe.Domain\BoardGameCafe.Domain.csproj" />
-    <ProjectReference Include="..\BoardGameCafe.Api\BoardGameCafe.Api.csproj" />
   </ItemGroup>
 
 </Project>
