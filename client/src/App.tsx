@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/HomePage';
 import GameCatalog from './pages/GameCatalog';
 import ReservationsPage from './pages/ReservationsPage';
+import NewReservation from './pages/NewReservation';
 import OrdersPage from './pages/OrdersPage';
 
 // Create a client for React Query
@@ -57,6 +58,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/games" element={<GameCatalog />} />
               <Route path="/reservations" element={<ReservationsPage />} />
+              <Route path="/reservations/new" element={<NewReservation />} />
               <Route path="/orders" element={<OrdersPage />} />
             </Routes>
           </main>
