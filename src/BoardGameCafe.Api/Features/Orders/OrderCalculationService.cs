@@ -12,7 +12,18 @@ public class OrderCalculationService
     private const decimal AlcoholTaxRate = 0.10m; // 10%
     
     /// <summary>
-    /// Calculates all order totals including discounts, tax, and loyalty points
+    /// Calculates all order totals including discounts, tax, and loyalty points.
+    /// 
+    /// Calculation order:
+    /// 1. Subtotal = sum of (quantity * unitPrice) for all items
+    /// 2. Member discount = subtotal * membership tier percentage
+    /// 3. Loyalty points discount = loyaltyPointsToRedeem * $0.01
+    /// 4. Tax = calculated on original item prices (not discounted amount), based on category
+    /// 5. Total = subtotal - total discounts + tax
+    /// 6. Negative total prevention = reduces discount if total would be negative
+    /// 
+    /// Note: Tax is calculated on the original item prices before discounts are applied.
+    /// This is a business requirement to ensure proper tax reporting.
     /// </summary>
     /// <param name="order">The order to calculate</param>
     /// <param name="loyaltyPointsToRedeem">Number of loyalty points to redeem (optional)</param>

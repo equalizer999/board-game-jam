@@ -451,6 +451,9 @@ public static class OrdersEndpoints
                     Detail = $"Customer has {order.Customer.LoyaltyPoints} points, cannot redeem {loyaltyPointsToRedeem}"
                 });
             }
+            
+            // Deduct redeemed loyalty points from customer
+            order.Customer.LoyaltyPoints -= loyaltyPointsToRedeem;
         }
 
         // Calculate order totals including loyalty points redemption
@@ -473,7 +476,6 @@ public static class OrdersEndpoints
         OrderCalculationService calculationService,
         Guid id,
         PaymentMethod paymentMethod,
-        int loyaltyPointsToRedeem = 0,
         CancellationToken ct = default)
     {
         var order = await db.Orders
@@ -497,23 +499,8 @@ public static class OrdersEndpoints
             });
         }
 
-        // Calculate loyalty points earned
+        // Calculate loyalty points earned from the final order total
         var pointsEarned = calculationService.CalculateLoyaltyPointsEarned(order.TotalAmount);
-
-        // Apply loyalty points redemption if provided
-        if (loyaltyPointsToRedeem > 0)
-        {
-            if (!calculationService.ValidateLoyaltyPointsRedemption(order.Customer, loyaltyPointsToRedeem))
-            {
-                return TypedResults.BadRequest(new ProblemDetails
-                {
-                    Title = "Insufficient loyalty points",
-                    Detail = $"Customer has {order.Customer.LoyaltyPoints} points, cannot redeem {loyaltyPointsToRedeem}"
-                });
-            }
-
-            order.Customer.LoyaltyPoints -= loyaltyPointsToRedeem;
-        }
 
         // Update customer loyalty points
         order.Customer.LoyaltyPoints += pointsEarned;
@@ -524,7 +511,8 @@ public static class OrdersEndpoints
 
         await db.SaveChangesAsync(ct);
 
-        var summary = MapToOrderSummaryDto(order, calculationService, loyaltyPointsToRedeem);
+        // Note: loyaltyPointsRedeemed is 0 here because redemption happens during submit
+        var summary = MapToOrderSummaryDto(order, calculationService, 0);
         return TypedResults.Ok(summary);
     }
 

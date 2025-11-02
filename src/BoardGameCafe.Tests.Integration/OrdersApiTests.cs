@@ -343,19 +343,24 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
     }
 
     [Fact]
-    public async Task PayOrder_WithLoyaltyPointsRedemption_ShouldDeductAndAddPoints()
+    public async Task PayOrder_WithLoyaltyPointsRedeemedInSubmit_ShouldOnlyAddEarnedPoints()
     {
         // Arrange
         var customer = await SeedCustomerWithLoyaltyPointsAsync(500);
         var menuItem = await SeedMenuItemAsync(MenuCategory.Meals, 100.00m);
         var order = await CreateOrderAsync(customer.Id);
         await AddOrderItemAsync(order.Id, menuItem.Id, 1);
-        var submitResponse = await _client.PostAsync($"/api/v1/orders/{order.Id}/submit", null);
-        var summary = await submitResponse.Content.ReadFromJsonAsync<OrderSummaryDto>();
+        
+        // Submit with loyalty points redemption
+        var submitResponse = await _client.PostAsync(
+            $"/api/v1/orders/{order.Id}/submit?loyaltyPointsToRedeem=200", 
+            null);
+        submitResponse.EnsureSuccessStatusCode();
+        var submitSummary = await submitResponse.Content.ReadFromJsonAsync<OrderSummaryDto>();
 
-        // Act
+        // Act - Pay the order
         var response = await _client.PostAsync(
-            $"/api/v1/orders/{order.Id}/pay?paymentMethod=Card&loyaltyPointsToRedeem=200", 
+            $"/api/v1/orders/{order.Id}/pay?paymentMethod=Card", 
             null);
 
         // Assert
@@ -363,7 +368,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
         var paySummary = await response.Content.ReadFromJsonAsync<OrderSummaryDto>();
         paySummary.Should().NotBeNull();
 
-        // Verify customer's loyalty points: 500 - 200 + earned
+        // Verify customer's loyalty points: 500 (initial) - 200 (redeemed in submit) + earned
         using var scope = _fixture.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var updatedCustomer = await db.Customers.FindAsync(customer.Id);
