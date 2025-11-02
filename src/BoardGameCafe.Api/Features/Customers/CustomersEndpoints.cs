@@ -26,28 +26,30 @@ public static class CustomersEndpoints
         /// Get current customer profile
         /// </summary>
         group.MapGet("/me", async Task<Results<Ok<CustomerDto>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId) =>
         {
-            var customer = await db.Customers
-                .Where(c => c.Id == customerId)
-                .Select(c => new CustomerDto
-                {
-                    Id = c.Id,
-                    Email = c.Email,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    Phone = c.Phone,
-                    MembershipTier = c.MembershipTier.ToString(),
-                    LoyaltyPoints = c.LoyaltyPoints,
-                    JoinedDate = c.JoinedDate,
-                    TotalVisits = c.TotalVisits
-                })
-                .FirstOrDefaultAsync();
+            var customer = await db.Customers.FindAsync(customerId);
 
-            return customer is null
-                ? TypedResults.NotFound()
-                : TypedResults.Ok(customer);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var dto = new CustomerDto
+            {
+                Id = customer.Id,
+                Email = customer.Email,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Phone = customer.Phone,
+                MembershipTier = customer.MembershipTier.ToString(),
+                LoyaltyPoints = customer.LoyaltyPoints,
+                JoinedDate = customer.JoinedDate,
+                TotalVisits = customer.TotalVisits
+            };
+
+            return TypedResults.Ok(dto);
         })
         .WithName("GetCustomerProfile")
         .WithSummary("Get current customer profile")
@@ -59,7 +61,7 @@ public static class CustomersEndpoints
         /// Update customer profile
         /// </summary>
         group.MapPut("/me", async Task<Results<Ok<CustomerDto>, NotFound, BadRequest<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId,
             [FromBody] UpdateCustomerRequest request) =>
         {
@@ -101,7 +103,7 @@ public static class CustomersEndpoints
         /// Get loyalty points balance and tier information
         /// </summary>
         group.MapGet("/me/loyalty-points", async Task<Results<Ok<LoyaltyPointsDto>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId) =>
         {
             var customer = await db.Customers.FindAsync(customerId);
@@ -133,7 +135,7 @@ public static class CustomersEndpoints
         /// Get loyalty points transaction history
         /// </summary>
         group.MapGet("/me/loyalty-history", async Task<Results<Ok<List<LoyaltyTransactionDto>>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId) =>
         {
             var customer = await db.Customers.FindAsync(customerId);
@@ -145,18 +147,19 @@ public static class CustomersEndpoints
             var history = await db.LoyaltyPointsHistory
                 .Where(h => h.CustomerId == customerId)
                 .OrderByDescending(h => h.TransactionDate)
-                .Select(h => new LoyaltyTransactionDto
-                {
-                    Id = h.Id,
-                    PointsChange = h.PointsChange,
-                    TransactionType = h.TransactionType.ToString(),
-                    Description = h.Description,
-                    TransactionDate = h.TransactionDate,
-                    OrderId = h.OrderId
-                })
                 .ToListAsync();
 
-            return TypedResults.Ok(history);
+            var dtos = history.Select(h => new LoyaltyTransactionDto
+            {
+                Id = h.Id,
+                PointsChange = h.PointsChange,
+                TransactionType = h.TransactionType.ToString(),
+                Description = h.Description,
+                TransactionDate = h.TransactionDate,
+                OrderId = h.OrderId
+            }).ToList();
+
+            return TypedResults.Ok(dtos);
         })
         .WithName("GetLoyaltyHistory")
         .WithSummary("Get loyalty points transaction history")
@@ -168,7 +171,7 @@ public static class CustomersEndpoints
         /// Add a game to favorites
         /// </summary>
         group.MapPost("/me/favorites", async Task<Results<NoContent, NotFound, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId,
             Guid gameId) =>
         {
@@ -212,7 +215,7 @@ public static class CustomersEndpoints
         /// Remove a game from favorites
         /// </summary>
         group.MapDelete("/me/favorites/{gameId:guid}", async Task<Results<NoContent, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId,
             Guid gameId) =>
         {
@@ -246,7 +249,7 @@ public static class CustomersEndpoints
         /// Get customer visit statistics
         /// </summary>
         group.MapGet("/me/visit-stats", async Task<Results<Ok<VisitStatsDto>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid customerId) =>
         {
             var customer = await db.Customers.FindAsync(customerId);

@@ -180,6 +180,7 @@ public class BoardGameCafeDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
             entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
             entity.HasIndex(e => new { e.CustomerId, e.TransactionDate });
+            entity.HasIndex(e => e.OrderId);
         });
     }
 }

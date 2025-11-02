@@ -3,16 +3,19 @@ using System;
 using BoardGameCafe.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
 namespace BoardGameCafe.Api.Migrations
 {
-    [DbContext(typeof(BoardGameCafeDbContext))]
-    partial class BoardGameCafeDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AppDbContext))]
+    [Migration("20251102141010_AddLoyaltyPointsHistory")]
+    partial class AddLoyaltyPointsHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
@@ -481,21 +484,6 @@ namespace BoardGameCafe.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CustomerGame", b =>
-                {
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("FavoriteGamesId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("CustomerId", "FavoriteGamesId");
-
-                    b.HasIndex("FavoriteGamesId");
-
-                    b.ToTable("CustomerFavoriteGames", (string)null);
-                });
-
             modelBuilder.Entity("BoardGameCafe.Domain.EventRegistration", b =>
                 {
                     b.HasOne("BoardGameCafe.Domain.Customer", "Customer")
@@ -606,21 +594,6 @@ namespace BoardGameCafe.Api.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Table");
-                });
-
-            modelBuilder.Entity("CustomerGame", b =>
-                {
-                    b.HasOne("BoardGameCafe.Domain.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BoardGameCafe.Domain.Game", null)
-                        .WithMany()
-                        .HasForeignKey("FavoriteGamesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Event", b =>

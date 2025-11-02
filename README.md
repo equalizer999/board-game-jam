@@ -762,6 +762,38 @@ Progressive implementation stages:
   - Total test coverage: 37 tests (20 reservation + 17 games integration)
   - Verified all endpoints appear in Swagger UI with proper documentation
 
+- ✅ **Issue #28**: Build Customer Loyalty Program REST API with Points Tracking and Tier Management
+  - Created `LoyaltyPointsHistory` domain entity to track all point transactions
+  - Updated DbContext with LoyaltyPointsHistory table configuration and indexes
+  - Created and applied EF Core migration (AddLoyaltyPointsHistory)
+  - Created `Features/Customers/` folder with vertical slice architecture
+  - Implemented DTOs: CustomerDto, UpdateCustomerRequest, LoyaltyPointsDto, LoyaltyTransactionDto, VisitStatsDto
+  - Implemented all 7 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/customers/me - get current customer profile
+    - PUT /api/v1/customers/me - update profile (first name, last name, phone)
+    - GET /api/v1/customers/me/loyalty-points - get points balance, tier, discount %, and progress to next tier
+    - GET /api/v1/customers/me/loyalty-history - list point transactions (earned, redeemed, sorted by date)
+    - POST /api/v1/customers/me/favorites - add game to favorites (placeholder)
+    - DELETE /api/v1/customers/me/favorites/{gameId} - remove from favorites (placeholder)
+    - GET /api/v1/customers/me/visit-stats - total visits, games played, spending, avg order value
+  - Implemented tier upgrade logic with automatic tier updates:
+    - Bronze: 0-499 points (5% discount)
+    - Silver: 500-1999 points (10% discount)
+    - Gold: 2000+ points (15% discount)
+  - Added loyalty points tracking in Orders API:
+    - Points earned tracked when order is paid (1 point per $1 spent)
+    - Points redeemed tracked when order is submitted (100 points = $1 discount)
+  - Implemented validation: can't redeem more points than balance
+  - Created 15 comprehensive integration tests covering all scenarios:
+    - Profile management (get, update)
+    - Loyalty points tiers (None, Bronze, Silver, Gold with correct discounts)
+    - Points history tracking (earned and redeemed transactions)
+    - Visit statistics
+    - Favorites management
+    - Integration with Orders API for points earning and redemption
+  - All tests passing (38 unit + 81 integration = 119 total)
+  - Verified all endpoints appear in Swagger UI with proper documentation
+
 - ✅ **Issue #28**: Build Customer Loyalty Program REST API
   - Created `LoyaltyPointsHistory` domain entity for tracking point transactions (earned, redeemed, adjustments)
   - Updated `Customer` entity with `FavoriteGames` collection (many-to-many relationship)
