@@ -1,10 +1,14 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import GameCatalog from './pages/GameCatalog';
 
 export default function App() {
   return (
-    <main style={{ fontFamily: 'system-ui', padding: '2rem' }}>
-      <h1>Board Game Café Demo</h1>
-      <p>Frontend scaffold is ready. More features coming via issues.</p>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/games" replace />} />
+        <Route path="/games" element={<GameCatalog />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
