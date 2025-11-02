@@ -17,21 +17,7 @@ export function GameFilters({ onFilterChange }: GameFiltersProps) {
   const [search, setSearch] = useState<string>('');
   const [availableOnly, setAvailableOnly] = useState<boolean>(false);
   
-  // Debounce search input
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      applyFilters();
-    }, 300);
-    
-    return () => clearTimeout(timer);
-  }, [search]);
-  
-  // Apply filters immediately for non-search changes
-  useEffect(() => {
-    applyFilters();
-  }, [category, minPlayers, maxPlayers, minComplexity, maxComplexity, availableOnly]);
-  
-  const applyFilters = () => {
+  const applyFilters = React.useCallback(() => {
     const filters: Filters = {
       pageSize: 20,
     };
@@ -66,7 +52,21 @@ export function GameFilters({ onFilterChange }: GameFiltersProps) {
     }
     
     onFilterChange(filters);
-  };
+  }, [onFilterChange, category, minPlayers, maxPlayers, minComplexity, maxComplexity, search, availableOnly]);
+  
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      applyFilters();
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [search, applyFilters]);
+  
+  // Apply filters immediately for non-search changes
+  useEffect(() => {
+    applyFilters();
+  }, [category, minPlayers, maxPlayers, minComplexity, maxComplexity, availableOnly, applyFilters]);
   
   const resetFilters = () => {
     setCategory('');
