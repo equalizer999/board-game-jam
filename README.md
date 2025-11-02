@@ -229,17 +229,46 @@ Issues are tagged with:
 - `exercise` - Workshop exercises
 - `performance` - Optimization tasks
 
-## 🤖 Assigning to GitHub Copilot
+## 🤖 Assigning Issues to GitHub Copilot
 
-This repository is designed for **GitHub Copilot Coding Agent** handoff:
+This repository is designed for **GitHub Copilot Coding Agent** handoff. You can delegate well-defined issues to Copilot, which will autonomously create pull requests with implementation.
 
+### Quick Start
+
+**Method 1: Comment on Issue**
 ```bash
-# Example: Assign issue #5 to Copilot
-# Navigate to issue → Comment:
-@github-copilot implement this feature following the acceptance criteria
+# Navigate to any issue → Add comment:
+@copilot please implement this issue
 ```
 
-Or use the assignment button and select **Copilot** as the assignee.
+**Method 2: Assign via UI**
+1. Open the issue
+2. Click "Assignees" → Search for "copilot"
+3. Assign the issue
+4. Copilot automatically starts working
+
+### What Happens Next?
+
+1. **Copilot analyzes** the issue (2-5 minutes)
+2. **Copilot generates code** following acceptance criteria (5-15 minutes)
+3. **Copilot creates a PR** with implementation
+4. **You review and merge** (or request changes)
+
+### Best Practices
+
+- ✅ **Clear problem statements** - Single, well-defined tasks
+- ✅ **Explicit acceptance criteria** - Testable checkboxes
+- ✅ **Technical constraints** - File paths, libraries, patterns
+- ✅ **Dependencies complete** - Follow issue dependency order (see below)
+
+### Learn More
+
+📖 **[Complete Copilot Assignment Guide](docs/copilot-agent-assignment-guide.md)** - Detailed guide covering:
+- Writing Copilot-friendly issues
+- Good vs bad problem statement examples
+- Monitoring and reviewing Copilot's work
+- Troubleshooting common issues
+- Tips for maximizing effectiveness
 ## 🔗 Issue Dependencies & Assignment Order
 
 To maximize GitHub Copilot effectiveness, follow this dependency-based assignment order:
