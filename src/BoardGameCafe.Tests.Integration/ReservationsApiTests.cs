@@ -30,7 +30,7 @@ public class ReservationsApiTests : IClassFixture<ReservationsApiTestFixture>, I
         
         // Create a scope to seed test data for this test
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
 
         // Clean up any existing data from previous tests
         db.Reservations.RemoveRange(db.Reservations);

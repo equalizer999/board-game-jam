@@ -11,7 +11,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext with SQLite
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<BoardGameCafeDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add CORS policy
@@ -59,7 +59,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<AppDbContext>();
+        var context = services.GetRequiredService<BoardGameCafeDbContext>();
         context.Database.Migrate(); // Apply pending migrations
         SeedData.Initialize(services);
     }

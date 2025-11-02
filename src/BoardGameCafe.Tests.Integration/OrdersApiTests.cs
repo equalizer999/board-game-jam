@@ -337,7 +337,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
 
         // Verify customer's loyalty points were updated
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         var updatedCustomer = await db.Customers.FindAsync(customer.Id);
         updatedCustomer!.LoyaltyPoints.Should().Be(summary.LoyaltyPointsEarned);
     }
@@ -370,7 +370,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
 
         // Verify customer's loyalty points: 500 (initial) - 200 (redeemed in submit) + earned
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         var updatedCustomer = await db.Customers.FindAsync(customer.Id);
         var expectedPoints = 500 - 200 + paySummary!.LoyaltyPointsEarned;
         updatedCustomer!.LoyaltyPoints.Should().Be(expectedPoints);
@@ -380,7 +380,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
     private async Task<Customer> SeedCustomerAsync()
     {
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
 
         var customer = new Customer
         {
@@ -401,7 +401,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
     private async Task<Customer> SeedCustomerWithMembershipAsync(MembershipTier tier)
     {
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
 
         var customer = new Customer
         {
@@ -422,7 +422,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
     private async Task<Customer> SeedCustomerWithLoyaltyPointsAsync(int points)
     {
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
 
         var customer = new Customer
         {
@@ -443,7 +443,7 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
     private async Task<MenuItem> SeedMenuItemAsync(MenuCategory category = MenuCategory.Coffee, decimal price = 5.00m)
     {
         using var scope = _fixture.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
 
         var menuItem = new MenuItem
         {
