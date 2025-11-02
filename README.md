@@ -628,6 +628,28 @@ Progressive implementation stages:
   - Created 10 comprehensive unit tests for order pricing calculations
   - All tests passing (17 unit + 2 integration)
 
+- ✅ **Issue #9**: Build Event Management and Registration System with Capacity Control
+  - Updated Event entity with ImageUrl property and CurrentParticipants computed property
+  - Created EventRegistration entity with proper enums (RegistrationStatus, PaymentStatus)
+  - Configured relationships: Event 1-to-many EventRegistrations with cascade delete
+  - Added unique constraint on EventId + CustomerId to prevent duplicate registrations
+  - Created Features/Events folder with vertical slice architecture
+  - Implemented DTOs: EventDto, CreateEventRequest, RegisterForEventRequest, EventRegistrationDto
+  - Implemented all 6 Minimal API endpoints with Swagger documentation:
+    - GET /api/v1/events - List upcoming events
+    - GET /api/v1/events/{id} - Get event details with participant count
+    - POST /api/v1/events - Create event (admin)
+    - POST /api/v1/events/{id}/register - Register customer with capacity validation
+    - DELETE /api/v1/events/{id}/register - Cancel registration
+    - GET /api/v1/events/{id}/participants - List registrations (staff/admin)
+  - Implemented capacity validation: prevent registration when CurrentParticipants >= MaxParticipants
+  - Handled concurrency for last spot registration using Serializable transaction isolation
+  - Returns 409 Conflict when event is full or customer already registered
+  - CurrentParticipants computed from non-cancelled registrations only
+  - Created and applied EF Core migration (UpdateEventManagement)
+  - Created 13 comprehensive integration tests covering all scenarios
+  - All tests passing (17 unit + 33 integration)
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:
