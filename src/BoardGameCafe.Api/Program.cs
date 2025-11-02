@@ -1,5 +1,6 @@
 using BoardGameCafe.Api.Data;
 using BoardGameCafe.Api.Features.Events;
+using BoardGameCafe.Api.Features.Games;
 using BoardGameCafe.Api.Features.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -82,6 +83,7 @@ app.MapGet("/api/v1/health", () => new { status = "ok", timestamp = DateTimeOffs
     .WithTags("Health");
 
 // Map feature endpoints
+app.MapGamesEndpoints();
 app.MapReservationsEndpoints();
 app.MapEventsEndpoints();
 
