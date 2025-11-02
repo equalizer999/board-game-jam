@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/HomePage';
-import GamesPage from './pages/GamesPage';
+import GameCatalog from './pages/GameCatalog';
 import ReservationsPage from './pages/ReservationsPage';
 import OrdersPage from './pages/OrdersPage';
 
@@ -55,7 +55,7 @@ export default function App() {
           <main style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/games" element={<GamesPage />} />
+              <Route path="/games" element={<GameCatalog />} />
               <Route path="/reservations" element={<ReservationsPage />} />
               <Route path="/orders" element={<OrdersPage />} />
             </Routes>

@@ -1,8 +1,9 @@
-using BoardGameCafe.Api.Features.Orders;
 using BoardGameCafe.Domain;
+using BoardGameCafe.Tests.Unit.Builders;
+using BoardGameCafe.Tests.Unit.TestUtilities;
 using FluentAssertions;
 
-namespace BoardGameCafe.Tests.Unit;
+namespace BoardGameCafe.Tests.Unit.Services;
 
 public class OrderCalculationServiceTests
 {
@@ -520,4 +521,330 @@ public class OrderCalculationServiceTests
         order.TaxAmount.Should().Be(4.00m);
         order.TotalAmount.Should().Be(47.00m);
     }
+
+    #region Additional Comprehensive Tests with Builders and Edge Cases
+
+    [Theory]
+    [InlineData(0, 0.00)]
+    [InlineData(1, 0.01)]
+    [InlineData(50, 0.50)]
+    [InlineData(999, 9.99)]
+    public void CalculateLoyaltyPointsDiscount_VariousAmounts_ReturnsCorrectDiscount(int points, decimal expected)
+    {
+        // Act
+        var discount = _service.CalculateLoyaltyPointsDiscount(points);
+
+        // Assert
+        discount.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData(0.00, 0)]
+    [InlineData(0.99, 0)]
+    [InlineData(1.00, 1)]
+    [InlineData(1.99, 1)]
+    [InlineData(99.99, 99)]
+    [InlineData(100.00, 100)]
+    [InlineData(100.50, 100)]
+    public void CalculateLoyaltyPointsEarned_VariousAmounts_ReturnsCorrectPoints(decimal amount, int expected)
+    {
+        // Act
+        var points = _service.CalculateLoyaltyPointsEarned(amount);
+
+        // Assert
+        points.Should().Be(expected);
+    }
+
+    [Fact]
+    public void CalculateSubtotal_WithBuilder_CalculatesCorrectly()
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var menuItem1 = new MenuItem { Id = Guid.NewGuid(), Name = "Item1", Category = MenuCategory.Coffee, Price = 5.00m };
+        var menuItem2 = new MenuItem { Id = Guid.NewGuid(), Name = "Item2", Category = MenuCategory.Meals, Price = 12.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem1, quantity: 2)
+            .WithItem(menuItem2, quantity: 1)
+            .Build();
+
+        // Act
+        order.CalculateSubtotal();
+
+        // Assert
+        order.Subtotal.Should().Be(22.00m); // (2 * 5.00) + (1 * 12.00)
+    }
+
+    [Fact]
+    public void ApplyMemberDiscount_Bronze_Applies5PercentDiscount()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .AsBronzeMember()
+            .Build();
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithSubtotal(100.00m)
+            .Build();
+
+        // Act
+        order.CalculateMemberDiscount();
+
+        // Assert
+        order.DiscountAmount.Should().Be(5.00m);
+    }
+
+    [Fact]
+    public void ApplyMemberDiscount_Silver_Applies10PercentDiscount()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .AsSilverMember()
+            .Build();
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithSubtotal(100.00m)
+            .Build();
+
+        // Act
+        order.CalculateMemberDiscount();
+
+        // Assert
+        order.DiscountAmount.Should().Be(10.00m);
+    }
+
+    [Fact]
+    public void ApplyMemberDiscount_Gold_Applies15PercentDiscount()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .AsGoldMember()
+            .Build();
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithSubtotal(100.00m)
+            .Build();
+
+        // Act
+        order.CalculateMemberDiscount();
+
+        // Assert
+        order.DiscountAmount.Should().Be(15.00m);
+    }
+
+    [Fact]
+    public void CalculateTax_Food_Applies8PercentTax()
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Pizza", Category = MenuCategory.Meals, Price = 25.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act
+        order.CalculateTax();
+
+        // Assert
+        order.TaxAmount.Should().Be(2.00m); // 25.00 * 0.08
+    }
+
+    [Fact]
+    public void CalculateTax_Alcohol_Applies10PercentTax()
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Wine", Category = MenuCategory.Alcohol, Price = 30.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act
+        order.CalculateTax();
+
+        // Assert
+        order.TaxAmount.Should().Be(3.00m); // 30.00 * 0.10
+    }
+
+    [Fact]
+    public void CalculateTax_MixedItems_AppliesDifferentRatesCorrectly()
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var foodItem = new MenuItem { Id = Guid.NewGuid(), Name = "Burger", Category = MenuCategory.Meals, Price = 15.00m };
+        var alcoholItem = new MenuItem { Id = Guid.NewGuid(), Name = "Beer", Category = MenuCategory.Alcohol, Price = 8.00m };
+        var coffeeItem = new MenuItem { Id = Guid.NewGuid(), Name = "Coffee", Category = MenuCategory.Coffee, Price = 4.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(foodItem, quantity: 1)
+            .WithItem(alcoholItem, quantity: 2)
+            .WithItem(coffeeItem, quantity: 1)
+            .Build();
+
+        // Act
+        order.CalculateTax();
+
+        // Assert
+        // Food: 15.00 * 0.08 = 1.20
+        // Alcohol: 16.00 * 0.10 = 1.60
+        // Coffee: 4.00 * 0.08 = 0.32
+        // Total: 3.12
+        order.TaxAmount.Should().Be(3.12m);
+    }
+
+    [Fact]
+    public void RedeemLoyaltyPoints_100Points_Reduces1Dollar()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .WithLoyaltyPoints(500)
+            .Build();
+
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Coffee", Category = MenuCategory.Coffee, Price = 5.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act
+        _service.CalculateOrderTotals(order, loyaltyPointsToRedeem: 100);
+
+        // Assert
+        order.DiscountAmount.Should().Be(1.00m);
+    }
+
+    [Fact]
+    public void RedeemLoyaltyPoints_PreventsNegativeTotal()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .WithLoyaltyPoints(10000)
+            .AsGoldMember() // 15% discount
+            .Build();
+
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Coffee", Category = MenuCategory.Coffee, Price = 5.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act - Try to redeem more than order is worth
+        _service.CalculateOrderTotals(order, loyaltyPointsToRedeem: 10000);
+
+        // Assert
+        order.TotalAmount.Should().BeGreaterThanOrEqualTo(0);
+    }
+
+    [Fact]
+    public void CalculateLoyaltyPointsEarned_1PointPerDollarSpent()
+    {
+        // Act
+        var points = _service.CalculateLoyaltyPointsEarned(45.00m);
+
+        // Assert
+        points.Should().Be(45);
+    }
+
+    [Fact]
+    public void CalculateLoyaltyPointsEarned_RoundsDown()
+    {
+        // Act
+        var points = _service.CalculateLoyaltyPointsEarned(45.99m);
+
+        // Assert
+        points.Should().Be(45); // Should round down, not up
+    }
+
+    [Theory]
+    [InlineData(0.00)]
+    [InlineData(0.01)]
+    [InlineData(0.99)]
+    public void CalculateOrderTotals_ZeroAmounts_HandlesCorrectly(decimal itemPrice)
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Free Item", Category = MenuCategory.Snacks, Price = itemPrice };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act
+        _service.CalculateOrderTotals(order);
+
+        // Assert
+        order.TotalAmount.Should().BeGreaterThanOrEqualTo(0);
+    }
+
+    [Fact]
+    public void CalculateOrderTotals_MaxDiscount_DoesNotExceedSubtotal()
+    {
+        // Arrange
+        var customer = new CustomerBuilder()
+            .AsGoldMember() // 15% discount
+            .WithLoyaltyPoints(10000)
+            .Build();
+
+        var menuItem = new MenuItem { Id = Guid.NewGuid(), Name = "Item", Category = MenuCategory.Meals, Price = 10.00m };
+
+        var order = new OrderBuilder()
+            .WithCustomer(customer)
+            .WithItem(menuItem, quantity: 1)
+            .Build();
+
+        // Act
+        _service.CalculateOrderTotals(order, loyaltyPointsToRedeem: 10000);
+
+        // Assert
+        // Even with huge discount, total should not be negative
+        order.TotalAmount.Should().BeGreaterThanOrEqualTo(0);
+        // Tax should still be calculated
+        order.TaxAmount.Should().BeGreaterThan(0);
+    }
+
+    [Theory]
+    [InlineData(10.00, 10.00, 1.80)]  // Food: 10 * 0.08 = 0.80, Alcohol: 10 * 0.10 = 1.00, Total = 1.80
+    [InlineData(10.00, 0.00, 0.80)]   // Food only
+    [InlineData(0.00, 10.00, 1.00)]   // Alcohol only: 10 * 0.10
+    [InlineData(25.50, 15.75, 3.615)] // Mixed: 25.50 * 0.08 + 15.75 * 0.10 = 2.04 + 1.575 = 3.615
+    public void CalculateTax_Rounding_HandlesCorrectly(decimal foodPrice, decimal alcoholPrice, decimal expectedTax)
+    {
+        // Arrange
+        var customer = new CustomerBuilder().Build();
+        var orderBuilder = new OrderBuilder().WithCustomer(customer);
+
+        if (foodPrice > 0)
+        {
+            var foodItem = new MenuItem { Id = Guid.NewGuid(), Name = "Food", Category = MenuCategory.Meals, Price = foodPrice };
+            orderBuilder.WithItem(foodItem, quantity: 1);
+        }
+
+        if (alcoholPrice > 0)
+        {
+            var alcoholItem = new MenuItem { Id = Guid.NewGuid(), Name = "Alcohol", Category = MenuCategory.Alcohol, Price = alcoholPrice };
+            orderBuilder.WithItem(alcoholItem, quantity: 1);
+        }
+
+        var order = orderBuilder.Build();
+
+        // Act
+        order.CalculateTax();
+
+        // Assert
+        order.TaxAmount.Should().Be(expectedTax);
+    }
+
+    #endregion
 }
