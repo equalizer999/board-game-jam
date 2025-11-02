@@ -63,7 +63,7 @@ public static class EventsEndpoints
     /// Get list of upcoming events
     /// </summary>
     private static async Task<Ok<List<EventDto>>> GetUpcomingEvents(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         var now = DateTime.UtcNow;
@@ -96,7 +96,7 @@ public static class EventsEndpoints
     /// </summary>
     private static async Task<Results<Ok<EventDto>, NotFound>> GetEvent(
         Guid id,
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         var eventEntity = await db.Events
@@ -129,7 +129,7 @@ public static class EventsEndpoints
     /// </summary>
     private static async Task<Results<Created<EventDto>, BadRequest<ProblemDetails>>> CreateEvent(
         CreateEventRequest request,
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         // Validation
@@ -201,7 +201,7 @@ public static class EventsEndpoints
     private static async Task<Results<Created<EventRegistrationDto>, NotFound, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> RegisterForEvent(
         Guid id,
         RegisterForEventRequest request,
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         // Validate customer exists
@@ -309,7 +309,7 @@ public static class EventsEndpoints
     private static async Task<Results<NoContent, NotFound>> CancelRegistration(
         Guid id,
         [FromQuery] Guid customerId,
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         var registration = await db.EventRegistrations
@@ -331,7 +331,7 @@ public static class EventsEndpoints
     /// </summary>
     private static async Task<Results<Ok<List<EventRegistrationDto>>, NotFound>> GetParticipants(
         Guid id,
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CancellationToken ct)
     {
         var eventExists = await db.Events.AnyAsync(e => e.Id == id, ct);

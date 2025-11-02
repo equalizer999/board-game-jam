@@ -24,7 +24,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
         
         // Clean up any existing data from previous tests
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         db.Games.RemoveRange(db.Games);
         await db.SaveChangesAsync();
     }
@@ -49,7 +49,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var game1 = new Game
         {
@@ -103,7 +103,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         db.Games.AddRange(
             new Game { Title = "Catan", Publisher = "Test", MinPlayers = 3, MaxPlayers = 4, PlayTimeMinutes = 90, AgeRating = 10, Complexity = 2.5m, Category = GameCategory.Strategy, CopiesOwned = 1, DailyRentalFee = 5.00m },
@@ -128,7 +128,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         db.Games.AddRange(
             new Game { Title = "Game 2-4 Players", Publisher = "Test", MinPlayers = 2, MaxPlayers = 4, PlayTimeMinutes = 60, AgeRating = 10, Complexity = 2.0m, Category = GameCategory.Family, CopiesOwned = 1, DailyRentalFee = 5.00m },
@@ -152,7 +152,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         db.Games.AddRange(
             new Game { Title = "Available Game", Publisher = "Test", MinPlayers = 2, MaxPlayers = 4, PlayTimeMinutes = 60, AgeRating = 10, Complexity = 2.0m, Category = GameCategory.Family, CopiesOwned = 2, CopiesInUse = 0, DailyRentalFee = 5.00m },
@@ -177,7 +177,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         for (int i = 1; i <= 15; i++)
         {
@@ -213,7 +213,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var gameId = Guid.NewGuid();
         var game = new Game
@@ -323,7 +323,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var existingGame = new Game
         {
@@ -367,7 +367,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var gameId = Guid.NewGuid();
         var game = new Game
@@ -446,7 +446,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var gameId = Guid.NewGuid();
         var game = new Game
@@ -494,7 +494,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var gameId = Guid.NewGuid();
         var game = new Game
@@ -523,7 +523,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
         
         // Verify deletion with a fresh scope
         using var verifyScope = _factory.Services.CreateScope();
-        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         var deletedGame = await verifyDb.Games.FindAsync(gameId);
         deletedGame.Should().BeNull();
     }
@@ -543,7 +543,7 @@ public class GamesApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLi
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         
         var gameId = Guid.NewGuid();
         var game = new Game
