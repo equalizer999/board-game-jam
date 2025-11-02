@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
     public DbSet<GameSession> GameSessions => Set<GameSession>();
+    public DbSet<LoyaltyPointsHistory> LoyaltyPointsHistory => Set<LoyaltyPointsHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,6 +57,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
             entity.HasIndex(e => e.Email).IsUnique();
+            entity.HasMany(e => e.FavoriteGames)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("CustomerFavoriteGames"));
         });
 
         // Reservation entity configuration
@@ -160,6 +164,22 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
             entity.Property(e => e.LateFeeApplied).HasPrecision(10, 2);
             entity.HasIndex(e => new { e.GameId, e.ReturnedAt });
+        });
+
+        // LoyaltyPointsHistory entity configuration
+        modelBuilder.Entity<LoyaltyPointsHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Customer)
+                .WithMany()
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Order)
+                .WithMany()
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
+            entity.HasIndex(e => new { e.CustomerId, e.TransactionDate });
         });
     }
 }
