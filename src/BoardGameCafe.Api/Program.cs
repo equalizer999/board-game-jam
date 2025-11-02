@@ -1,4 +1,5 @@
 using BoardGameCafe.Api.Data;
+using BoardGameCafe.Api.Features.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -45,7 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Seed the database
+// Seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -53,7 +54,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<AppDbContext>();
         context.Database.Migrate(); // Apply pending migrations
-        SeedData.Initialize(context);
+        SeedData.Initialize(services);
     }
     catch (Exception ex)
     {
@@ -78,6 +79,9 @@ app.MapHealthChecks("/health");
 app.MapGet("/api/v1/health", () => new { status = "ok", timestamp = DateTimeOffset.UtcNow })
     .WithName("GetHealthStatus")
     .WithTags("Health");
+
+// Map feature endpoints
+app.MapReservationsEndpoints();
 
 app.Run();
 
