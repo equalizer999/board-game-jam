@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoardGameCafe.Api.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
+    [DbContext(typeof(BoardGameCafeDbContext))]
     [Migration("20251031150245_InitialCreate")]
     partial class InitialCreate
     {

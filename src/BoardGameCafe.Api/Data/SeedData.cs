@@ -7,8 +7,8 @@ public static class SeedData
 {
     public static void Initialize(IServiceProvider serviceProvider)
     {
-        using var context = new AppDbContext(
-            serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>());
+        using var context = new BoardGameCafeDbContext(
+            serviceProvider.GetRequiredService<DbContextOptions<BoardGameCafeDbContext>>());
 
         // Check if already seeded
         if (context.MenuItems.Any())
@@ -22,7 +22,7 @@ public static class SeedData
         context.SaveChanges();
     }
 
-    private static void SeedMenuItems(AppDbContext context)
+    private static void SeedMenuItems(BoardGameCafeDbContext context)
     {
         var menuItems = new List<MenuItem>
         {
@@ -350,7 +350,7 @@ public static class SeedData
         context.MenuItems.AddRange(menuItems);
     }
 
-    private static void SeedSampleOrders(AppDbContext context)
+    private static void SeedSampleOrders(BoardGameCafeDbContext context)
     {
         // Only seed orders if we have customers
         if (!context.Customers.Any())

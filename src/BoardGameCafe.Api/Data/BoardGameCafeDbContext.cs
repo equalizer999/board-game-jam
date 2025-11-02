@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BoardGameCafe.Api.Data;
 
-public class AppDbContext : DbContext
+public class BoardGameCafeDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public BoardGameCafeDbContext(DbContextOptions<BoardGameCafeDbContext> options) : base(options)
     {
     }
 
