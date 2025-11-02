@@ -131,7 +131,7 @@ public class BoardGameCafeDbContext : DbContext
                 .HasForeignKey(e => e.EventId)
                 .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => e.EventDate);
-            entity.ToTable(t => t.HasCheckConstraint("CK_Event_Capacity", "[CurrentParticipants] <= [MaxParticipants]"));
+            entity.Ignore(e => e.CurrentParticipants); // Computed property, not stored in DB
         });
 
         // EventRegistration entity configuration
@@ -142,6 +142,8 @@ public class BoardGameCafeDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
+            entity.HasIndex(e => new { e.EventId, e.CustomerId }).IsUnique();
+            entity.HasIndex(e => e.EventId);
         });
 
         // GameSession entity configuration

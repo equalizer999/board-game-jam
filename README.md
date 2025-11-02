@@ -683,6 +683,85 @@ Progressive implementation stages:
   - Created 10 comprehensive unit tests for order pricing calculations
   - All tests passing (17 unit + 2 integration)
 
+- ✅ **Issue #19**: Set up Playwright for E2E Testing
+  - Installed Playwright test library (@playwright/test)
+  - Configured `playwright.config.ts` with:
+    - Projects for chromium, firefox, webkit browsers
+    - Base URL: http://localhost:5173
+    - Headless mode in CI, headed for local development
+    - Screenshot on test failure
+    - Video recording on retry
+    - Parallel execution: 1 worker in CI, 4 workers locally
+    - 2 retries for failed tests in CI
+    - Auto-start dev server before tests
+  - Created E2E test folder structure:
+    - `tests/e2e/fixtures/` - Test data and API seeding helpers
+    - `tests/e2e/pages/` - Page Object Models
+    - `tests/e2e/specs/` - Test specifications
+  - Implemented Page Object Models:
+    - `GameCatalogPage.ts` - Game browsing, filtering, and detail viewing
+    - `ReservationPage.ts` - Table booking workflow and availability
+    - `OrderPage.ts` - Menu ordering and cart management
+  - Created comprehensive test fixtures:
+    - Sample games, tables, menu items, and customers
+    - Helper functions for API seeding via backend endpoints
+    - Date/time utilities for reservation testing
+  - Implemented first E2E test suite (`game-browsing.spec.ts`):
+    - Navigate to game catalog and verify games load
+    - Apply category filter (Strategy) and verify filtered results
+    - Click game card and verify detail modal opens
+    - Multiple filter criteria testing
+    - Search functionality
+    - No results handling
+    - Modal open/close functionality
+  - Added npm scripts:
+    - `test:e2e` - Run all E2E tests
+    - `test:e2e:ui` - Open Playwright UI mode
+    - `test:e2e:headed` - Run tests in headed mode
+    - `test:e2e:debug` - Run tests in debug mode
+    - `test:e2e:chromium/firefox/webkit` - Run tests on specific browser
+  - Uses data-testid attributes for stable, maintainable selectors
+  - Follows Page Object pattern for reusability and maintainability
+  - Leverages Playwright's auto-waiting features for reliability
+
+- ✅ **Issue #9**: Build Event Management and Registration System with Capacity Control
+  - Updated Event entity with ImageUrl property and CurrentParticipants computed property
+  - Created EventRegistration entity with proper enums (RegistrationStatus, PaymentStatus)
+  - Configured relationships: Event 1-to-many EventRegistrations with cascade delete
+  - Added unique constraint on EventId + CustomerId to prevent duplicate registrations
+  - Created Features/Events folder with vertical slice architecture
+  - Implemented DTOs: EventDto, CreateEventRequest, RegisterForEventRequest, EventRegistrationDto
+  - Implemented all 6 Minimal API endpoints with Swagger documentation:
+    - GET /api/v1/events - List upcoming events
+    - GET /api/v1/events/{id} - Get event details with participant count
+    - POST /api/v1/events - Create event (admin)
+    - POST /api/v1/events/{id}/register - Register customer with capacity validation
+    - DELETE /api/v1/events/{id}/register - Cancel registration
+    - GET /api/v1/events/{id}/participants - List registrations (staff/admin)
+  - Implemented capacity validation: prevent registration when CurrentParticipants >= MaxParticipants
+  - Handled concurrency for last spot registration using Serializable transaction isolation
+  - Returns 409 Conflict when event is full or customer already registered
+  - CurrentParticipants computed from non-cancelled registrations only
+  - Created and applied EF Core migration (UpdateEventManagement)
+  - Created 13 comprehensive integration tests covering all scenarios
+  - All tests passing (17 unit + 33 integration)
+- ✅ **Issue #10 / #3**: Build Games CRUD REST API Endpoints with Swagger Documentation
+  - Created Features/Games folder with vertical slice architecture
+  - Implemented DTOs: GameDto, CreateGameRequest, UpdateGameRequest, GameFilterRequest
+  - Implemented all 5 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/games - List/filter games with pagination (category, player count, availability filters)
+    - GET /api/v1/games/{id} - Get single game by ID
+    - POST /api/v1/games - Create new game (admin placeholder)
+    - PUT /api/v1/games/{id} - Update existing game (admin placeholder)
+    - DELETE /api/v1/games/{id} - Soft delete game (admin placeholder)
+  - Added proper response types: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 409 Conflict
+  - Implemented request validation using Data Annotations
+  - Manual entity-to-DTO mapping for optimal performance
+  - Business rules: MinPlayers ≤ MaxPlayers, CopiesInUse ≤ CopiesOwned, no deletion if copies in use
+  - Created 17 comprehensive integration tests (all passing)
+  - Total test coverage: 37 tests (20 reservation + 17 games integration)
+  - Verified all endpoints appear in Swagger UI with proper documentation
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:
