@@ -1,0 +1,189 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  e2e-tests:
+    name: E2E Tests - ${{ matrix.project }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, firefox, webkit]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: Restore backend dependencies
+        working-directory: src/BoardGameCafe.Api
+        run: dotnet restore
+
+      - name: Restore frontend dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Build backend
+        working-directory: src/BoardGameCafe.Api
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Build frontend
+        working-directory: client
+        run: npm run build
+
+      - name: Start backend API
+        working-directory: src/BoardGameCafe.Api
+        run: |
+          nohup dotnet run --no-build --configuration Release --urls "http://localhost:5000" > backend.log 2>&1 &
+          echo $! > backend.pid
+
+      - name: Start frontend dev server
+        working-directory: client
+        run: |
+          nohup npm run dev > frontend.log 2>&1 &
+          echo $! > frontend.pid
+
+      - name: Wait for backend to be healthy
+        run: |
+          echo "Waiting for backend API to be ready..."
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:5000/health > /dev/null 2>&1; then
+              echo "Backend is healthy!"
+              exit 0
+            fi
+            echo "Attempt $i/30: Backend not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "Backend failed to start!"
+          cat src/BoardGameCafe.Api/backend.log || true
+          exit 1
+
+      - name: Wait for frontend to be ready
+        run: |
+          echo "Waiting for frontend to be ready..."
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:5173 > /dev/null 2>&1; then
+              echo "Frontend is ready!"
+              exit 0
+            fi
+            echo "Attempt $i/30: Frontend not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "Frontend failed to start!"
+          cat client/frontend.log || true
+          exit 1
+
+      - name: Install Playwright browsers
+        working-directory: client
+        run: npx playwright install --with-deps ${{ matrix.project }}
+
+      - name: Run Playwright tests
+        working-directory: client
+        run: npm run test:e2e -- --project=${{ matrix.project }} --reporter=html,github
+        env:
+          CI: true
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ matrix.project }}-${{ github.run_number }}
+          path: client/test-results/**/*.png
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload videos on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: videos-${{ matrix.project }}-${{ github.run_number }}
+          path: client/test-results/**/*.webm
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}-${{ github.run_number }}
+          path: client/playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload backend logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-logs-${{ matrix.project }}-${{ github.run_number }}
+          path: src/BoardGameCafe.Api/backend.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload frontend logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-logs-${{ matrix.project }}-${{ github.run_number }}
+          path: client/frontend.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Stop services
+        if: always()
+        run: |
+          if [ -f src/BoardGameCafe.Api/backend.pid ]; then
+            kill $(cat src/BoardGameCafe.Api/backend.pid) || true
+          fi
+          if [ -f client/frontend.pid ]; then
+            kill $(cat client/frontend.pid) || true
+          fi
+
+      - name: Create job summary
+        if: always()
+        run: |
+          echo "## E2E Test Results - ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Browser:** ${{ matrix.project }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ job.status }}" == "failure" ]; then
+            echo "### 📸 Artifacts Available" >> $GITHUB_STEP_SUMMARY
+            echo "- Screenshots: \`screenshots-${{ matrix.project }}-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- Videos: \`videos-${{ matrix.project }}-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- HTML Report: \`playwright-report-${{ matrix.project }}-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- Backend Logs: \`backend-logs-${{ matrix.project }}-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- Frontend Logs: \`frontend-logs-${{ matrix.project }}-${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+          fi

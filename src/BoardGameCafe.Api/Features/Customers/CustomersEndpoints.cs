@@ -115,12 +115,13 @@ public static class CustomersEndpoints
             var tierInfo = GetTierInfo(customer.LoyaltyPoints);
             var dto = new LoyaltyPointsDto
             {
-                CurrentPoints = customer.LoyaltyPoints,
+                CurrentBalance = customer.LoyaltyPoints,
                 CurrentTier = tierInfo.Tier.ToString(),
-                CurrentDiscount = tierInfo.Discount,
+                DiscountPercentage = tierInfo.Discount,
                 NextTier = tierInfo.NextTier?.ToString(),
                 PointsToNextTier = tierInfo.PointsToNextTier,
-                PointsThreshold = tierInfo.Threshold
+                CurrentTierThreshold = tierInfo.Threshold,
+                NextTierThreshold = tierInfo.NextTierThreshold
             };
 
             return TypedResults.Ok(dto);
@@ -267,24 +268,28 @@ public static class CustomersEndpoints
                 .CountAsync();
 
             // Get total spending from completed orders
-            var totalSpending = await db.Orders
+            var orderStats = await db.Orders
                 .Where(o => o.CustomerId == customerId && 
                            (o.Status == OrderStatus.Completed || o.Status == OrderStatus.Delivered))
-                .SumAsync(o => o.TotalAmount);
-
-            // Get last visit from most recent reservation
-            var lastVisit = await db.Reservations
-                .Where(r => r.CustomerId == customerId)
-                .OrderByDescending(r => r.ReservationDate)
-                .Select(r => (DateTime?)r.ReservationDate)
+                .GroupBy(o => o.CustomerId)
+                .Select(g => new
+                {
+                    TotalSpent = g.Sum(o => o.TotalAmount),
+                    TotalOrders = g.Count()
+                })
                 .FirstOrDefaultAsync();
+
+            var totalSpent = orderStats?.TotalSpent ?? 0;
+            var totalOrders = orderStats?.TotalOrders ?? 0;
+            var averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
 
             var stats = new VisitStatsDto
             {
                 TotalVisits = customer.TotalVisits,
                 GamesPlayed = gamesPlayed,
-                TotalSpending = totalSpending,
-                LastVisit = lastVisit
+                TotalSpent = totalSpent,
+                TotalOrders = totalOrders,
+                AverageOrderValue = averageOrderValue
             };
 
             return TypedResults.Ok(stats);
@@ -301,23 +306,23 @@ public static class CustomersEndpoints
     /// <summary>
     /// Helper method to calculate tier information based on points
     /// </summary>
-    private static (MembershipTier Tier, decimal Discount, MembershipTier? NextTier, int? PointsToNextTier, int Threshold) GetTierInfo(int points)
+    private static (MembershipTier Tier, decimal Discount, MembershipTier? NextTier, int? PointsToNextTier, int Threshold, int? NextTierThreshold) GetTierInfo(int points)
     {
         if (points >= GoldThreshold)
         {
-            return (MembershipTier.Gold, GoldDiscount, null, null, GoldThreshold);
+            return (MembershipTier.Gold, GoldDiscount, null, null, GoldThreshold, null);
         }
         else if (points >= SilverThreshold)
         {
-            return (MembershipTier.Silver, SilverDiscount, MembershipTier.Gold, GoldThreshold - points, SilverThreshold);
+            return (MembershipTier.Silver, SilverDiscount, MembershipTier.Gold, GoldThreshold - points, SilverThreshold, GoldThreshold);
         }
         else if (points > BronzeThreshold)
         {
-            return (MembershipTier.Bronze, BronzeDiscount, MembershipTier.Silver, SilverThreshold - points, BronzeThreshold);
+            return (MembershipTier.Bronze, BronzeDiscount, MembershipTier.Silver, SilverThreshold - points, BronzeThreshold, SilverThreshold);
         }
         else
         {
-            return (MembershipTier.None, 0m, MembershipTier.Bronze, 1 - points, BronzeThreshold);
+            return (MembershipTier.None, 0m, MembershipTier.Bronze, 1 - points, BronzeThreshold, 1);
         }
     }
 
