@@ -454,6 +454,19 @@ public static class OrdersEndpoints
             
             // Deduct redeemed loyalty points from customer
             order.Customer.LoyaltyPoints -= loyaltyPointsToRedeem;
+            
+            // Track loyalty points redemption
+            var redemptionHistory = new LoyaltyPointsHistory
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = order.CustomerId,
+                OrderId = order.Id,
+                PointsChange = -loyaltyPointsToRedeem,
+                TransactionType = LoyaltyTransactionType.Redeemed,
+                TransactionDate = DateTime.UtcNow,
+                Description = $"Redeemed {loyaltyPointsToRedeem} points on order"
+            };
+            db.LoyaltyPointsHistory.Add(redemptionHistory);
         }
 
         // Calculate order totals including loyalty points redemption
@@ -504,6 +517,22 @@ public static class OrdersEndpoints
 
         // Update customer loyalty points
         order.Customer.LoyaltyPoints += pointsEarned;
+        
+        // Track loyalty points earned
+        if (pointsEarned > 0)
+        {
+            var earnedHistory = new LoyaltyPointsHistory
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = order.CustomerId,
+                OrderId = order.Id,
+                PointsChange = pointsEarned,
+                TransactionType = LoyaltyTransactionType.Earned,
+                TransactionDate = DateTime.UtcNow,
+                Description = $"Earned {pointsEarned} points from order (${order.TotalAmount:F2})"
+            };
+            db.LoyaltyPointsHistory.Add(earnedHistory);
+        }
 
         // Update payment method and status
         order.PaymentMethod = paymentMethod;

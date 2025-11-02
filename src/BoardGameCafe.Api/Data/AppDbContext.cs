@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventRegistration> EventRegistrations => Set<EventRegistration>();
     public DbSet<GameSession> GameSessions => Set<GameSession>();
+    public DbSet<LoyaltyPointsHistory> LoyaltyPointsHistory => Set<LoyaltyPointsHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -160,6 +161,23 @@ public class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
             entity.Property(e => e.LateFeeApplied).HasPrecision(10, 2);
             entity.HasIndex(e => new { e.GameId, e.ReturnedAt });
+        });
+
+        // LoyaltyPointsHistory entity configuration
+        modelBuilder.Entity<LoyaltyPointsHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasOne(e => e.Customer)
+                .WithMany()
+                .HasForeignKey(e => e.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(e => e.Order)
+                .WithMany()
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.HasIndex(e => new { e.CustomerId, e.TransactionDate });
+            entity.HasIndex(e => e.OrderId);
         });
     }
 }
