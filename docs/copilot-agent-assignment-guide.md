@@ -270,6 +270,336 @@ POST /api/v1/games
 
 ---
 
+## Complete Example Workflow: Issue #3 Assignment
+
+This section provides a complete, realistic walkthrough of assigning Issue #3 (Create Game Domain Entity) to GitHub Copilot, from start to finish.
+
+### Context
+
+**Issue #3: Create Game Domain Entity**
+- **Depends on**: Issue #2 (Domain Entities Setup) - Already completed ✅
+- **Status**: Ready to assign
+- **Complexity**: Simple - perfect first issue for Copilot
+- **Expected files**: 1 entity file + 1 migration
+
+### Step 1: Review the Issue
+
+Before assigning, verify the issue is well-structured:
+
+**✅ Check: Problem Statement**
+```markdown
+## Problem Statement
+Create the `Game` domain entity representing board games in the café's library, 
+including properties for gameplay metadata, availability tracking, and rental pricing.
+```
+Clear and focused on a single task.
+
+**✅ Check: Acceptance Criteria**
+```markdown
+- [ ] Create `Game` entity in `src/BoardGameCafe.Domain/Entities/Game.cs`
+- [ ] Add properties: Id (Guid), Title (string, max 200), Publisher, MinPlayers, 
+      MaxPlayers, PlayTimeMinutes, AgeRating, Complexity (decimal 1-5), 
+      Category (enum), CopiesOwned, CopiesInUse, DailyRentalFee, Description, ImageUrl
+- [ ] Add computed property `IsAvailable`: `CopiesOwned > CopiesInUse`
+- [ ] Configure entity in DbContext with fluent API
+- [ ] Create EF migration for Game table
+- [ ] Add indexes on Title and Category
+```
+Specific, testable, and complete.
+
+**✅ Check: Technical Details**
+```markdown
+- Use Guid for Id with default generation
+- Category enum: Strategy, Party, Family, Cooperative, Abstract
+- Check constraint: CopiesInUse <= CopiesOwned
+- Fluent API in OnModelCreating, not data annotations
+```
+Clear constraints provided.
+
+**✅ Check: Dependencies**
+The issue description includes:
+```markdown
+**Depends on:** #2 (Domain Entities Setup)
+```
+Verified #2 is completed ✅
+
+**Conclusion**: Issue is ready for Copilot assignment.
+
+### Step 2: Assign to Copilot
+
+**Option A: Via Comment (Recommended)**
+1. Navigate to: `https://github.com/equalizer999/board-game-jam/issues/3`
+2. Scroll to the comment section at the bottom
+3. Type: `@copilot please implement this issue following all acceptance criteria`
+4. Click **Comment**
+
+**Option B: Via Assignees**
+1. Navigate to the issue
+2. On the right sidebar, click **Assignees**
+3. Search for "copilot"
+4. Click to assign
+
+**What Happens Next:**
+- GitHub notifies Copilot of the assignment
+- Copilot begins analyzing the issue (1-3 minutes)
+- You'll see a comment from Copilot acknowledging the assignment
+
+### Step 3: Monitor Copilot's Work
+
+**Timeline:**
+- **T+0 min**: Issue assigned
+- **T+2 min**: Copilot comments: "I'll start working on this issue"
+- **T+3-5 min**: Copilot analyzes codebase and dependencies
+- **T+6-10 min**: Copilot generates code and tests
+- **T+10-15 min**: Copilot creates pull request
+
+**GitHub Notifications:**
+You'll receive notifications for:
+1. Copilot's acknowledgment comment
+2. PR creation: "[Copilot] Implement Issue #3: Create Game Domain Entity"
+3. CI/CD workflow started (if configured)
+
+### Step 4: Review the Pull Request
+
+When the PR is created, review systematically:
+
+#### 4.1 Check PR Title and Description
+**Expected PR Title:**
+```
+[Copilot] Implement Issue #3: Create Game Domain Entity
+```
+
+**Expected PR Description:**
+Should reference the issue and summarize changes:
+```markdown
+Resolves #3
+
+## Changes Made
+- Created Game entity with all required properties
+- Configured entity in DbContext with fluent API
+- Added indexes on Title and Category
+- Created EF Core migration for Game table
+- Added seed data for 5 sample games
+
+## Testing
+- Verified migration creates table successfully
+- Tested entity constraints and computed properties
+```
+
+#### 4.2 Review Files Changed
+
+**Expected Files (2-3 files):**
+1. `src/BoardGameCafe.Domain/Entities/Game.cs` - New entity
+2. `src/BoardGameCafe.Api/Data/BoardGameCafeDbContext.cs` - DbContext updates
+3. `src/BoardGameCafe.Api/Data/Migrations/[timestamp]_AddGameEntity.cs` - EF migration
+
+**Review Checklist:**
+
+**✅ Game.cs:**
+```csharp
+// Verify all properties present:
+- public Guid Id { get; set; }
+- public string Title { get; set; } (MaxLength 200)
+- public int MinPlayers { get; set; }
+- public int MaxPlayers { get; set; }
+- ... (all other properties)
+
+// Verify computed property:
+- public bool IsAvailable => CopiesOwned > CopiesInUse;
+
+// Verify Category enum defined:
+public enum GameCategory { Strategy, Party, Family, Cooperative, Abstract }
+```
+
+**✅ BoardGameCafeDbContext.cs:**
+```csharp
+// Verify DbSet added:
+public DbSet<Game> Games { get; set; }
+
+// Verify OnModelCreating configuration:
+modelBuilder.Entity<Game>(entity =>
+{
+    entity.HasIndex(g => g.Title);
+    entity.HasIndex(g => g.Category);
+    entity.HasCheckConstraint("CK_Game_CopiesInUse", 
+        "CopiesInUse <= CopiesOwned");
+});
+```
+
+**✅ Migration File:**
+```csharp
+// Verify CreateTable operation:
+migrationBuilder.CreateTable(
+    name: "Games",
+    columns: table => new
+    {
+        Id = table.Column<Guid>(...),
+        Title = table.Column<string>(maxLength: 200, ...),
+        // ... all other columns
+    },
+    constraints: table =>
+    {
+        table.PrimaryKey("PK_Games", x => x.Id);
+    });
+
+// Verify indexes:
+migrationBuilder.CreateIndex(
+    name: "IX_Games_Title",
+    table: "Games",
+    column: "Title");
+```
+
+#### 4.3 Run Tests Locally (Optional)
+
+```bash
+# Clone the PR branch
+git fetch origin pull/[PR-NUMBER]/head:pr-[NUMBER]
+git checkout pr-[NUMBER]
+
+# Run database migration
+cd src/BoardGameCafe.Api
+dotnet ef database update
+
+# Verify database
+sqlite3 data/dev.db "SELECT name FROM sqlite_master WHERE type='table';"
+# Should show: Games
+
+# Check schema
+sqlite3 data/dev.db ".schema Games"
+# Verify all columns present
+
+# Run tests
+cd ../../
+dotnet test
+```
+
+#### 4.4 Check CI/CD Results
+
+If GitHub Actions is configured:
+- ✅ Build successful
+- ✅ Tests passed
+- ✅ Code quality checks passed
+
+### Step 5: Provide Feedback (If Needed)
+
+**Scenario 1: Everything Looks Good ✅**
+
+Add a review comment:
+```markdown
+Great work! All acceptance criteria met:
+- ✅ Game entity created with all properties
+- ✅ Computed property IsAvailable implemented correctly
+- ✅ DbContext configured with fluent API
+- ✅ Indexes added on Title and Category
+- ✅ Migration created successfully
+- ✅ Check constraint added
+
+Approving and merging!
+```
+
+Click **Approve** → **Merge pull request**
+
+**Scenario 2: Minor Issues Found ⚠️**
+
+Example issue: Seed data is missing
+
+Add a review comment:
+```markdown
+Thanks for the implementation! The entity and migration look good, but I noticed 
+the acceptance criteria mentioned seeding 3-5 sample games for testing.
+
+Could you please add seed data in the migration's `Up()` method with games like:
+- Catan (Strategy, 3-4 players)
+- Ticket to Ride (Family, 2-5 players)
+- Pandemic (Cooperative, 2-4 players)
+
+@copilot please add seed data for sample games
+```
+
+Copilot will update the PR with the requested changes.
+
+**Scenario 3: Significant Issues Found ❌**
+
+Example issue: Wrong file location or pattern
+
+Add a review comment:
+```markdown
+I see you created the entity, but there are a few issues:
+
+1. ❌ Entity should be in `src/BoardGameCafe.Domain/Entities/Game.cs`, 
+   not in the Api project
+2. ❌ Please use fluent API in OnModelCreating, not data annotations
+3. ❌ The check constraint syntax needs to be SQL: 
+   `CopiesInUse <= CopiesOwned`, not C# expression
+
+Please review the acceptance criteria and technical details again.
+
+@copilot please fix these issues
+```
+
+### Step 6: Merge and Verify
+
+After approval:
+
+1. **Merge the PR**
+   - Click **Merge pull request**
+   - Confirm merge
+   - Delete the branch (optional)
+
+2. **Verify Issue Closed**
+   - Navigate back to Issue #3
+   - Status should show: **Closed** with reference to the merged PR
+   - Comment shows: "Closed in [PR link]"
+
+3. **Verify in Codebase**
+   ```bash
+   git pull origin main
+   
+   # Check file exists
+   ls -la src/BoardGameCafe.Domain/Entities/Game.cs
+   
+   # Check migration applied
+   cd src/BoardGameCafe.Api
+   dotnet ef migrations list
+   # Should show new migration
+   
+   # Verify database
+   dotnet run
+   # API should start without errors
+   ```
+
+4. **Update Roadmap**
+   - Mark Issue #3 as complete in your tracking system
+   - Move to next dependency: Issue #10 (Games API endpoints)
+
+### Step 7: Prepare for Next Issue
+
+**What We Learned:**
+- ✅ Copilot successfully created entity with all properties
+- ✅ Fluent API configuration was correct
+- ✅ Migration was properly structured
+- ⚠️ Needed to request seed data addition (minor iteration)
+
+**Adjustments for Next Issue:**
+When assigning Issue #10 (Games API), add to acceptance criteria:
+```markdown
+- [ ] Add seed data with 5-10 sample games for testing
+```
+
+This prevents the same feedback cycle.
+
+### Success Metrics for This Assignment
+
+- **Time to PR**: 12 minutes ✅ (target: <20 min)
+- **First-Pass Success**: 90% ✅ (minor seed data addition needed)
+- **Iteration Count**: 1 ✅ (target: <2)
+- **Build Success**: ✅ All tests passed
+- **Code Quality**: ✅ Follows established patterns
+
+**Result**: Successfully implemented with minimal feedback. Ready to assign next issue!
+
+---
+
 ## Copilot Agent Capabilities
 
 ### ✅ Copilot Excels At:
