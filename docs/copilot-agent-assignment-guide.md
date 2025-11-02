@@ -11,7 +11,7 @@ GitHub Copilot's coding agent can autonomously implement issues by analyzing the
 ### Assigning an Issue to Copilot
 
 **Method 1: Via GitHub Issue UI**
-1. Open any issue (e.g., [Issue #3](https://github.com/equalizer999/board-game-jam-plan/issues/3))
+1. Open any issue (e.g., [Issue #3](https://github.com/equalizer999/board-game-jam/issues/3))
 2. In the issue description or comments, mention: `@copilot please implement this issue`
 3. Copilot will analyze the issue and create a PR with implementation
 
@@ -242,7 +242,7 @@ POST /api/v1/games
    - Testing requirements included? ✅
 
 3. **Assign to Copilot**
-   - Navigate to https://github.com/equalizer999/board-game-jam-plan/issues/5
+   - Navigate to https://github.com/equalizer999/board-game-jam/issues/5
    - Comment: `@copilot please implement this issue`
    - Or assign via Assignees dropdown
 
