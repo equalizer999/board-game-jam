@@ -762,6 +762,28 @@ Progressive implementation stages:
   - Total test coverage: 37 tests (20 reservation + 17 games integration)
   - Verified all endpoints appear in Swagger UI with proper documentation
 
+- ✅ **Issue #27**: Build Menu Catalog Management REST API with Filtering
+  - Created Features/Menu folder with vertical slice architecture
+  - Implemented DTOs: MenuItemDto, CreateMenuItemRequest, UpdateMenuItemRequest, MenuFilterRequest
+  - Implemented all 6 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/menu - List/filter menu items (category, dietary, availability, price filters)
+    - GET /api/v1/menu/{id} - Get single menu item by ID
+    - POST /api/v1/menu - Create menu item (admin placeholder)
+    - PUT /api/v1/menu/{id} - Update menu item (admin placeholder)
+    - DELETE /api/v1/menu/{id} - Soft delete (set IsAvailable = false)
+    - GET /api/v1/menu/categories - List all available categories
+  - Added comprehensive filtering support:
+    - By category (Coffee, Tea, Snacks, Meals, Desserts, Alcohol)
+    - By dietary flags (isVegetarian, isVegan, isGlutenFree)
+    - By availability (IsAvailable)
+    - By price range (minPrice, maxPrice)
+  - Added proper response types: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 409 Conflict
+  - Implemented soft delete pattern using IsAvailable flag
+  - Includes preparation time and allergen information in responses
+  - Created 15 comprehensive integration tests (all passing)
+  - Total test coverage: 119 tests (38 unit + 81 integration)
+  - Verified all endpoints appear in Swagger UI with proper documentation
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:

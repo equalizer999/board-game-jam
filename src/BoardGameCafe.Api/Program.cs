@@ -2,6 +2,7 @@ using BoardGameCafe.Api.Data;
 using BoardGameCafe.Api.Features.Orders;
 using BoardGameCafe.Api.Features.Events;
 using BoardGameCafe.Api.Features.Games;
+using BoardGameCafe.Api.Features.Menu;
 using BoardGameCafe.Api.Features.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -91,6 +92,7 @@ app.MapGamesEndpoints();
 app.MapReservationsEndpoints();
 app.MapOrdersEndpoints();
 app.MapEventsEndpoints();
+app.MapMenuEndpoints();
 
 app.Run();
 
