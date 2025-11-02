@@ -1,4 +1,5 @@
 using BoardGameCafe.Api.Data;
+using BoardGameCafe.Api.Features.Orders;
 using BoardGameCafe.Api.Features.Reservations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -24,6 +25,9 @@ builder.Services.AddCors(options =>
 
 // Add Health Checks
 builder.Services.AddHealthChecks();
+
+// Add services
+builder.Services.AddScoped<OrderCalculationService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -82,6 +86,7 @@ app.MapGet("/api/v1/health", () => new { status = "ok", timestamp = DateTimeOffs
 
 // Map feature endpoints
 app.MapReservationsEndpoints();
+app.MapOrdersEndpoints();
 
 app.Run();
 
