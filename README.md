@@ -628,30 +628,43 @@ Progressive implementation stages:
   - Created 10 comprehensive unit tests for order pricing calculations
   - All tests passing (17 unit + 2 integration)
 
-- ✅ **Issue #9**: Build Orders REST API with Discount and Loyalty Point Calculations
-  - Created Features/Orders folder with vertical slice architecture
-  - Implemented DTOs: OrderDto, CreateOrderRequest, AddOrderItemRequest, UpdateOrderRequest, OrderSummaryDto
-  - Implemented OrderCalculationService for:
-    - Subtotal calculation
-    - Member discount application (Bronze 5%, Silver 10%, Gold 15%)
-    - Tax calculation (8% food, 10% alcohol)
-    - Loyalty point redemption (100 points = $1 discount)
-    - Loyalty point earning (1 point per $1 spent)
-    - Prevention of negative totals from excessive discounts
-  - Implemented all 8 Minimal API endpoints with XML documentation and Swagger support:
-    - GET /api/v1/orders - List customer's orders
-    - GET /api/v1/orders/{id} - Get order with items
-    - POST /api/v1/orders - Create new draft order
-    - POST /api/v1/orders/{id}/items - Add item to order
-    - DELETE /api/v1/orders/{id}/items/{itemId} - Remove item
-    - PATCH /api/v1/orders/{id} - Update quantities
-    - POST /api/v1/orders/{id}/submit - Finalize order and apply calculations
-    - POST /api/v1/orders/{id}/pay - Process payment and update loyalty points
-  - Added validation: draft orders can be modified, submitted orders are read-only
-  - Proper error handling: 400 Bad Request, 404 Not Found for invalid requests
-  - Created 17 comprehensive unit tests for OrderCalculationService
-  - Created 20 comprehensive integration tests for all API endpoints
-  - Total test coverage: 74 tests (37 unit + 37 integration)
+- ✅ **Issue #9**: Build Event Management and Registration System with Capacity Control
+  - Updated Event entity with ImageUrl property and CurrentParticipants computed property
+  - Created EventRegistration entity with proper enums (RegistrationStatus, PaymentStatus)
+  - Configured relationships: Event 1-to-many EventRegistrations with cascade delete
+  - Added unique constraint on EventId + CustomerId to prevent duplicate registrations
+  - Created Features/Events folder with vertical slice architecture
+  - Implemented DTOs: EventDto, CreateEventRequest, RegisterForEventRequest, EventRegistrationDto
+  - Implemented all 6 Minimal API endpoints with Swagger documentation:
+    - GET /api/v1/events - List upcoming events
+    - GET /api/v1/events/{id} - Get event details with participant count
+    - POST /api/v1/events - Create event (admin)
+    - POST /api/v1/events/{id}/register - Register customer with capacity validation
+    - DELETE /api/v1/events/{id}/register - Cancel registration
+    - GET /api/v1/events/{id}/participants - List registrations (staff/admin)
+  - Implemented capacity validation: prevent registration when CurrentParticipants >= MaxParticipants
+  - Handled concurrency for last spot registration using Serializable transaction isolation
+  - Returns 409 Conflict when event is full or customer already registered
+  - CurrentParticipants computed from non-cancelled registrations only
+  - Created and applied EF Core migration (UpdateEventManagement)
+  - Created 13 comprehensive integration tests covering all scenarios
+  - All tests passing (17 unit + 33 integration)
+- ✅ **Issue #10 / #3**: Build Games CRUD REST API Endpoints with Swagger Documentation
+  - Created Features/Games folder with vertical slice architecture
+  - Implemented DTOs: GameDto, CreateGameRequest, UpdateGameRequest, GameFilterRequest
+  - Implemented all 5 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/games - List/filter games with pagination (category, player count, availability filters)
+    - GET /api/v1/games/{id} - Get single game by ID
+    - POST /api/v1/games - Create new game (admin placeholder)
+    - PUT /api/v1/games/{id} - Update existing game (admin placeholder)
+    - DELETE /api/v1/games/{id} - Soft delete game (admin placeholder)
+  - Added proper response types: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 409 Conflict
+  - Implemented request validation using Data Annotations
+  - Manual entity-to-DTO mapping for optimal performance
+  - Business rules: MinPlayers ≤ MaxPlayers, CopiesInUse ≤ CopiesOwned, no deletion if copies in use
+  - Created 17 comprehensive integration tests (all passing)
+  - Total test coverage: 37 tests (20 reservation + 17 games integration)
+  - Verified all endpoints appear in Swagger UI with proper documentation
 
 ## 🤝 Contributing
 
