@@ -762,6 +762,33 @@ Progressive implementation stages:
   - Total test coverage: 37 tests (20 reservation + 17 games integration)
   - Verified all endpoints appear in Swagger UI with proper documentation
 
+- ✅ **Issue #28**: Build Customer Loyalty Program REST API
+  - Created `LoyaltyPointsHistory` domain entity for tracking point transactions (earned, redeemed, adjustments)
+  - Updated `Customer` entity with `FavoriteGames` collection (many-to-many relationship)
+  - Updated `AppDbContext` with `LoyaltyPointsHistory` DbSet and configuration
+  - Created EF migration `AddLoyaltyPointsHistory` for new table and customer favorites join table
+  - Created `Features/Customers/` folder with vertical slice architecture
+  - Implemented DTOs: `CustomerDto`, `LoyaltyPointsDto`, `LoyaltyTransactionDto`, `UpdateCustomerRequest`, `VisitStatsDto`
+  - Implemented all 7 Minimal API endpoints with Swagger documentation:
+    - GET /api/v1/customers/me - Get current customer profile
+    - PUT /api/v1/customers/me - Update profile (name, phone)
+    - GET /api/v1/customers/me/loyalty-points - Get points balance and tier with progress
+    - GET /api/v1/customers/me/loyalty-history - List point transactions (ordered by date)
+    - POST /api/v1/customers/me/favorites - Add game to favorites
+    - DELETE /api/v1/customers/me/favorites/{gameId} - Remove game from favorites
+    - GET /api/v1/customers/me/visit-stats - Total visits, games played, spending
+  - Implemented tier upgrade logic with helper methods:
+    - None: 0 points (0% discount)
+    - Bronze: 1-499 points (5% discount)
+    - Silver: 500-1999 points (10% discount)
+    - Gold: 2000+ points (15% discount)
+  - Shows tier progress: points to next tier (e.g., "250 points to Silver")
+  - Gold tier shows no next tier (top tier achieved)
+  - Configured cascade delete for LoyaltyPointsHistory when customer deleted
+  - Configured many-to-many relationship for favorite games with join table
+  - Created 14 comprehensive integration tests covering all scenarios (all passing)
+  - Total test coverage: 118 tests (38 unit + 80 integration)
+
 - ✅ **Issue #27**: Build Menu Catalog Management REST API with Filtering
   - Created Features/Menu folder with vertical slice architecture
   - Implemented DTOs: MenuItemDto, CreateMenuItemRequest, UpdateMenuItemRequest, MenuFilterRequest

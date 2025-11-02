@@ -4,6 +4,7 @@ using BoardGameCafe.Api.Features.Events;
 using BoardGameCafe.Api.Features.Games;
 using BoardGameCafe.Api.Features.Menu;
 using BoardGameCafe.Api.Features.Reservations;
+using BoardGameCafe.Api.Features.Customers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -93,6 +94,7 @@ app.MapReservationsEndpoints();
 app.MapOrdersEndpoints();
 app.MapEventsEndpoints();
 app.MapMenuEndpoints();
+app.MapCustomersEndpoints();
 
 app.Run();
 
