@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BoardGameCafe.Api.Data;
 
-public class AppDbContext : DbContext
+public class BoardGameCafeDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public BoardGameCafeDbContext(DbContextOptions<BoardGameCafeDbContext> options) : base(options)
     {
     }
 
@@ -57,6 +57,9 @@ public class AppDbContext : DbContext
             entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
             entity.Property(e => e.Email).IsRequired().HasMaxLength(200);
             entity.HasIndex(e => e.Email).IsUnique();
+            entity.HasMany(e => e.FavoriteGames)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("CustomerFavoriteGames"));
         });
 
         // Reservation entity configuration
@@ -175,7 +178,7 @@ public class AppDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.OrderId)
                 .OnDelete(DeleteBehavior.Restrict);
-            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
             entity.HasIndex(e => new { e.CustomerId, e.TransactionDate });
             entity.HasIndex(e => e.OrderId);
         });

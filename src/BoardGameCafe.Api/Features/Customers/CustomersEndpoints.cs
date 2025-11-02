@@ -8,371 +8,325 @@ namespace BoardGameCafe.Api.Features.Customers;
 
 public static class CustomersEndpoints
 {
+    // Tier thresholds and discount rates
+    private const int BronzeThreshold = 0;
+    private const int SilverThreshold = 500;
+    private const int GoldThreshold = 2000;
+    
+    private const decimal BronzeDiscount = 0.05m;
+    private const decimal SilverDiscount = 0.10m;
+    private const decimal GoldDiscount = 0.15m;
+
     public static IEndpointRouteBuilder MapCustomersEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/customers")
             .WithTags("Customers");
 
-        // GET /api/v1/customers/me
-        group.MapGet("/me", GetCustomerProfile)
-            .WithName("GetCustomerProfile")
-            .WithSummary("Get current customer profile")
-            .Produces<CustomerDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+        /// <summary>
+        /// Get current customer profile
+        /// </summary>
+        group.MapGet("/me", async Task<Results<Ok<CustomerDto>, NotFound>> (
+            BoardGameCafeDbContext db,
+            Guid customerId) =>
+        {
+            var customer = await db.Customers.FindAsync(customerId);
 
-        // PUT /api/v1/customers/me
-        group.MapPut("/me", UpdateCustomerProfile)
-            .WithName("UpdateCustomerProfile")
-            .WithSummary("Update customer profile")
-            .Produces<CustomerDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
 
-        // GET /api/v1/customers/me/loyalty-points
-        group.MapGet("/me/loyalty-points", GetLoyaltyPoints)
-            .WithName("GetLoyaltyPoints")
-            .WithSummary("Get loyalty points balance and tier information")
-            .Produces<LoyaltyPointsDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            var dto = new CustomerDto
+            {
+                Id = customer.Id,
+                Email = customer.Email,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Phone = customer.Phone,
+                MembershipTier = customer.MembershipTier.ToString(),
+                LoyaltyPoints = customer.LoyaltyPoints,
+                JoinedDate = customer.JoinedDate,
+                TotalVisits = customer.TotalVisits
+            };
 
-        // GET /api/v1/customers/me/loyalty-history
-        group.MapGet("/me/loyalty-history", GetLoyaltyHistory)
-            .WithName("GetLoyaltyHistory")
-            .WithSummary("Get loyalty points transaction history")
-            .Produces<List<LoyaltyTransactionDto>>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            return TypedResults.Ok(dto);
+        })
+        .WithName("GetCustomerProfile")
+        .WithSummary("Get current customer profile")
+        .WithDescription("Retrieves the profile information for the authenticated customer")
+        .Produces<CustomerDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
-        // POST /api/v1/customers/me/favorites
-        group.MapPost("/me/favorites", AddFavoriteGame)
-            .WithName("AddFavoriteGame")
-            .WithSummary("Add a game to customer's favorites")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status404NotFound);
+        /// <summary>
+        /// Update customer profile
+        /// </summary>
+        group.MapPut("/me", async Task<Results<Ok<CustomerDto>, NotFound, BadRequest<ProblemDetails>>> (
+            BoardGameCafeDbContext db,
+            Guid customerId,
+            [FromBody] UpdateCustomerRequest request) =>
+        {
+            var customer = await db.Customers.FindAsync(customerId);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
 
-        // DELETE /api/v1/customers/me/favorites/{gameId}
-        group.MapDelete("/me/favorites/{gameId:guid}", RemoveFavoriteGame)
-            .WithName("RemoveFavoriteGame")
-            .WithSummary("Remove a game from customer's favorites")
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status404NotFound);
+            customer.FirstName = request.FirstName;
+            customer.LastName = request.LastName;
+            customer.Phone = request.Phone;
 
-        // GET /api/v1/customers/me/visit-stats
-        group.MapGet("/me/visit-stats", GetVisitStats)
-            .WithName("GetVisitStats")
-            .WithSummary("Get customer visit statistics")
-            .Produces<VisitStatsDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound);
+            await db.SaveChangesAsync();
+
+            var dto = new CustomerDto
+            {
+                Id = customer.Id,
+                Email = customer.Email,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Phone = customer.Phone,
+                MembershipTier = customer.MembershipTier.ToString(),
+                LoyaltyPoints = customer.LoyaltyPoints,
+                JoinedDate = customer.JoinedDate,
+                TotalVisits = customer.TotalVisits
+            };
+
+            return TypedResults.Ok(dto);
+        })
+        .WithName("UpdateCustomerProfile")
+        .WithSummary("Update customer profile")
+        .WithDescription("Updates the profile information for the authenticated customer")
+        .Produces<CustomerDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces<ProblemDetails>(StatusCodes.Status400BadRequest);
+
+        /// <summary>
+        /// Get loyalty points balance and tier information
+        /// </summary>
+        group.MapGet("/me/loyalty-points", async Task<Results<Ok<LoyaltyPointsDto>, NotFound>> (
+            BoardGameCafeDbContext db,
+            Guid customerId) =>
+        {
+            var customer = await db.Customers.FindAsync(customerId);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var tierInfo = GetTierInfo(customer.LoyaltyPoints);
+            var dto = new LoyaltyPointsDto
+            {
+                CurrentPoints = customer.LoyaltyPoints,
+                CurrentTier = tierInfo.Tier.ToString(),
+                CurrentDiscount = tierInfo.Discount,
+                NextTier = tierInfo.NextTier?.ToString(),
+                PointsToNextTier = tierInfo.PointsToNextTier,
+                PointsThreshold = tierInfo.Threshold
+            };
+
+            return TypedResults.Ok(dto);
+        })
+        .WithName("GetLoyaltyPoints")
+        .WithSummary("Get loyalty points balance and tier")
+        .WithDescription("Retrieves current loyalty points balance, tier information, and progress to next tier")
+        .Produces<LoyaltyPointsDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
+        /// <summary>
+        /// Get loyalty points transaction history
+        /// </summary>
+        group.MapGet("/me/loyalty-history", async Task<Results<Ok<List<LoyaltyTransactionDto>>, NotFound>> (
+            BoardGameCafeDbContext db,
+            Guid customerId) =>
+        {
+            var customer = await db.Customers.FindAsync(customerId);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var history = await db.LoyaltyPointsHistory
+                .Where(h => h.CustomerId == customerId)
+                .OrderByDescending(h => h.TransactionDate)
+                .ToListAsync();
+
+            var dtos = history.Select(h => new LoyaltyTransactionDto
+            {
+                Id = h.Id,
+                PointsChange = h.PointsChange,
+                TransactionType = h.TransactionType.ToString(),
+                Description = h.Description,
+                TransactionDate = h.TransactionDate,
+                OrderId = h.OrderId
+            }).ToList();
+
+            return TypedResults.Ok(dtos);
+        })
+        .WithName("GetLoyaltyHistory")
+        .WithSummary("Get loyalty points transaction history")
+        .WithDescription("Retrieves the history of all loyalty points transactions (earned, redeemed, adjustments)")
+        .Produces<List<LoyaltyTransactionDto>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
+
+        /// <summary>
+        /// Add a game to favorites
+        /// </summary>
+        group.MapPost("/me/favorites", async Task<Results<NoContent, NotFound, Conflict<ProblemDetails>>> (
+            BoardGameCafeDbContext db,
+            Guid customerId,
+            Guid gameId) =>
+        {
+            var customer = await db.Customers
+                .Include(c => c.FavoriteGames)
+                .FirstOrDefaultAsync(c => c.Id == customerId);
+
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var game = await db.Games.FindAsync(gameId);
+            if (game is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            if (customer.FavoriteGames.Any(g => g.Id == gameId))
+            {
+                return TypedResults.Conflict(new ProblemDetails
+                {
+                    Title = "Already favorited",
+                    Detail = "This game is already in your favorites"
+                });
+            }
+
+            customer.FavoriteGames.Add(game);
+            await db.SaveChangesAsync();
+
+            return TypedResults.NoContent();
+        })
+        .WithName("AddFavoriteGame")
+        .WithSummary("Add game to favorites")
+        .WithDescription("Adds a game to the customer's favorite games list")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound)
+        .Produces<ProblemDetails>(StatusCodes.Status409Conflict);
+
+        /// <summary>
+        /// Remove a game from favorites
+        /// </summary>
+        group.MapDelete("/me/favorites/{gameId:guid}", async Task<Results<NoContent, NotFound>> (
+            BoardGameCafeDbContext db,
+            Guid customerId,
+            Guid gameId) =>
+        {
+            var customer = await db.Customers
+                .Include(c => c.FavoriteGames)
+                .FirstOrDefaultAsync(c => c.Id == customerId);
+
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var game = customer.FavoriteGames.FirstOrDefault(g => g.Id == gameId);
+            if (game is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            customer.FavoriteGames.Remove(game);
+            await db.SaveChangesAsync();
+
+            return TypedResults.NoContent();
+        })
+        .WithName("RemoveFavoriteGame")
+        .WithSummary("Remove game from favorites")
+        .WithDescription("Removes a game from the customer's favorite games list")
+        .Produces(StatusCodes.Status204NoContent)
+        .Produces(StatusCodes.Status404NotFound);
+
+        /// <summary>
+        /// Get customer visit statistics
+        /// </summary>
+        group.MapGet("/me/visit-stats", async Task<Results<Ok<VisitStatsDto>, NotFound>> (
+            BoardGameCafeDbContext db,
+            Guid customerId) =>
+        {
+            var customer = await db.Customers.FindAsync(customerId);
+            if (customer is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            // Get games played count (unique game sessions)
+            var gamesPlayed = await db.GameSessions
+                .Include(gs => gs.Reservation)
+                .Where(gs => gs.Reservation != null && gs.Reservation.CustomerId == customerId)
+                .Select(gs => gs.GameId)
+                .Distinct()
+                .CountAsync();
+
+            // Get total spending from completed orders
+            var totalSpending = await db.Orders
+                .Where(o => o.CustomerId == customerId && 
+                           (o.Status == OrderStatus.Completed || o.Status == OrderStatus.Delivered))
+                .SumAsync(o => o.TotalAmount);
+
+            // Get last visit from most recent reservation
+            var lastVisit = await db.Reservations
+                .Where(r => r.CustomerId == customerId)
+                .OrderByDescending(r => r.ReservationDate)
+                .Select(r => (DateTime?)r.ReservationDate)
+                .FirstOrDefaultAsync();
+
+            var stats = new VisitStatsDto
+            {
+                TotalVisits = customer.TotalVisits,
+                GamesPlayed = gamesPlayed,
+                TotalSpending = totalSpending,
+                LastVisit = lastVisit
+            };
+
+            return TypedResults.Ok(stats);
+        })
+        .WithName("GetVisitStats")
+        .WithSummary("Get customer visit statistics")
+        .WithDescription("Retrieves statistics including total visits, games played, and total spending")
+        .Produces<VisitStatsDto>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound);
 
         return app;
     }
 
     /// <summary>
-    /// Get customer profile
+    /// Helper method to calculate tier information based on points
     /// </summary>
-    private static async Task<Results<Ok<CustomerDto>, NotFound>> GetCustomerProfile(
-        AppDbContext db,
-        Guid customerId,
-        CancellationToken ct)
+    private static (MembershipTier Tier, decimal Discount, MembershipTier? NextTier, int? PointsToNextTier, int Threshold) GetTierInfo(int points)
     {
-        var customer = await db.Customers
-            .FirstOrDefaultAsync(c => c.Id == customerId, ct);
-
-        if (customer == null)
+        if (points >= GoldThreshold)
         {
-            return TypedResults.NotFound();
+            return (MembershipTier.Gold, GoldDiscount, null, null, GoldThreshold);
         }
-
-        return TypedResults.Ok(MapToCustomerDto(customer));
+        else if (points >= SilverThreshold)
+        {
+            return (MembershipTier.Silver, SilverDiscount, MembershipTier.Gold, GoldThreshold - points, SilverThreshold);
+        }
+        else if (points > BronzeThreshold)
+        {
+            return (MembershipTier.Bronze, BronzeDiscount, MembershipTier.Silver, SilverThreshold - points, BronzeThreshold);
+        }
+        else
+        {
+            return (MembershipTier.None, 0m, MembershipTier.Bronze, 1 - points, BronzeThreshold);
+        }
     }
 
     /// <summary>
-    /// Update customer profile
+    /// Helper method to update customer tier based on loyalty points
     /// </summary>
-    private static async Task<Results<Ok<CustomerDto>, NotFound>> UpdateCustomerProfile(
-        AppDbContext db,
-        Guid customerId,
-        UpdateCustomerRequest request,
-        CancellationToken ct)
+    public static void UpdateCustomerTier(Customer customer)
     {
-        var customer = await db.Customers
-            .FirstOrDefaultAsync(c => c.Id == customerId, ct);
-
-        if (customer == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        // Update only provided fields
-        if (!string.IsNullOrWhiteSpace(request.FirstName))
-        {
-            customer.FirstName = request.FirstName;
-        }
-        
-        if (!string.IsNullOrWhiteSpace(request.LastName))
-        {
-            customer.LastName = request.LastName;
-        }
-        
-        if (request.Phone != null)
-        {
-            customer.Phone = request.Phone;
-        }
-
-        await db.SaveChangesAsync(ct);
-
-        return TypedResults.Ok(MapToCustomerDto(customer));
-    }
-
-    /// <summary>
-    /// Get loyalty points balance and tier information
-    /// </summary>
-    private static async Task<Results<Ok<LoyaltyPointsDto>, NotFound>> GetLoyaltyPoints(
-        AppDbContext db,
-        Guid customerId,
-        CancellationToken ct)
-    {
-        var customer = await db.Customers
-            .FirstOrDefaultAsync(c => c.Id == customerId, ct);
-
-        if (customer == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        // Check and update tier if needed
-        var previousTier = customer.MembershipTier;
-        UpdateCustomerTier(customer);
-        
-        if (previousTier != customer.MembershipTier)
-        {
-            await db.SaveChangesAsync(ct);
-        }
-
-        var loyaltyInfo = CalculateLoyaltyInfo(customer);
-        return TypedResults.Ok(loyaltyInfo);
-    }
-
-    /// <summary>
-    /// Get loyalty points transaction history
-    /// </summary>
-    private static async Task<Results<Ok<List<LoyaltyTransactionDto>>, NotFound>> GetLoyaltyHistory(
-        AppDbContext db,
-        Guid customerId,
-        CancellationToken ct)
-    {
-        var customerExists = await db.Customers.AnyAsync(c => c.Id == customerId, ct);
-        if (!customerExists)
-        {
-            return TypedResults.NotFound();
-        }
-
-        var transactions = await db.LoyaltyPointsHistory
-            .Where(h => h.CustomerId == customerId)
-            .OrderByDescending(h => h.TransactionDate)
-            .ToListAsync(ct);
-
-        var transactionDtos = transactions.Select(MapToLoyaltyTransactionDto).ToList();
-        return TypedResults.Ok(transactionDtos);
-    }
-
-    /// <summary>
-    /// Add a game to customer's favorites (placeholder - would need a FavoriteGames table)
-    /// </summary>
-    private static async Task<Results<NoContent, NotFound, BadRequest<ProblemDetails>>> AddFavoriteGame(
-        AppDbContext db,
-        Guid customerId,
-        Guid gameId,
-        CancellationToken ct)
-    {
-        var customer = await db.Customers.FindAsync([customerId], ct);
-        if (customer == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        var game = await db.Games.FindAsync([gameId], ct);
-        if (game == null)
-        {
-            return TypedResults.BadRequest(new ProblemDetails
-            {
-                Title = "Invalid game",
-                Detail = "Game not found"
-            });
-        }
-
-        // Note: This is a placeholder. A full implementation would need a FavoriteGames table
-        // For now, just return success
-        return TypedResults.NoContent();
-    }
-
-    /// <summary>
-    /// Remove a game from customer's favorites (placeholder)
-    /// </summary>
-    private static async Task<Results<NoContent, NotFound>> RemoveFavoriteGame(
-        AppDbContext db,
-        Guid customerId,
-        Guid gameId,
-        CancellationToken ct)
-    {
-        var customerExists = await db.Customers.AnyAsync(c => c.Id == customerId, ct);
-        if (!customerExists)
-        {
-            return TypedResults.NotFound();
-        }
-
-        // Note: This is a placeholder. A full implementation would need a FavoriteGames table
-        return TypedResults.NoContent();
-    }
-
-    /// <summary>
-    /// Get customer visit statistics
-    /// </summary>
-    private static async Task<Results<Ok<VisitStatsDto>, NotFound>> GetVisitStats(
-        AppDbContext db,
-        Guid customerId,
-        CancellationToken ct)
-    {
-        var customer = await db.Customers
-            .FirstOrDefaultAsync(c => c.Id == customerId, ct);
-
-        if (customer == null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        // Get total spent and order count
-        var orderStats = await db.Orders
-            .Where(o => o.CustomerId == customerId && o.Status == OrderStatus.Completed)
-            .GroupBy(o => o.CustomerId)
-            .Select(g => new
-            {
-                TotalOrders = g.Count(),
-                TotalSpent = g.Sum(o => o.TotalAmount)
-            })
-            .FirstOrDefaultAsync(ct);
-
-        // Get games played count
-        var gamesPlayed = await db.GameSessions
-            .Where(gs => gs.Reservation!.CustomerId == customerId)
-            .CountAsync(ct);
-
-        var totalOrders = orderStats?.TotalOrders ?? 0;
-        var totalSpent = orderStats?.TotalSpent ?? 0;
-        
-        var stats = new VisitStatsDto
-        {
-            TotalVisits = customer.TotalVisits,
-            GamesPlayed = gamesPlayed,
-            TotalSpent = totalSpent,
-            TotalOrders = totalOrders,
-            AverageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0
-        };
-
-        return TypedResults.Ok(stats);
-    }
-
-    /// <summary>
-    /// Update customer membership tier based on loyalty points
-    /// None: 0 points
-    /// Bronze: 1-499 points (5% discount)
-    /// Silver: 500-1999 points (10% discount)
-    /// Gold: 2000+ points (15% discount)
-    /// </summary>
-    private static void UpdateCustomerTier(Customer customer)
-    {
-        var newTier = customer.LoyaltyPoints switch
-        {
-            >= 2000 => MembershipTier.Gold,
-            >= 500 => MembershipTier.Silver,
-            >= 1 => MembershipTier.Bronze,
-            _ => MembershipTier.None
-        };
-
-        customer.MembershipTier = newTier;
-    }
-
-    /// <summary>
-    /// Calculate loyalty points information including tier progress
-    /// </summary>
-    private static LoyaltyPointsDto CalculateLoyaltyInfo(Customer customer)
-    {
-        var currentPoints = customer.LoyaltyPoints;
-        var currentTier = customer.MembershipTier;
-        
-        decimal discountPercentage = currentTier switch
-        {
-            MembershipTier.Bronze => 5m,
-            MembershipTier.Silver => 10m,
-            MembershipTier.Gold => 15m,
-            _ => 0m
-        };
-
-        int currentTierThreshold = currentTier switch
-        {
-            MembershipTier.Gold => 2000,
-            MembershipTier.Silver => 500,
-            MembershipTier.Bronze => 1,
-            _ => 0
-        };
-
-        string? nextTier = currentTier switch
-        {
-            MembershipTier.None => "Bronze",
-            MembershipTier.Bronze => "Silver",
-            MembershipTier.Silver => "Gold",
-            _ => null
-        };
-
-        int? nextTierThreshold = currentTier switch
-        {
-            MembershipTier.None => 1,
-            MembershipTier.Bronze => 500,
-            MembershipTier.Silver => 2000,
-            _ => null
-        };
-
-        int? pointsToNextTier = nextTierThreshold.HasValue 
-            ? Math.Max(0, nextTierThreshold.Value - currentPoints)
-            : null;
-
-        return new LoyaltyPointsDto
-        {
-            CurrentBalance = currentPoints,
-            CurrentTier = currentTier.ToString(),
-            DiscountPercentage = discountPercentage,
-            NextTier = nextTier,
-            PointsToNextTier = pointsToNextTier,
-            CurrentTierThreshold = currentTierThreshold,
-            NextTierThreshold = nextTierThreshold
-        };
-    }
-
-    private static CustomerDto MapToCustomerDto(Customer customer)
-    {
-        return new CustomerDto
-        {
-            Id = customer.Id,
-            Email = customer.Email,
-            FirstName = customer.FirstName,
-            LastName = customer.LastName,
-            Phone = customer.Phone,
-            MembershipTier = customer.MembershipTier.ToString(),
-            LoyaltyPoints = customer.LoyaltyPoints,
-            JoinedDate = customer.JoinedDate,
-            TotalVisits = customer.TotalVisits
-        };
-    }
-
-    private static LoyaltyTransactionDto MapToLoyaltyTransactionDto(LoyaltyPointsHistory transaction)
-    {
-        return new LoyaltyTransactionDto
-        {
-            Id = transaction.Id,
-            PointsChange = transaction.PointsChange,
-            TransactionType = transaction.TransactionType.ToString(),
-            TransactionDate = transaction.TransactionDate,
-            Description = transaction.Description,
-            OrderId = transaction.OrderId
-        };
+        var tierInfo = GetTierInfo(customer.LoyaltyPoints);
+        customer.MembershipTier = tierInfo.Tier;
     }
 }

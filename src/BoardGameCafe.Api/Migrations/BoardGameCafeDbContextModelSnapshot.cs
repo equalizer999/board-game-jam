@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BoardGameCafe.Api.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BoardGameCafeDbContext))]
+    partial class BoardGameCafeDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -481,6 +481,21 @@ namespace BoardGameCafe.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CustomerGame", b =>
+                {
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("FavoriteGamesId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CustomerId", "FavoriteGamesId");
+
+                    b.HasIndex("FavoriteGamesId");
+
+                    b.ToTable("CustomerFavoriteGames", (string)null);
+                });
+
             modelBuilder.Entity("BoardGameCafe.Domain.EventRegistration", b =>
                 {
                     b.HasOne("BoardGameCafe.Domain.Customer", "Customer")
@@ -591,6 +606,21 @@ namespace BoardGameCafe.Api.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Table");
+                });
+
+            modelBuilder.Entity("CustomerGame", b =>
+                {
+                    b.HasOne("BoardGameCafe.Domain.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BoardGameCafe.Domain.Game", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteGamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Event", b =>

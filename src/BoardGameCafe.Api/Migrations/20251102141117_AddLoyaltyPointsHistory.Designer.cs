@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BoardGameCafe.Api.Migrations
 {
     [DbContext(typeof(BoardGameCafeDbContext))]
-    [Migration("20251102092950_UpdateEventManagement")]
-    partial class UpdateEventManagement
+    [Migration("20251102141117_AddLoyaltyPointsHistory")]
+    partial class AddLoyaltyPointsHistory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,6 +243,41 @@ namespace BoardGameCafe.Api.Migrations
                     b.ToTable("GameSessions");
                 });
 
+            modelBuilder.Entity("BoardGameCafe.Domain.LoyaltyPointsHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PointsChange")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("TransactionType")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("CustomerId", "TransactionDate");
+
+                    b.ToTable("LoyaltyPointsHistory");
+                });
+
             modelBuilder.Entity("BoardGameCafe.Domain.MenuItem", b =>
                 {
                     b.Property<Guid>("Id")
@@ -450,6 +485,21 @@ namespace BoardGameCafe.Api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CustomerGame", b =>
+                {
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("FavoriteGamesId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CustomerId", "FavoriteGamesId");
+
+                    b.HasIndex("FavoriteGamesId");
+
+                    b.ToTable("CustomerFavoriteGames", (string)null);
+                });
+
             modelBuilder.Entity("BoardGameCafe.Domain.EventRegistration", b =>
                 {
                     b.HasOne("BoardGameCafe.Domain.Customer", "Customer")
@@ -486,6 +536,24 @@ namespace BoardGameCafe.Api.Migrations
                     b.Navigation("Game");
 
                     b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("BoardGameCafe.Domain.LoyaltyPointsHistory", b =>
+                {
+                    b.HasOne("BoardGameCafe.Domain.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BoardGameCafe.Domain.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Order", b =>
@@ -542,6 +610,21 @@ namespace BoardGameCafe.Api.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Table");
+                });
+
+            modelBuilder.Entity("CustomerGame", b =>
+                {
+                    b.HasOne("BoardGameCafe.Domain.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BoardGameCafe.Domain.Game", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteGamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Event", b =>

@@ -74,7 +74,7 @@ public static class ReservationsEndpoints
     /// List all reservations for a specific customer
     /// </summary>
     private static async Task<Ok<List<ReservationDto>>> GetReservations(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid customerId,
         CancellationToken ct)
     {
@@ -97,7 +97,7 @@ public static class ReservationsEndpoints
     /// Get a single reservation by ID
     /// </summary>
     private static async Task<Results<Ok<ReservationDto>, NotFound>> GetReservation(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         CancellationToken ct)
     {
@@ -116,7 +116,7 @@ public static class ReservationsEndpoints
     /// Create a new reservation with validation
     /// </summary>
     private static async Task<Results<Created<ReservationDto>, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> CreateReservation(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CreateReservationRequest request,
         CancellationToken ct)
     {
@@ -169,7 +169,7 @@ public static class ReservationsEndpoints
     /// Update an existing reservation
     /// </summary>
     private static async Task<Results<Ok<ReservationDto>, NotFound, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> UpdateReservation(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         UpdateReservationRequest request,
         CancellationToken ct)
@@ -239,7 +239,7 @@ public static class ReservationsEndpoints
     /// Cancel a reservation
     /// </summary>
     private static async Task<Results<NoContent, NotFound>> CancelReservation(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         CancellationToken ct)
     {
@@ -258,7 +258,7 @@ public static class ReservationsEndpoints
     /// Check in a reservation
     /// </summary>
     private static async Task<Results<Ok<ReservationDto>, NotFound, BadRequest<ProblemDetails>>> CheckInReservation(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         CancellationToken ct)
     {
@@ -300,7 +300,7 @@ public static class ReservationsEndpoints
     /// Query available tables
     /// </summary>
     private static async Task<Results<Ok<List<AvailableTableDto>>, BadRequest<ProblemDetails>>> GetAvailability(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         DateTime date,
         TimeSpan startTime,
         TimeSpan endTime,
@@ -405,7 +405,7 @@ public static class ReservationsEndpoints
     }
 
     private static async Task<ProblemDetails?> ValidateReservationRequest(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CreateReservationRequest request,
         CancellationToken ct)
     {
@@ -479,7 +479,7 @@ public static class ReservationsEndpoints
     }
 
     private static async Task<ProblemDetails?> ValidateReservationUpdate(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid tableId,
         DateTime date,
         TimeSpan startTime,
@@ -545,7 +545,7 @@ public static class ReservationsEndpoints
     }
 
     private static async Task<ProblemDetails?> CheckReservationConflicts(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid tableId,
         DateTime date,
         TimeSpan startTime,

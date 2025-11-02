@@ -22,7 +22,7 @@ public static class GamesEndpoints
         /// <response code="200">Returns the list of games</response>
         /// <response code="400">If the filter parameters are invalid</response>
         group.MapGet("/", async Task<Results<Ok<List<GameDto>>, BadRequest<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             [AsParameters] GameFilterRequest filter) =>
         {
             var query = db.Games.AsQueryable();
@@ -113,7 +113,7 @@ public static class GamesEndpoints
         /// <response code="200">Returns the game details</response>
         /// <response code="404">If the game is not found</response>
         group.MapGet("/{id:guid}", async Task<Results<Ok<GameDto>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id) =>
         {
             var game = await db.Games
@@ -158,7 +158,7 @@ public static class GamesEndpoints
         /// <response code="400">If the request data is invalid</response>
         /// <response code="409">If a game with the same title already exists</response>
         group.MapPost("/", async Task<Results<Created<GameDto>, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             [FromBody] CreateGameRequest request) =>
         {
             // Validate MinPlayers <= MaxPlayers
@@ -256,7 +256,7 @@ public static class GamesEndpoints
         /// <response code="404">If the game is not found</response>
         /// <response code="409">If the update would violate business rules</response>
         group.MapPut("/{id:guid}", async Task<Results<Ok<GameDto>, NotFound, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id,
             [FromBody] UpdateGameRequest request) =>
         {
@@ -366,7 +366,7 @@ public static class GamesEndpoints
         /// <response code="404">If the game is not found</response>
         /// <response code="409">If the game is currently in use and cannot be deleted</response>
         group.MapDelete("/{id:guid}", async Task<Results<NoContent, NotFound, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id) =>
         {
             var game = await db.Games.FindAsync(id);

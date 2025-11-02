@@ -11,6 +11,7 @@ public class Customer
     public int LoyaltyPoints { get; set; } = 0;
     public DateTime JoinedDate { get; set; }
     public int TotalVisits { get; set; } = 0;
+    public List<Game> FavoriteGames { get; set; } = new();
 }
 
 public enum MembershipTier
