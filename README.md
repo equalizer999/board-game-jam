@@ -628,6 +628,48 @@ Progressive implementation stages:
   - Created 10 comprehensive unit tests for order pricing calculations
   - All tests passing (17 unit + 2 integration)
 
+- ✅ **Issue #19**: Set up Playwright for E2E Testing
+  - Installed Playwright test library (@playwright/test)
+  - Configured `playwright.config.ts` with:
+    - Projects for chromium, firefox, webkit browsers
+    - Base URL: http://localhost:5173
+    - Headless mode in CI, headed for local development
+    - Screenshot on test failure
+    - Video recording on retry
+    - Parallel execution: 1 worker in CI, 4 workers locally
+    - 2 retries for failed tests in CI
+    - Auto-start dev server before tests
+  - Created E2E test folder structure:
+    - `tests/e2e/fixtures/` - Test data and API seeding helpers
+    - `tests/e2e/pages/` - Page Object Models
+    - `tests/e2e/specs/` - Test specifications
+  - Implemented Page Object Models:
+    - `GameCatalogPage.ts` - Game browsing, filtering, and detail viewing
+    - `ReservationPage.ts` - Table booking workflow and availability
+    - `OrderPage.ts` - Menu ordering and cart management
+  - Created comprehensive test fixtures:
+    - Sample games, tables, menu items, and customers
+    - Helper functions for API seeding via backend endpoints
+    - Date/time utilities for reservation testing
+  - Implemented first E2E test suite (`game-browsing.spec.ts`):
+    - Navigate to game catalog and verify games load
+    - Apply category filter (Strategy) and verify filtered results
+    - Click game card and verify detail modal opens
+    - Multiple filter criteria testing
+    - Search functionality
+    - No results handling
+    - Modal open/close functionality
+  - Added npm scripts:
+    - `test:e2e` - Run all E2E tests
+    - `test:e2e:ui` - Open Playwright UI mode
+    - `test:e2e:headed` - Run tests in headed mode
+    - `test:e2e:debug` - Run tests in debug mode
+    - `test:e2e:chromium/firefox/webkit` - Run tests on specific browser
+  - Uses data-testid attributes for stable, maintainable selectors
+  - Follows Page Object pattern for reusability and maintainability
+  - Leverages Playwright's auto-waiting features for reliability
+
+
 ## 🤝 Contributing
 
 This is a **demo repository** designed for workshops. For local customization:
