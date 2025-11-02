@@ -2,6 +2,7 @@ using BoardGameCafe.Api.Data;
 using BoardGameCafe.Api.Features.Orders;
 using BoardGameCafe.Api.Features.Events;
 using BoardGameCafe.Api.Features.Games;
+using BoardGameCafe.Api.Features.Menu;
 using BoardGameCafe.Api.Features.Reservations;
 using BoardGameCafe.Api.Features.Customers;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add DbContext with SQLite
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<BoardGameCafeDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add CORS policy
@@ -59,7 +60,7 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        var context = services.GetRequiredService<AppDbContext>();
+        var context = services.GetRequiredService<BoardGameCafeDbContext>();
         context.Database.Migrate(); // Apply pending migrations
         SeedData.Initialize(services);
     }
@@ -92,6 +93,7 @@ app.MapGamesEndpoints();
 app.MapReservationsEndpoints();
 app.MapOrdersEndpoints();
 app.MapEventsEndpoints();
+app.MapMenuEndpoints();
 app.MapCustomersEndpoints();
 
 app.Run();

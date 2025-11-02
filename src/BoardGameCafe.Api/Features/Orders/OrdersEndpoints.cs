@@ -80,7 +80,7 @@ public static class OrdersEndpoints
     /// List all orders for a specific customer
     /// </summary>
     private static async Task<Ok<List<OrderDto>>> GetOrders(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid customerId,
         CancellationToken ct)
     {
@@ -100,7 +100,7 @@ public static class OrdersEndpoints
     /// Get a single order by ID with all items
     /// </summary>
     private static async Task<Results<Ok<OrderDto>, NotFound>> GetOrder(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         CancellationToken ct)
     {
@@ -122,7 +122,7 @@ public static class OrdersEndpoints
     /// Create a new draft order
     /// </summary>
     private static async Task<Results<Created<OrderDto>, BadRequest<ProblemDetails>>> CreateOrder(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         CreateOrderRequest request,
         CancellationToken ct)
     {
@@ -178,7 +178,7 @@ public static class OrdersEndpoints
     /// Add an item to a draft order
     /// </summary>
     private static async Task<Results<Ok<OrderDto>, NotFound, BadRequest<ProblemDetails>>> AddOrderItem(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         AddOrderItemRequest request,
         CancellationToken ct)
@@ -276,7 +276,7 @@ public static class OrdersEndpoints
     /// Remove an item from a draft order
     /// </summary>
     private static async Task<Results<NoContent, NotFound, BadRequest<ProblemDetails>>> RemoveOrderItem(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         Guid itemId,
         CancellationToken ct)
@@ -323,7 +323,7 @@ public static class OrdersEndpoints
     /// Update item quantities in a draft order
     /// </summary>
     private static async Task<Results<Ok<OrderDto>, NotFound, BadRequest<ProblemDetails>>> UpdateOrder(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         Guid id,
         UpdateOrderRequest request,
         CancellationToken ct)
@@ -403,7 +403,7 @@ public static class OrdersEndpoints
     /// Finalize a draft order and apply calculations
     /// </summary>
     private static async Task<Results<Ok<OrderSummaryDto>, NotFound, BadRequest<ProblemDetails>>> SubmitOrder(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         OrderCalculationService calculationService,
         Guid id,
         int loyaltyPointsToRedeem = 0,
@@ -472,7 +472,7 @@ public static class OrdersEndpoints
     /// Process payment for a submitted order
     /// </summary>
     private static async Task<Results<Ok<OrderSummaryDto>, NotFound, BadRequest<ProblemDetails>>> PayOrder(
-        AppDbContext db,
+        BoardGameCafeDbContext db,
         OrderCalculationService calculationService,
         Guid id,
         PaymentMethod paymentMethod,

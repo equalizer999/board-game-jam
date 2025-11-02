@@ -146,6 +146,50 @@ Separate branches contain curated bugs for regression testing practice:
 
 Each bug has a linked GitHub Issue with reproduction steps.
 
+## 🗄️ Database Management
+
+The project uses **Entity Framework Core 9** with **SQLite** for data persistence.
+
+### Migration Commands
+
+```bash
+# Navigate to API project
+cd src/BoardGameCafe.Api
+
+# List all migrations
+dotnet ef migrations list
+
+# Add a new migration
+dotnet ef migrations add <MigrationName>
+
+# Apply migrations to database
+dotnet ef database update
+
+# Revert to a specific migration
+dotnet ef database update <MigrationName>
+
+# Remove last migration (if not applied)
+dotnet ef migrations remove
+
+# Generate SQL script for migrations
+dotnet ef migrations script
+```
+
+### Database Configuration
+
+- **Provider:** SQLite (Microsoft.EntityFrameworkCore.Sqlite v9.0.10)
+- **Connection String:** `Data Source=data/dev.db;Cache=Shared`
+- **Database File:** `src/BoardGameCafe.Api/data/dev.db`
+- **Auto-Migration:** Database is automatically created and migrations applied on startup in development mode
+
+### Existing Migrations
+
+1. **20251031150245_InitialCreate** - Initial database schema with Game, Table, Customer, and Reservation entities
+2. **20251031161248_AddOrdersMenuEventsGameSessions** - Added Order, MenuItem, Event, EventRegistration, and GameSession entities
+3. **20251031165824_UpdateTableCustomerReservationEntities** - Updated Table, Customer, and Reservation entities with additional properties
+
+**Note:** The database file (`*.db`, `*.db-shm`, `*.db-wal`) is excluded from version control via `.gitignore`.
+
 ## 🧪 Testing
 
 ```bash
@@ -582,6 +626,17 @@ Progressive implementation stages:
 ## 📊 Implementation Status
 
 ### Completed Issues
+- ✅ **Issue #6**: Implement SQLite Database Context with EF Core 9
+  - Added Microsoft.EntityFrameworkCore.Sqlite 9.0.10 and Microsoft.EntityFrameworkCore.Design 9.0.10 packages
+  - Created BoardGameCafeDbContext in src/BoardGameCafe.Api/Data/ with DbSet properties for all core entities (Games, Tables, Customers, Reservations, MenuItems, Orders, OrderItems, Events, EventRegistrations, GameSessions)
+  - Configured connection string in appsettings.json: `Data Source=data/dev.db;Cache=Shared`
+  - Added DbContext registration in Program.cs with SQLite provider
+  - Created three migrations: InitialCreate, AddOrdersMenuEventsGameSessions, UpdateTableCustomerReservationEntities
+  - Configured data/ directory with .db files properly gitignored
+  - Added database initialization/migration logic to run on startup (context.Database.MigrateAsync())
+  - Configured cascade delete behaviors and default values in OnModelCreating
+  - Documented migration commands in README
+  - Verified: migrations list shows all three migrations, API starts successfully, data/dev.db file is created, Swagger UI loads at /swagger
 - ✅ **Issue #5**: Create Game Domain Entity and Repository Pattern
   - Created Game entity with all required properties (Id, Title, Publisher, MinPlayers, MaxPlayers, PlayTimeMinutes, AgeRating, Complexity, Category, CopiesOwned, CopiesInUse, DailyRentalFee, Description, ImageUrl)
   - Added data annotations for validation (Required, MaxLength, Range constraints)
@@ -733,6 +788,28 @@ Progressive implementation stages:
   - Configured many-to-many relationship for favorite games with join table
   - Created 14 comprehensive integration tests covering all scenarios (all passing)
   - Total test coverage: 118 tests (38 unit + 80 integration)
+
+- ✅ **Issue #27**: Build Menu Catalog Management REST API with Filtering
+  - Created Features/Menu folder with vertical slice architecture
+  - Implemented DTOs: MenuItemDto, CreateMenuItemRequest, UpdateMenuItemRequest, MenuFilterRequest
+  - Implemented all 6 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/menu - List/filter menu items (category, dietary, availability, price filters)
+    - GET /api/v1/menu/{id} - Get single menu item by ID
+    - POST /api/v1/menu - Create menu item (admin placeholder)
+    - PUT /api/v1/menu/{id} - Update menu item (admin placeholder)
+    - DELETE /api/v1/menu/{id} - Soft delete (set IsAvailable = false)
+    - GET /api/v1/menu/categories - List all available categories
+  - Added comprehensive filtering support:
+    - By category (Coffee, Tea, Snacks, Meals, Desserts, Alcohol)
+    - By dietary flags (isVegetarian, isVegan, isGlutenFree)
+    - By availability (IsAvailable)
+    - By price range (minPrice, maxPrice)
+  - Added proper response types: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 409 Conflict
+  - Implemented soft delete pattern using IsAvailable flag
+  - Includes preparation time and allergen information in responses
+  - Created 15 comprehensive integration tests (all passing)
+  - Total test coverage: 119 tests (38 unit + 81 integration)
+  - Verified all endpoints appear in Swagger UI with proper documentation
 
 ## 🤝 Contributing
 
