@@ -669,6 +669,43 @@ Progressive implementation stages:
   - Follows Page Object pattern for reusability and maintainability
   - Leverages Playwright's auto-waiting features for reliability
 
+- ✅ **Issue #9**: Build Event Management and Registration System with Capacity Control
+  - Updated Event entity with ImageUrl property and CurrentParticipants computed property
+  - Created EventRegistration entity with proper enums (RegistrationStatus, PaymentStatus)
+  - Configured relationships: Event 1-to-many EventRegistrations with cascade delete
+  - Added unique constraint on EventId + CustomerId to prevent duplicate registrations
+  - Created Features/Events folder with vertical slice architecture
+  - Implemented DTOs: EventDto, CreateEventRequest, RegisterForEventRequest, EventRegistrationDto
+  - Implemented all 6 Minimal API endpoints with Swagger documentation:
+    - GET /api/v1/events - List upcoming events
+    - GET /api/v1/events/{id} - Get event details with participant count
+    - POST /api/v1/events - Create event (admin)
+    - POST /api/v1/events/{id}/register - Register customer with capacity validation
+    - DELETE /api/v1/events/{id}/register - Cancel registration
+    - GET /api/v1/events/{id}/participants - List registrations (staff/admin)
+  - Implemented capacity validation: prevent registration when CurrentParticipants >= MaxParticipants
+  - Handled concurrency for last spot registration using Serializable transaction isolation
+  - Returns 409 Conflict when event is full or customer already registered
+  - CurrentParticipants computed from non-cancelled registrations only
+  - Created and applied EF Core migration (UpdateEventManagement)
+  - Created 13 comprehensive integration tests covering all scenarios
+  - All tests passing (17 unit + 33 integration)
+- ✅ **Issue #10 / #3**: Build Games CRUD REST API Endpoints with Swagger Documentation
+  - Created Features/Games folder with vertical slice architecture
+  - Implemented DTOs: GameDto, CreateGameRequest, UpdateGameRequest, GameFilterRequest
+  - Implemented all 5 Minimal API endpoints with XML documentation and Swagger support:
+    - GET /api/v1/games - List/filter games with pagination (category, player count, availability filters)
+    - GET /api/v1/games/{id} - Get single game by ID
+    - POST /api/v1/games - Create new game (admin placeholder)
+    - PUT /api/v1/games/{id} - Update existing game (admin placeholder)
+    - DELETE /api/v1/games/{id} - Soft delete game (admin placeholder)
+  - Added proper response types: 200 OK, 201 Created, 400 Bad Request, 404 Not Found, 409 Conflict
+  - Implemented request validation using Data Annotations
+  - Manual entity-to-DTO mapping for optimal performance
+  - Business rules: MinPlayers ≤ MaxPlayers, CopiesInUse ≤ CopiesOwned, no deletion if copies in use
+  - Created 17 comprehensive integration tests (all passing)
+  - Total test coverage: 37 tests (20 reservation + 17 games integration)
+  - Verified all endpoints appear in Swagger UI with proper documentation
 
 ## 🤝 Contributing
 
