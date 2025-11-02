@@ -120,7 +120,7 @@ This demo maps to a **60-minute workshop agenda**:
 - **[Copilot Prompts Guide](docs/copilot-prompts-guide.md)** - Effective prompts for test generation
 - **[Bug Hunting Guide](docs/bug-hunting-guide.md)** - Intentional bugs with hints
 - **[API Testing Guide](docs/api-testing-guide.md)** - Using Swagger for exploration
-- **[Implementation Roadmap](ROADMAP.md)** - Phased development plan
+- **[Implementation Roadmap](docs/ROADMAP.md)** - Phased development plan with issue dependencies
 
 ### 🎯 Exercise Folders
 
@@ -597,7 +597,7 @@ This information helps you:
 ---
 
 
-**See [ROADMAP.md](ROADMAP.md) for detailed issue assignment strategy.**
+**See [docs/ROADMAP.md](docs/ROADMAP.md) for detailed issue assignment strategy and phase dependencies.**
 
 ## 📈 Checkpoint Branches
 
