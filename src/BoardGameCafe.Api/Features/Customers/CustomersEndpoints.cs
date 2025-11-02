@@ -8,6 +8,15 @@ namespace BoardGameCafe.Api.Features.Customers;
 
 public static class CustomersEndpoints
 {
+    // Tier thresholds and discount rates
+    private const int BronzeThreshold = 0;
+    private const int SilverThreshold = 500;
+    private const int GoldThreshold = 2000;
+    
+    private const decimal BronzeDiscount = 0.05m;
+    private const decimal SilverDiscount = 0.10m;
+    private const decimal GoldDiscount = 0.15m;
+
     public static IEndpointRouteBuilder MapCustomersEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/v1/customers")
@@ -248,6 +257,7 @@ public static class CustomersEndpoints
 
             // Get games played count (unique game sessions)
             var gamesPlayed = await db.GameSessions
+                .Include(gs => gs.Reservation)
                 .Where(gs => gs.Reservation != null && gs.Reservation.CustomerId == customerId)
                 .Select(gs => gs.GameId)
                 .Distinct()
@@ -290,21 +300,21 @@ public static class CustomersEndpoints
     /// </summary>
     private static (MembershipTier Tier, decimal Discount, MembershipTier? NextTier, int? PointsToNextTier, int Threshold) GetTierInfo(int points)
     {
-        if (points >= 2000)
+        if (points >= GoldThreshold)
         {
-            return (MembershipTier.Gold, 0.15m, null, null, 2000);
+            return (MembershipTier.Gold, GoldDiscount, null, null, GoldThreshold);
         }
-        else if (points >= 500)
+        else if (points >= SilverThreshold)
         {
-            return (MembershipTier.Silver, 0.10m, MembershipTier.Gold, 2000 - points, 500);
+            return (MembershipTier.Silver, SilverDiscount, MembershipTier.Gold, GoldThreshold - points, SilverThreshold);
         }
-        else if (points > 0)
+        else if (points > BronzeThreshold)
         {
-            return (MembershipTier.Bronze, 0.05m, MembershipTier.Silver, 500 - points, 0);
+            return (MembershipTier.Bronze, BronzeDiscount, MembershipTier.Silver, SilverThreshold - points, BronzeThreshold);
         }
         else
         {
-            return (MembershipTier.None, 0m, MembershipTier.Bronze, 1 - points, 0);
+            return (MembershipTier.None, 0m, MembershipTier.Bronze, 1 - points, BronzeThreshold);
         }
     }
 

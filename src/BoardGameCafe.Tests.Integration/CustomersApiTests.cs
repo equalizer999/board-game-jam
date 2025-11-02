@@ -37,8 +37,12 @@ public class CustomersApiTests : IClassFixture<ReservationsApiTestFixture>, IAsy
         db.Orders.RemoveRange(db.Orders);
         db.LoyaltyPointsHistory.RemoveRange(db.LoyaltyPointsHistory);
         
-        // Clear many-to-many relationship
-        await db.Database.ExecuteSqlRawAsync("DELETE FROM CustomerFavoriteGames");
+        // Clear many-to-many relationship using EF operations
+        var existingCustomers = await db.Customers.Include(c => c.FavoriteGames).ToListAsync();
+        foreach (var existingCustomer in existingCustomers)
+        {
+            existingCustomer.FavoriteGames.Clear();
+        }
         
         db.Customers.RemoveRange(db.Customers);
         db.Games.RemoveRange(db.Games);
