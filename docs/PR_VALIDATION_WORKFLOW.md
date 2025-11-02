@@ -207,8 +207,10 @@ Expected: Workflow fails, posts comment, adds `needs-linting` label
 
 ### Test with Security Issues
 
+**⚠️ WARNING:** Only test this on a test branch and **DO NOT MERGE** the vulnerable package.
+
 ```bash
-# Add an old package with known vulnerabilities
+# Add an old package with known vulnerabilities (FOR TESTING ONLY)
 cd client
 npm install axios@0.21.0  # Known to have vulnerabilities
 git commit -am "Test: Add vulnerable package"
@@ -216,6 +218,13 @@ git push origin test-pr-validation
 ```
 
 Expected: Workflow fails, posts security comment, adds `security-issue` label
+
+**After testing, remove the vulnerable package:**
+```bash
+npm install axios@latest
+git commit -am "Remove test vulnerability"
+git push origin test-pr-validation
+```
 
 ### Test Success Case
 
