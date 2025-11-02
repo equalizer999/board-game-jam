@@ -31,7 +31,7 @@ jobs:
         run: dotnet format --verify-no-changes --verbosity diagnostic
         
       - name: Build with analyzers
-        run: dotnet build --no-restore --warnaserror
+        run: dotnet build --no-restore -p:TreatWarningsAsErrors=true
         
       - name: Post comment on failure
         if: failure()
@@ -177,7 +177,7 @@ jobs:
         working-directory: client
         run: |
           echo "Running npm audit..."
-          npm audit --audit-level=high --production 2>&1 | tee ../npm-audit.txt
+          npm audit --audit-level=high --omit=dev 2>&1 | tee ../npm-audit.txt
           exit_code=$?
           if [ $exit_code -ne 0 ]; then
             echo "has_vulnerabilities=true" >> $GITHUB_OUTPUT
