@@ -273,7 +273,8 @@ public static class CustomersEndpoints
 
     /// <summary>
     /// Update customer membership tier based on loyalty points
-    /// Bronze: 0-499 points (5% discount)
+    /// None: 0 points
+    /// Bronze: 1-499 points (5% discount)
     /// Silver: 500-1999 points (10% discount)
     /// Gold: 2000+ points (15% discount)
     /// </summary>
@@ -310,7 +311,7 @@ public static class CustomersEndpoints
         {
             MembershipTier.Gold => 2000,
             MembershipTier.Silver => 500,
-            MembershipTier.Bronze => 0,
+            MembershipTier.Bronze => 1,
             _ => 0
         };
 
@@ -324,7 +325,7 @@ public static class CustomersEndpoints
 
         int? nextTierThreshold = currentTier switch
         {
-            MembershipTier.None => 0,
+            MembershipTier.None => 1,
             MembershipTier.Bronze => 500,
             MembershipTier.Silver => 2000,
             _ => null
