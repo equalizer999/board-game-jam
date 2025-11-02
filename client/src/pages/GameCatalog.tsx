@@ -30,7 +30,7 @@ export default function GameCatalog() {
       style={{
         minHeight: '100vh',
         backgroundColor: '#f3f4f6',
-        padding: '40px 20px',
+        padding: '20px',
       }}
     >
       <div
