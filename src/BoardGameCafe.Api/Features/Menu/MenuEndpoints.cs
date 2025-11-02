@@ -22,7 +22,7 @@ public static class MenuEndpoints
         /// <response code="200">Returns the list of menu items</response>
         /// <response code="400">If the filter parameters are invalid</response>
         group.MapGet("/", async Task<Results<Ok<List<MenuItemDto>>, BadRequest<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             [AsParameters] MenuFilterRequest filter) =>
         {
             var query = db.MenuItems.AsQueryable();
@@ -110,7 +110,7 @@ public static class MenuEndpoints
         /// <response code="200">Returns the menu item details</response>
         /// <response code="404">If the menu item is not found</response>
         group.MapGet("/{id:guid}", async Task<Results<Ok<MenuItemDto>, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id) =>
         {
             var menuItem = await db.MenuItems
@@ -151,7 +151,7 @@ public static class MenuEndpoints
         /// <response code="400">If the request data is invalid</response>
         /// <response code="409">If a menu item with the same name already exists</response>
         group.MapPost("/", async Task<Results<Created<MenuItemDto>, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             [FromBody] CreateMenuItemRequest request) =>
         {
             // Validate category is valid enum value
@@ -232,7 +232,7 @@ public static class MenuEndpoints
         /// <response code="404">If the menu item is not found</response>
         /// <response code="409">If the update would create a duplicate name</response>
         group.MapPut("/{id:guid}", async Task<Results<Ok<MenuItemDto>, NotFound, BadRequest<ProblemDetails>, Conflict<ProblemDetails>>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id,
             [FromBody] UpdateMenuItemRequest request) =>
         {
@@ -314,7 +314,7 @@ public static class MenuEndpoints
         /// <response code="204">Menu item successfully marked as unavailable</response>
         /// <response code="404">If the menu item is not found</response>
         group.MapDelete("/{id:guid}", async Task<Results<NoContent, NotFound>> (
-            AppDbContext db,
+            BoardGameCafeDbContext db,
             Guid id) =>
         {
             var menuItem = await db.MenuItems.FindAsync(id);
