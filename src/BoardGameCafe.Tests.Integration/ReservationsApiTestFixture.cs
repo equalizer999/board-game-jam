@@ -17,7 +17,7 @@ public class ReservationsApiTestFixture : WebApplicationFactory<Program>, IAsync
         {
             // Remove existing DbContext
             var descriptor = services.SingleOrDefault(
-                d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+                d => d.ServiceType == typeof(DbContextOptions<BoardGameCafeDbContext>));
             if (descriptor != null)
                 services.Remove(descriptor);
 
@@ -26,7 +26,7 @@ public class ReservationsApiTestFixture : WebApplicationFactory<Program>, IAsync
             _connection.Open();
 
             // Add DbContext with the shared connection
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddDbContext<BoardGameCafeDbContext>(options =>
             {
                 options.UseSqlite(_connection);
             });
@@ -37,7 +37,7 @@ public class ReservationsApiTestFixture : WebApplicationFactory<Program>, IAsync
     {
         // Create the database schema
         using var scope = Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         await db.Database.EnsureCreatedAsync();
     }
 
