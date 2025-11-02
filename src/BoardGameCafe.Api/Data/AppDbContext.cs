@@ -29,7 +29,8 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
-            entity.Property(e => e.Publisher).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Publisher).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(1000);
             entity.Property(e => e.Complexity).HasPrecision(3, 2);
             entity.Property(e => e.DailyRentalFee).HasPrecision(10, 2);
             entity.HasIndex(e => e.Title);

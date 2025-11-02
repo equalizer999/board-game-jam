@@ -52,6 +52,8 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        var context = services.GetRequiredService<AppDbContext>();
+        context.Database.Migrate(); // Apply pending migrations
         SeedData.Initialize(services);
     }
     catch (Exception ex)
