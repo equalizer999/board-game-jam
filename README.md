@@ -12,6 +12,8 @@
 
 > 📖 **Documentation:** For detailed information about issue dependencies and assignment order, see [docs/DEPENDENCY_SETUP.md](docs/DEPENDENCY_SETUP.md)
 
+> 🤖 **GitHub Copilot Resources:** Complete navigation guide and prompt templates → **[COPILOT_RESOURCES.md](docs/COPILOT_RESOURCES.md)**
+
 ## 🎯 Purpose
 
 This repository provides a **fork-friendly demo environment** for Test Engineers to explore GitHub Copilot's capabilities across:
@@ -119,10 +121,21 @@ This demo maps to a **60-minute workshop agenda**:
 
 ### 📖 Reference Materials
 
+**GitHub Copilot Resources:**
+- **[Copilot Quick Prompts](docs/copilot-quick-prompts.md)** - Copy-paste ready prompts for common tasks
 - **[Copilot Prompts Guide](docs/copilot-prompts-guide.md)** - Effective prompts for test generation
+- **[Testing Engineer's Copilot Guide](docs/testing-engineer-copilot-guide.md)** - QA-focused workflows and prompts
+- **[Copilot Agent Assignment Guide](docs/copilot-agent-assignment-guide.md)** - How to assign issues to Copilot
+
+**Testing & Development:**
 - **[Bug Hunting Guide](docs/bug-hunting-guide.md)** - Intentional bugs with hints
 - **[API Testing Guide](docs/api-testing-guide.md)** - Using Swagger for exploration
 - **[Implementation Roadmap](docs/ROADMAP.md)** - Phased development plan with issue dependencies
+
+**Prompt Templates:**
+- **[Unit Test Templates](.github/copilot/unit-test-templates.md)** - xUnit test generation prompts
+- **[Integration Test Templates](.github/copilot/integration-test-templates.md)** - API endpoint test prompts
+- **[E2E Test Templates](.github/copilot/e2e-test-templates.md)** - Playwright test prompts
 
 ### 🎯 Exercise Folders
 
