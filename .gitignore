@@ -76,3 +76,4 @@ Thumbs.db
 logs/
 *.log
 *.pid
+coverage/

@@ -6,6 +6,8 @@
 [![React](https://img.shields.io/badge/React-18+-61DAFB)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Backend CI](https://github.com/equalizer999/board-game-jam/actions/workflows/ci.yml/badge.svg)](https://github.com/equalizer999/board-game-jam/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/equalizer999/board-game-jam/branch/main/graph/badge.svg)](https://codecov.io/gh/equalizer999/board-game-jam)
 
 
 > 📖 **Documentation:** For detailed information about issue dependencies and assignment order, see [docs/DEPENDENCY_SETUP.md](docs/DEPENDENCY_SETUP.md)
