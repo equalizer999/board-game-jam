@@ -12,6 +12,8 @@
 
 > 📖 **Documentation:** For detailed information about issue dependencies and assignment order, see [docs/DEPENDENCY_SETUP.md](docs/DEPENDENCY_SETUP.md)
 
+> 🤖 **GitHub Copilot Resources:** Complete navigation guide and prompt templates → **[COPILOT_RESOURCES.md](docs/COPILOT_RESOURCES.md)**
+
 ## 🎯 Purpose
 
 This repository provides a **fork-friendly demo environment** for Test Engineers to explore GitHub Copilot's capabilities across:
