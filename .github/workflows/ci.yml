@@ -100,7 +100,7 @@ jobs:
           flags: unittests
           name: unit-tests-coverage
           fail_ci_if_error: false
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}  # Required for private repos; optional for public repos
 
       - name: Check code coverage threshold
         run: |
@@ -113,8 +113,8 @@ jobs:
             -targetdir:"coverage/report" \
             -reporttypes:"TextSummary"
           
-          # Extract line coverage percentage using awk for portability
-          COVERAGE=$(grep "Line coverage:" coverage/report/Summary.txt | sed 's/.*Line coverage: \([0-9]*\(\.[0-9]*\)\?\)%.*/\1/')
+          # Extract line coverage percentage using portable sed commands
+          COVERAGE=$(grep "Line coverage:" coverage/report/Summary.txt | sed 's/.*Line coverage: //;s/%.*//')
           
           echo "Current coverage: ${COVERAGE}%"
           
@@ -288,10 +288,10 @@ jobs:
 
       - name: Check overall status
         run: |
-          if [[ "${{ needs.build-backend.result }}" == "failure" ]] || \
-             [[ "${{ needs.unit-tests.result }}" == "failure" ]] || \
-             [[ "${{ needs.integration-tests.result }}" == "failure" ]] || \
-             [[ "${{ needs.lint-backend.result }}" == "failure" ]]; then
+          if [ "${{ needs.build-backend.result }}" = "failure" ] || \
+             [ "${{ needs.unit-tests.result }}" = "failure" ] || \
+             [ "${{ needs.integration-tests.result }}" = "failure" ] || \
+             [ "${{ needs.lint-backend.result }}" = "failure" ]; then
             echo "One or more CI checks failed"
             exit 1
           fi
