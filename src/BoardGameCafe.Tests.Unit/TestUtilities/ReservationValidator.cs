@@ -47,7 +47,7 @@ public class ReservationValidator
             return false; // Start time must be before end time
         }
 
-        return startTime >= BusinessHoursStart && 
+        return startTime >= BusinessHoursStart &&
                endTime <= BusinessHoursEnd;
     }
 

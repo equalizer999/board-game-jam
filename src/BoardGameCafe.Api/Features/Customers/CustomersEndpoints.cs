@@ -12,7 +12,7 @@ public static class CustomersEndpoints
     private const int BronzeThreshold = 0;
     private const int SilverThreshold = 500;
     private const int GoldThreshold = 2000;
-    
+
     private const decimal BronzeDiscount = 0.05m;
     private const decimal SilverDiscount = 0.10m;
     private const decimal GoldDiscount = 0.15m;
@@ -71,8 +71,8 @@ public static class CustomersEndpoints
                 return TypedResults.NotFound();
             }
 
-            customer.FirstName = request.FirstName;
-            customer.LastName = request.LastName;
+            customer.FirstName = request.FirstName ?? customer.FirstName;
+            customer.LastName = request.LastName ?? customer.LastName;
             customer.Phone = request.Phone;
 
             await db.SaveChangesAsync();
@@ -269,7 +269,7 @@ public static class CustomersEndpoints
 
             // Get total spending from completed orders
             var orderStats = await db.Orders
-                .Where(o => o.CustomerId == customerId && 
+                .Where(o => o.CustomerId == customerId &&
                            (o.Status == OrderStatus.Completed || o.Status == OrderStatus.Delivered))
                 .GroupBy(o => o.CustomerId)
                 .Select(g => new

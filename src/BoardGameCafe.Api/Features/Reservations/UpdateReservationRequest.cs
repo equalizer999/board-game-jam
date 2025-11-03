@@ -9,27 +9,27 @@ public record UpdateReservationRequest
     /// New table ID (optional)
     /// </summary>
     public Guid? TableId { get; init; }
-    
+
     /// <summary>
     /// New reservation date (optional, must be future date if provided)
     /// </summary>
     public DateTime? ReservationDate { get; init; }
-    
+
     /// <summary>
     /// New start time (optional)
     /// </summary>
     public TimeSpan? StartTime { get; init; }
-    
+
     /// <summary>
     /// New end time (optional)
     /// </summary>
     public TimeSpan? EndTime { get; init; }
-    
+
     /// <summary>
     /// New party size (optional, must be less than or equal to table capacity if provided)
     /// </summary>
     public int? PartySize { get; init; }
-    
+
     /// <summary>
     /// New special requests (optional)
     /// </summary>

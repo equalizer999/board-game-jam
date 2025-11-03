@@ -12,7 +12,7 @@ public class Reservation
     public ReservationStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? SpecialRequests { get; set; }
-    
+
     // Navigation properties
     public Customer? Customer { get; set; }
     public Table? Table { get; set; }

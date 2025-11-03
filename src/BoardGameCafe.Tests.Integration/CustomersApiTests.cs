@@ -22,7 +22,7 @@ public class CustomersApiTests : IClassFixture<ReservationsApiTestFixture>, IAsy
     public async Task InitializeAsync()
     {
         _client = _factory.CreateClient();
-        
+
         // Clean up and seed test data
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
@@ -116,9 +116,9 @@ public class CustomersApiTests : IClassFixture<ReservationsApiTestFixture>, IAsy
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var loyaltyPoints = await response.Content.ReadFromJsonAsync<LoyaltyPointsDto>();
         loyaltyPoints.Should().NotBeNull();
-        loyaltyPoints!.CurrentPoints.Should().Be(250);
+        loyaltyPoints!.CurrentBalance.Should().Be(250);
         loyaltyPoints.CurrentTier.Should().Be("Bronze");
-        loyaltyPoints.CurrentDiscount.Should().Be(0.05m);
+        loyaltyPoints.DiscountPercentage.Should().Be(0.05m);
         loyaltyPoints.NextTier.Should().Be("Silver");
         loyaltyPoints.PointsToNextTier.Should().Be(250); // 500 - 250
     }

@@ -451,10 +451,10 @@ public static class OrdersEndpoints
                     Detail = $"Customer has {order.Customer.LoyaltyPoints} points, cannot redeem {loyaltyPointsToRedeem}"
                 });
             }
-            
+
             // Deduct redeemed loyalty points from customer
             order.Customer.LoyaltyPoints -= loyaltyPointsToRedeem;
-            
+
             // Track loyalty points redemption
             var redemptionHistory = new LoyaltyPointsHistory
             {
@@ -517,7 +517,7 @@ public static class OrdersEndpoints
 
         // Update customer loyalty points
         order.Customer.LoyaltyPoints += pointsEarned;
-        
+
         // Track loyalty points earned
         if (pointsEarned > 0)
         {

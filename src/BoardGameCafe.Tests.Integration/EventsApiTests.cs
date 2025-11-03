@@ -27,7 +27,7 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
     public async Task InitializeAsync()
     {
         _client = _factory.CreateClient();
-        
+
         // Create a scope to seed test data for this test
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
@@ -47,7 +47,7 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
             LastName = "Johnson",
             JoinedDate = DateTime.UtcNow
         };
-        
+
         var customer2 = new Customer
         {
             Id = Guid.NewGuid(),
@@ -223,7 +223,7 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
 
         // Act - Register once
         await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", request);
-        
+
         // Act - Try to register again
         var response = await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", request);
 
@@ -235,9 +235,9 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
     public async Task RegisterForEvent_WhenEventFull_ReturnsConflict()
     {
         // Arrange - Register first two customers (max capacity is 2)
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId1 });
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId2 });
 
         // Act - Try to register third customer
@@ -255,9 +255,9 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
     public async Task CancelRegistration_AfterCancel_OpensSpot()
     {
         // Arrange - Fill the event to capacity
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId1 });
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId2 });
 
         // Act - Cancel one registration
@@ -267,7 +267,7 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
         cancelResponse.StatusCode.Should().Be(HttpStatusCode.NoContent);
 
         // Act - Try to register third customer (should now succeed)
-        var registerResponse = await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        var registerResponse = await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId3 });
 
         // Assert - Registration succeeded
@@ -278,9 +278,9 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
     public async Task GetParticipants_ReturnsRegistrations()
     {
         // Arrange - Register two customers
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId1 });
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId2 });
 
         // Act
@@ -316,7 +316,7 @@ public class EventsApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncL
         var eventBefore = await responseBefore.Content.ReadFromJsonAsync<EventDto>();
 
         // Arrange - Register a customer
-        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register", 
+        await _client.PostAsJsonAsync($"/api/v1/events/{_eventId1}/register",
             new RegisterForEventRequest { CustomerId = _customerId1 });
 
         // Act - Get event after registration

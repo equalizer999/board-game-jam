@@ -194,9 +194,7 @@ export function TableSelector({
               </div>
 
               {/* Hourly Rate */}
-              <div style={{ fontSize: '12px', marginBottom: '8px' }}>
-                💰 ${table.hourlyRate}/hr
-              </div>
+              <div style={{ fontSize: '12px', marginBottom: '8px' }}>💰 ${table.hourlyRate}/hr</div>
 
               {/* Amenities */}
               <div style={{ fontSize: '11px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>

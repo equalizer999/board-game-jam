@@ -27,10 +27,13 @@ export default function ReservationsPage() {
   };
 
   // Filter upcoming reservations (future dates only)
-  const upcomingReservations = reservations?.filter((reservation) => {
-    const reservationDateTime = new Date(`${reservation.reservationDate}T${reservation.startTime}`);
-    return reservationDateTime >= new Date();
-  }) || [];
+  const upcomingReservations =
+    reservations?.filter((reservation) => {
+      const reservationDateTime = new Date(
+        `${reservation.reservationDate}T${reservation.startTime}`
+      );
+      return reservationDateTime >= new Date();
+    }) || [];
 
   return (
     <div

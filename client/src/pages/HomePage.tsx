@@ -6,7 +6,7 @@ export default function HomePage() {
     <div style={{ fontFamily: 'system-ui', padding: '2rem' }}>
       <h1>Welcome to Board Game Café</h1>
       <p>Your destination for games, food, and fun!</p>
-      
+
       <nav style={{ marginTop: '2rem' }}>
         <ul style={{ listStyle: 'none', padding: 0 }}>
           <li style={{ marginBottom: '1rem' }}>

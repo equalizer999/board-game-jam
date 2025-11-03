@@ -72,9 +72,7 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
             >
               {game.title}
             </h2>
-            <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>
-              by {game.publisher}
-            </p>
+            <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>by {game.publisher}</p>
           </div>
           <button
             data-testid="close-modal-button"
@@ -154,7 +152,14 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
               {/* Description */}
               {game.description && (
                 <div style={{ marginBottom: '24px' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>
+                  <h3
+                    style={{
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '8px',
+                      color: '#1f2937',
+                    }}
+                  >
                     Description
                   </h3>
                   <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.6' }}>
@@ -165,7 +170,14 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
 
               {/* Game Metadata */}
               <div style={{ marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '12px',
+                    color: '#1f2937',
+                  }}
+                >
                   Game Details
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -179,7 +191,9 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ marginRight: '8px', fontSize: '18px' }}>⏱️</span>
-                    <span style={{ fontSize: '14px', color: '#374151' }}>{game.playTimeMinutes} minutes</span>
+                    <span style={{ fontSize: '14px', color: '#374151' }}>
+                      {game.playTimeMinutes} minutes
+                    </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ marginRight: '8px', fontSize: '18px' }}>🎲</span>
@@ -189,7 +203,9 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ marginRight: '8px', fontSize: '18px' }}>👶</span>
-                    <span style={{ fontSize: '14px', color: '#374151' }}>Age: {game.ageRating}+</span>
+                    <span style={{ fontSize: '14px', color: '#374151' }}>
+                      Age: {game.ageRating}+
+                    </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ marginRight: '8px', fontSize: '18px' }}>💰</span>
@@ -202,7 +218,14 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
 
               {/* Availability Status */}
               <div style={{ marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#1f2937' }}>
+                <h3
+                  style={{
+                    fontSize: '18px',
+                    fontWeight: '600',
+                    marginBottom: '8px',
+                    color: '#1f2937',
+                  }}
+                >
                   Availability
                 </h3>
                 <div
@@ -223,7 +246,9 @@ export function GameDetailModal({ game, onClose }: GameDetailModalProps) {
                   >
                     {game.isAvailable ? '✓ Available for Checkout' : '✗ All Copies In Use'}
                   </div>
-                  <div style={{ fontSize: '14px', color: game.isAvailable ? '#047857' : '#991b1b' }}>
+                  <div
+                    style={{ fontSize: '14px', color: game.isAvailable ? '#047857' : '#991b1b' }}
+                  >
                     {game.copiesOwned - game.copiesInUse} of {game.copiesOwned} copies available
                   </div>
                 </div>

@@ -10,7 +10,7 @@ public class OrderCalculationService
     private const decimal LoyaltyPointsToDiscountRate = 0.01m; // 100 points = $1
     private const decimal FoodTaxRate = 0.08m; // 8%
     private const decimal AlcoholTaxRate = 0.10m; // 10%
-    
+
     /// <summary>
     /// Calculates all order totals including discounts, tax, and loyalty points.
     /// 
@@ -31,20 +31,20 @@ public class OrderCalculationService
     {
         // 1. Calculate subtotal from all items
         order.CalculateSubtotal();
-        
+
         // 2. Calculate member discount
         order.CalculateMemberDiscount();
-        
+
         // 3. Apply loyalty points redemption
         var loyaltyPointsDiscount = CalculateLoyaltyPointsDiscount(loyaltyPointsToRedeem);
         order.DiscountAmount += loyaltyPointsDiscount;
-        
+
         // 4. Calculate tax
         order.CalculateTax();
-        
+
         // 5. Calculate final total
         order.CalculateTotal();
-        
+
         // 6. Prevent negative totals
         if (order.TotalAmount < 0)
         {
@@ -54,7 +54,7 @@ public class OrderCalculationService
             order.CalculateTotal();
         }
     }
-    
+
     /// <summary>
     /// Calculates discount amount from loyalty points redemption
     /// </summary>
@@ -66,10 +66,10 @@ public class OrderCalculationService
         {
             throw new ArgumentException("Loyalty points cannot be negative", nameof(loyaltyPoints));
         }
-        
+
         return loyaltyPoints * LoyaltyPointsToDiscountRate;
     }
-    
+
     /// <summary>
     /// Calculates loyalty points earned from the order total
     /// </summary>
@@ -81,11 +81,11 @@ public class OrderCalculationService
         {
             return 0;
         }
-        
+
         // 1 point per $1 spent (rounded down)
         return (int)Math.Floor(totalAmount);
     }
-    
+
     /// <summary>
     /// Validates that customer has enough loyalty points for redemption
     /// </summary>
@@ -98,10 +98,10 @@ public class OrderCalculationService
         {
             return false;
         }
-        
+
         return customer.LoyaltyPoints >= pointsToRedeem;
     }
-    
+
     /// <summary>
     /// Gets the member discount percentage for a membership tier
     /// </summary>

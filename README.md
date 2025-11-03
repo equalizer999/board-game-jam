@@ -71,7 +71,7 @@ A **Board Game Café Management System** featuring:
 
 1. Click **Code** → **Create codespace on main**
 2. Wait for automatic setup (dependencies, migrations, seed data)
-3. Open Swagger UI: `https://localhost:5001/swagger`
+3. Open Swagger UI: `http://localhost:5000/swagger`
 4. Start frontend: Terminal → Run Task → `watch:client`
 
 ### Option 2: Local Development
@@ -100,8 +100,8 @@ npm run dev
 
 **Access:**
 - Frontend: http://localhost:5173
-- API: https://localhost:5001
-- Swagger: https://localhost:5001/swagger
+- API: http://localhost:5000
+- Swagger: http://localhost:5000/swagger
 
 ## 📚 Workshop Structure
 

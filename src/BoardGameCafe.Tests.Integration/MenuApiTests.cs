@@ -21,10 +21,10 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     public async Task InitializeAsync()
     {
         _client = _factory.CreateClient();
-        
+
         // Clean up any existing data from previous tests
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         db.MenuItems.RemoveRange(db.MenuItems);
         await db.SaveChangesAsync();
     }
@@ -49,8 +49,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var item1 = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -101,8 +101,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var item = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -147,8 +147,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var coffee = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -191,8 +191,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var veganItem = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -241,8 +241,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var cheapItem = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -328,8 +328,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var existingItem = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -365,8 +365,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var item = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -433,8 +433,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var item = new MenuItem
         {
             Id = Guid.NewGuid(),
@@ -457,7 +457,7 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
 
         // Verify soft delete - use a new scope to get fresh data
         using var verifyScope = _factory.Services.CreateScope();
-        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var verifyDb = verifyScope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
         var deletedItem = await verifyDb.MenuItems.FindAsync(item.Id);
         deletedItem.Should().NotBeNull();
         deletedItem!.IsAvailable.Should().BeFalse();
@@ -491,8 +491,8 @@ public class MenuApiTests : IClassFixture<ReservationsApiTestFixture>, IAsyncLif
     {
         // Arrange
         using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
+        var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
+
         var availableItem = new MenuItem
         {
             Id = Guid.NewGuid(),

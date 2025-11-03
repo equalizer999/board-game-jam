@@ -1,11 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from './client';
-import type {
-  Order,
-  MenuItem,
-  CreateOrderRequest,
-  UpdateOrderStatusRequest,
-} from '../types/order';
+import type { Order, MenuItem, CreateOrderRequest, UpdateOrderStatusRequest } from '../types/order';
 
 /**
  * Fetch customer's orders

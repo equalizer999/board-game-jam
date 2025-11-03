@@ -12,37 +12,37 @@ public record MenuFilterRequest
     /// </summary>
     [FromQuery(Name = "category")]
     public int? Category { get; init; }
-    
+
     /// <summary>
     /// Filter by vegetarian items only
     /// </summary>
     [FromQuery(Name = "isVegetarian")]
     public bool? IsVegetarian { get; init; }
-    
+
     /// <summary>
     /// Filter by vegan items only
     /// </summary>
     [FromQuery(Name = "isVegan")]
     public bool? IsVegan { get; init; }
-    
+
     /// <summary>
     /// Filter by gluten-free items only
     /// </summary>
     [FromQuery(Name = "isGlutenFree")]
     public bool? IsGlutenFree { get; init; }
-    
+
     /// <summary>
     /// Filter by available items only
     /// </summary>
     [FromQuery(Name = "availableOnly")]
     public bool? AvailableOnly { get; init; }
-    
+
     /// <summary>
     /// Minimum price filter
     /// </summary>
     [FromQuery(Name = "minPrice")]
     public decimal? MinPrice { get; init; }
-    
+
     /// <summary>
     /// Maximum price filter
     /// </summary>

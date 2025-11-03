@@ -199,7 +199,9 @@ export function ReservationSummary({
               justifyContent: 'space-between',
             }}
           >
-            <span>Base rate ({duration.toFixed(1)} hr × ${selectedTable?.hourlyRate}/hr):</span>
+            <span>
+              Base rate ({duration.toFixed(1)} hr × ${selectedTable?.hourlyRate}/hr):
+            </span>
             <span>${(selectedTable ? selectedTable.hourlyRate * duration : 0).toFixed(2)}</span>
           </div>
 

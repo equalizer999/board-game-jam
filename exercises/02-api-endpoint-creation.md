@@ -238,7 +238,7 @@ cd src/BoardGameCafe.Api
 dotnet run
 ```
 
-2. Open Swagger UI: `https://localhost:5001/swagger`
+2. Open Swagger UI: `http://localhost:5000/swagger`
 
 3. Find the new endpoint: `POST /api/v1/games/recommendations`
 

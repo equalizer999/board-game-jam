@@ -350,17 +350,17 @@ public class OrdersApiTests : IClassFixture<ReservationsApiTestFixture>
         var menuItem = await SeedMenuItemAsync(MenuCategory.Meals, 100.00m);
         var order = await CreateOrderAsync(customer.Id);
         await AddOrderItemAsync(order.Id, menuItem.Id, 1);
-        
+
         // Submit with loyalty points redemption
         var submitResponse = await _client.PostAsync(
-            $"/api/v1/orders/{order.Id}/submit?loyaltyPointsToRedeem=200", 
+            $"/api/v1/orders/{order.Id}/submit?loyaltyPointsToRedeem=200",
             null);
         submitResponse.EnsureSuccessStatusCode();
         var submitSummary = await submitResponse.Content.ReadFromJsonAsync<OrderSummaryDto>();
 
         // Act - Pay the order
         var response = await _client.PostAsync(
-            $"/api/v1/orders/{order.Id}/pay?paymentMethod=Card", 
+            $"/api/v1/orders/{order.Id}/pay?paymentMethod=Card",
             null);
 
         // Assert

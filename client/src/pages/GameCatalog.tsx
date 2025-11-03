@@ -10,7 +10,7 @@ import { GameDetailModal } from '../components/GameDetailModal';
 export default function GameCatalog() {
   const [filters, setFilters] = useState<Filters>({ pageSize: 20 });
   const [selectedGame, setSelectedGame] = useState<GameDto | null>(null);
-  
+
   const { data: games, isLoading, error } = useGames(filters);
 
   const handleFilterChange = (newFilters: Filters) => {
@@ -106,7 +106,9 @@ export default function GameCatalog() {
             }}
           >
             <div style={{ fontSize: '64px', marginBottom: '16px' }}>🔍</div>
-            <h3 style={{ fontSize: '24px', fontWeight: '600', margin: '0 0 8px 0', color: '#1f2937' }}>
+            <h3
+              style={{ fontSize: '24px', fontWeight: '600', margin: '0 0 8px 0', color: '#1f2937' }}
+            >
               No games found
             </h3>
             <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>
