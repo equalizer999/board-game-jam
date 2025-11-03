@@ -58,7 +58,7 @@ namespace BoardGameCafe.Api.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Customers");
+                    b.ToTable("Customers", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Event", b =>
@@ -103,7 +103,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("EventDate");
 
-                    b.ToTable("Events");
+                    b.ToTable("Events", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.EventRegistration", b =>
@@ -136,7 +136,7 @@ namespace BoardGameCafe.Api.Migrations
                     b.HasIndex("EventId", "CustomerId")
                         .IsUnique();
 
-                    b.ToTable("EventRegistrations");
+                    b.ToTable("EventRegistrations", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Game", b =>
@@ -197,7 +197,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Games", t =>
+                    b.ToTable("Games", null, t =>
                         {
                             t.HasCheckConstraint("CK_Game_CopiesInUse", "[CopiesInUse] <= [CopiesOwned]");
                         });
@@ -237,7 +237,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("GameId", "ReturnedAt");
 
-                    b.ToTable("GameSessions");
+                    b.ToTable("GameSessions", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.LoyaltyPointsHistory", b =>
@@ -250,6 +250,7 @@ namespace BoardGameCafe.Api.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
@@ -271,7 +272,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("CustomerId", "TransactionDate");
 
-                    b.ToTable("LoyaltyPointsHistory");
+                    b.ToTable("LoyaltyPointsHistory", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.MenuItem", b =>
@@ -317,7 +318,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MenuItems");
+                    b.ToTable("MenuItems", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Order", b =>
@@ -363,7 +364,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("CustomerId", "OrderDate");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.OrderItem", b =>
@@ -394,7 +395,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Reservation", b =>
@@ -440,7 +441,7 @@ namespace BoardGameCafe.Api.Migrations
 
                     b.HasIndex("TableId", "ReservationDate", "StartTime");
 
-                    b.ToTable("Reservations");
+                    b.ToTable("Reservations", (string)null);
                 });
 
             modelBuilder.Entity("BoardGameCafe.Domain.Table", b =>
@@ -475,7 +476,7 @@ namespace BoardGameCafe.Api.Migrations
                     b.HasIndex("TableNumber")
                         .IsUnique();
 
-                    b.ToTable("Tables", t =>
+                    b.ToTable("Tables", null, t =>
                         {
                             t.HasCheckConstraint("CK_Table_SeatingCapacity", "[SeatingCapacity] >= 2 AND [SeatingCapacity] <= 8");
                         });
