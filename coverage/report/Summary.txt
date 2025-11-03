@@ -1,0 +1,32 @@
+Summary
+  Generated on: 11/03/2025 - 06:48:20
+  Parser: OpenCover
+  Assemblies: 1
+  Classes: 11
+  Files: 11
+  Line coverage: 77%
+  Covered lines: 111
+  Uncovered lines: 33
+  Coverable lines: 144
+  Total lines: 379
+  Branch coverage: 91.6% (11 of 12)
+  Covered branches: 11
+  Total branches: 12
+  Method coverage: 72.5% (87 of 120)
+  Full method coverage: 72.5% (87 of 120)
+  Covered methods: 87
+  Fully covered methods: 87
+  Total methods: 120
+
+BoardGameCafe.Domain                            77%
+  BoardGameCafe.Domain.Customer                100%
+  BoardGameCafe.Domain.Event                  66.6%
+  BoardGameCafe.Domain.EventRegistration         0%
+  BoardGameCafe.Domain.Game                    100%
+  BoardGameCafe.Domain.GameSession              80%
+  BoardGameCafe.Domain.LoyaltyPointsHistory      0%
+  BoardGameCafe.Domain.MenuItem               54.5%
+  BoardGameCafe.Domain.Order                   100%
+  BoardGameCafe.Domain.OrderItem              87.5%
+  BoardGameCafe.Domain.Reservation             100%
+  BoardGameCafe.Domain.Table                  42.8%
