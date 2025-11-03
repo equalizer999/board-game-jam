@@ -244,4 +244,4 @@ You've completed this exercise when:
 
 ## Next Steps
 
-Continue to [Exercise 2: API Testing](./02-api-testing.md) to learn how to test REST endpoints with Swagger.
+Continue to [Exercise 2: API Endpoint Creation](./02-api-endpoint-creation.md) to learn how to create new REST endpoints with Copilot.

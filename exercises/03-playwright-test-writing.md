@@ -98,4 +98,4 @@ You've completed this exercise when:
 
 ## Next Steps
 
-Continue to [Exercise 4: Bug Hunting](./04-bug-hunting.md) to practice finding and fixing bugs.
+Continue to [Exercise 4: Test Data Builder](./04-test-data-builder.md) to learn how to create fluent test data builders.
