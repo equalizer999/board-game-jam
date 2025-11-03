@@ -1,0 +1,399 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  lint-backend:
+    name: Lint Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Check code formatting
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+        
+      - name: Build with analyzers
+        run: dotnet build --no-restore -p:TreatWarningsAsErrors=true
+        
+      - name: Post comment on failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## ❌ Backend Linting Failed
+            
+            The backend code has formatting or analyzer issues that need to be fixed.
+            
+            **To fix formatting issues:**
+            ```bash
+            dotnet format
+            ```
+            
+            **To view analyzer warnings:**
+            ```bash
+            dotnet build
+            ```
+            
+            Please review the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+
+      - name: Add label on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['needs-linting']
+            })
+
+  lint-frontend:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: client
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        working-directory: client
+        run: npm run format:check
+        
+      - name: Post comment on failure
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## ❌ Frontend Linting Failed
+            
+            The frontend code has linting or formatting issues that need to be fixed.
+            
+            **To fix ESLint issues:**
+            ```bash
+            cd client
+            npm run lint
+            ```
+            
+            **To fix Prettier formatting:**
+            ```bash
+            cd client
+            npm run format
+            ```
+            
+            Please review the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+
+      - name: Add label on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['needs-linting']
+            })
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Restore .NET dependencies
+        run: dotnet restore
+
+      - name: Install npm dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Check for vulnerable .NET packages
+        id: dotnet-vuln
+        run: |
+          echo "Checking for vulnerable NuGet packages..."
+          dotnet list package --vulnerable --include-transitive 2>&1 | tee dotnet-vulnerabilities.txt
+          if grep -q "has the following vulnerable packages" dotnet-vulnerabilities.txt; then
+            echo "has_vulnerabilities=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "has_vulnerabilities=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Run npm audit
+        id: npm-audit
+        working-directory: client
+        run: |
+          echo "Running npm audit..."
+          npm audit --audit-level=high --omit=dev 2>&1 | tee ../npm-audit.txt
+          exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+            echo "has_vulnerabilities=true" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "has_vulnerabilities=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Post security comment on vulnerabilities
+        if: steps.dotnet-vuln.outputs.has_vulnerabilities == 'true' || steps.npm-audit.outputs.has_vulnerabilities == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## ⚠️ Security Vulnerabilities Detected
+            
+            This PR introduces or contains dependencies with known security vulnerabilities.
+            
+            ${{ steps.dotnet-vuln.outputs.has_vulnerabilities == 'true' && '### .NET Vulnerabilities\nVulnerable NuGet packages were detected. Run `dotnet list package --vulnerable --include-transitive` for details.\n\n' || '' }}
+            ${{ steps.npm-audit.outputs.has_vulnerabilities == 'true' && '### npm Vulnerabilities\nVulnerable npm packages were detected. Run `npm audit` in the `client` directory for details.\n\n' || '' }}
+            **Action Required:**
+            - Review the vulnerabilities in the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - Update affected packages to non-vulnerable versions
+            - If vulnerabilities cannot be fixed immediately, document them and create a follow-up issue
+            
+            Please address high and critical severity vulnerabilities before merging.
+
+      - name: Add security label on vulnerabilities
+        if: steps.dotnet-vuln.outputs.has_vulnerabilities == 'true' || steps.npm-audit.outputs.has_vulnerabilities == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['security-issue']
+            })
+
+      - name: Fail job if vulnerabilities found
+        if: steps.dotnet-vuln.outputs.has_vulnerabilities == 'true' || steps.npm-audit.outputs.has_vulnerabilities == 'true'
+        run: |
+          echo "Security vulnerabilities detected. Please review and fix before merging."
+          exit 1
+
+  openapi-validation:
+    name: OpenAPI Spec Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Restore backend dependencies
+        run: dotnet restore
+
+      - name: Build backend
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Start backend API
+        working-directory: src/BoardGameCafe.Api
+        run: |
+          nohup dotnet run --no-build --configuration Release --urls "http://localhost:5000" > backend.log 2>&1 &
+          echo $! > backend.pid
+
+      - name: Wait for backend to be healthy
+        run: |
+          echo "Waiting for backend API to be ready..."
+          for i in {1..30}; do
+            if curl --silent --fail http://localhost:5000/health > /dev/null 2>&1; then
+              echo "Backend is healthy!"
+              exit 0
+            fi
+            echo "Attempt $i/30: Backend not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "Backend failed to start!"
+          cat src/BoardGameCafe.Api/backend.log || true
+          exit 1
+
+      - name: Download OpenAPI spec
+        run: |
+          echo "Downloading OpenAPI specification..."
+          curl --silent --fail http://localhost:5000/swagger/v1/swagger.json -o openapi.json
+          echo "OpenAPI spec downloaded successfully"
+          cat openapi.json | jq . > formatted-openapi.json || cp openapi.json formatted-openapi.json
+
+      - name: Install Spectral
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Validate OpenAPI spec with Spectral
+        id: spectral-lint
+        run: |
+          echo "Validating OpenAPI specification..."
+          spectral lint openapi.json --ruleset spectral:oas --format pretty 2>&1 | tee spectral-output.txt
+          exit_code=$?
+          if [ $exit_code -ne 0 ]; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Upload OpenAPI spec as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-spec-${{ github.run_number }}
+          path: |
+            openapi.json
+            formatted-openapi.json
+          retention-days: 7
+
+      - name: Post OpenAPI validation comment
+        if: steps.spectral-lint.outputs.has_errors == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## ⚠️ OpenAPI Specification Issues
+            
+            The OpenAPI specification has validation warnings or errors.
+            
+            Please review the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.
+            
+            The generated OpenAPI spec is available as an artifact: `openapi-spec-${{ github.run_number }}`
+            
+            **Note:** These are informational warnings. Review them to ensure API quality, but they may not block the PR.
+
+      - name: Stop backend
+        if: always()
+        run: |
+          if [ -f src/BoardGameCafe.Api/backend.pid ]; then
+            kill $(cat src/BoardGameCafe.Api/backend.pid) || true
+          fi
+
+      - name: Upload backend logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-logs-openapi-${{ github.run_number }}
+          path: src/BoardGameCafe.Api/backend.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+  validation-summary:
+    name: Validation Summary
+    runs-on: ubuntu-latest
+    needs: [lint-backend, lint-frontend, security-scan, openapi-validation]
+    if: always()
+    timeout-minutes: 2
+    
+    steps:
+      - name: Check job results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const jobs = [
+              { name: 'Lint Backend', result: '${{ needs.lint-backend.result }}' },
+              { name: 'Lint Frontend', result: '${{ needs.lint-frontend.result }}' },
+              { name: 'Security Scan', result: '${{ needs.security-scan.result }}' },
+              { name: 'OpenAPI Validation', result: '${{ needs.openapi-validation.result }}' }
+            ];
+            
+            const passed = jobs.filter(j => j.result === 'success');
+            const failed = jobs.filter(j => j.result === 'failure');
+            const skipped = jobs.filter(j => j.result === 'skipped');
+            
+            let summary = '## 📋 PR Validation Summary\n\n';
+            
+            if (failed.length === 0) {
+              summary += '✅ **All validation checks passed!**\n\n';
+            } else {
+              summary += `❌ **${failed.length} validation check(s) failed**\n\n`;
+            }
+            
+            summary += '### Results\n\n';
+            jobs.forEach(job => {
+              const icon = job.result === 'success' ? '✅' : 
+                          job.result === 'failure' ? '❌' : 
+                          job.result === 'skipped' ? '⏭️' : '⚠️';
+              summary += `${icon} ${job.name}: ${job.result}\n`;
+            });
+            
+            summary += '\n';
+            
+            if (failed.length > 0) {
+              summary += '### Next Steps\n\n';
+              summary += 'Please review the individual job failures above and address the issues before merging.\n';
+            }
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: summary
+            });
+
+      - name: Set final status
+        run: |
+          if [[ "${{ needs.lint-backend.result }}" == "failure" ]] || \
+             [[ "${{ needs.lint-frontend.result }}" == "failure" ]] || \
+             [[ "${{ needs.security-scan.result }}" == "failure" ]]; then
+            echo "One or more critical validation checks failed"
+            exit 1
+          fi
+          echo "All critical validation checks passed"
