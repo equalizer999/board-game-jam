@@ -16,12 +16,13 @@ Each exercise includes:
 
 | Exercise | Duration | Focus Area | Key Skills |
 |----------|----------|------------|------------|
-| [01-unit-testing.md](./01-unit-testing.md) | 10 min | Backend business logic | xUnit, FluentAssertions, test data builders |
-| [02-api-testing.md](./02-api-testing.md) | 8 min | REST API integration tests | Swagger contracts, HTTP testing, WebApplicationFactory |
-| [03-ui-testing.md](./03-ui-testing.md) | 7 min | E2E browser automation | Playwright, Page Object Model, cross-browser testing |
-| [04-bug-hunting.md](./04-bug-hunting.md) | 10 min | Debugging & regression tests | Bug reproduction, regression suites, edge case testing |
+| [01-unit-test-generation.md](./01-unit-test-generation.md) | 10 min | Backend business logic | xUnit, FluentAssertions, test data builders |
+| [02-api-endpoint-creation.md](./02-api-endpoint-creation.md) | 12 min | REST API endpoint creation | DTOs, validation, integration tests |
+| [03-playwright-test-writing.md](./03-playwright-test-writing.md) | 7 min | E2E browser automation | Playwright, Page Object Model, cross-browser testing |
+| [04-test-data-builder.md](./04-test-data-builder.md) | 10 min | Test data patterns | Builder pattern, fluent APIs, reusable test data |
+| [05-bug-fix-with-test.md](./05-bug-fix-with-test.md) | 10 min | Debugging & regression tests | Bug reproduction, regression suites, edge case testing |
 
-**Total Duration:** ~35 minutes of core exercises + 25 minutes for Q&A and exploration
+**Total Duration:** ~49 minutes of core exercises + 11 minutes for Q&A and exploration
 
 ---
 
@@ -65,11 +66,11 @@ Before starting the exercises, ensure:
 |------|----------|----------|
 | 0-5 min | Welcome & Setup | Verify environments running |
 | 5-15 min | Unit Testing Demo | Exercise 1: Steps 1-5 |
-| 15-23 min | API Testing Demo | Exercise 2: Steps 1-5 |
-| 23-30 min | UI Testing Demo | Exercise 3: Steps 1-4 |
-| 30-40 min | Bug Hunting Demo | Exercise 4: Fix 2 bugs |
-| 40-50 min | CI/CD Integration | Show GitHub Actions running tests |
-| 50-60 min | Q&A & Wrap-up | Open discussion |
+| 15-27 min | API Endpoint Creation | Exercise 2: Steps 1-6 |
+| 27-34 min | UI Testing Demo | Exercise 3: Steps 1-4 |
+| 34-44 min | Test Data Builder | Exercise 4: Steps 1-5 |
+| 44-54 min | Bug Hunting Demo | Exercise 5: Fix 2 bugs |
+| 54-60 min | Q&A & Wrap-up | Open discussion |
 
 **Instructor Tips:**
 - Start each exercise with a quick overview (1 min)
@@ -81,7 +82,7 @@ Before starting the exercises, ensure:
 ### For Self-Paced Learning
 
 **Recommended Path:**
-1. Complete exercises in order (1 → 2 → 3 → 4)
+1. Complete exercises in order (1 → 2 → 3 → 4 → 5)
 2. Spend full time on each exercise
 3. Try all Copilot prompts
 4. Run all tests to verify your work
@@ -92,7 +93,7 @@ Before starting the exercises, ensure:
 ## Exercise Summaries
 
 ### Exercise 1: Unit Testing (10 min)
-**File:** [01-unit-testing.md](./01-unit-testing.md)
+**File:** [01-unit-test-generation.md](./01-unit-test-generation.md)
 
 Generate comprehensive unit tests for `OrderCalculationService`:
 - Tax calculation tests (8% food, 10% alcohol)
@@ -104,21 +105,22 @@ Generate comprehensive unit tests for `OrderCalculationService`:
 
 ---
 
-### Exercise 2: API Testing (8 min)
-**File:** [02-api-testing.md](./02-api-testing.md)
+### Exercise 2: API Endpoint Creation (12 min)
+**File:** [02-api-endpoint-creation.md](./02-api-endpoint-creation.md)
 
-Create integration tests for Games REST API:
-- Test CRUD operations (Create, Read, Update, Delete)
-- Validate Swagger contracts
-- Test query filters (category, player count, availability)
-- Test error scenarios (400, 404, 409 status codes)
+Create a new REST API endpoint for game recommendations:
+- Design request/response DTOs
+- Implement validation rules  
+- Add filtering and scoring logic
+- Create integration tests
+- Test with Swagger UI
 
-**Key Takeaway:** Use Swagger as the source of truth for API contracts and let Copilot generate matching integration tests.
+**Key Takeaway:** Use Copilot to scaffold complete API endpoints with DTOs, validation, and tests in minutes.
 
 ---
 
 ### Exercise 3: UI Testing (7 min)
-**File:** [03-ui-testing.md](./03-ui-testing.md)
+**File:** [03-playwright-test-writing.md](./03-playwright-test-writing.md)
 
 Build E2E tests with Playwright:
 - Create Page Object Models for game catalog, reservations
@@ -130,8 +132,22 @@ Build E2E tests with Playwright:
 
 ---
 
-### Exercise 4: Bug Hunting (10 min)
-**File:** [04-bug-hunting.md](./04-bug-hunting.md)
+### Exercise 4: Test Data Builder (10 min)
+**File:** [04-test-data-builder.md](./04-test-data-builder.md)
+
+Create fluent test data builders:
+- Study existing ReservationBuilder pattern
+- Create OrderBuilder with fluent API
+- Add convenience methods (AsCompletedOrder(), WithSmallTotal())
+- Refactor existing tests to use builders
+- Reduce test data duplication
+
+**Key Takeaway:** Use Copilot to generate builder patterns that make test setup clean, expressive, and maintainable.
+
+---
+
+### Exercise 5: Bug Hunting (10 min)
+**File:** [05-bug-fix-with-test.md](./05-bug-fix-with-test.md)
 
 Find and fix intentional bugs:
 - Reproduce bugs with failing tests
