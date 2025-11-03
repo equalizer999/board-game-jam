@@ -229,17 +229,28 @@ Issues are tagged with:
 - `exercise` - Workshop exercises
 - `performance` - Optimization tasks
 
-## 🤖 Assigning to GitHub Copilot
+## 🤖 Assigning Issues to GitHub Copilot
 
-This repository is designed for **GitHub Copilot Coding Agent** handoff:
+This repository is designed for **GitHub Copilot Coding Agent** handoff to accelerate development.
 
-```bash
-# Example: Assign issue #5 to Copilot
-# Navigate to issue → Comment:
-@github-copilot implement this feature following the acceptance criteria
-```
+### Quick Start Example
 
-Or use the assignment button and select **Copilot** as the assignee.
+1. **Select an Issue**: Navigate to an issue like [#3 (Create Game Domain Entity)](https://github.com/equalizer999/board-game-jam/issues/3)
+2. **Assign to Copilot**: Comment `@copilot please implement this issue` or use the Assignees dropdown
+3. **Monitor Progress**: Copilot analyzes the issue and creates a PR (typically within 5-15 minutes)
+4. **Review Changes**: Check the PR for code quality, test coverage, and acceptance criteria
+5. **Merge or Iterate**: Approve and merge, or request changes with specific feedback
+6. **Verify Completion**: Issue auto-closes when PR is merged
+
+### Best Practices
+
+- ✅ **Write Clear Issues**: Single-purpose tasks with specific acceptance criteria
+- ✅ **Provide Context**: Link to dependencies and reference existing code patterns
+- ✅ **Specify File Paths**: Don't make Copilot guess where code belongs
+- ✅ **Include Testing Requirements**: State expected test coverage and scenarios
+- ✅ **Review Thoroughly**: Check that all acceptance criteria are met before merging
+
+📖 **For detailed guidance, see [Copilot Agent Assignment Guide](docs/copilot-agent-assignment-guide.md)** - comprehensive best practices, examples, troubleshooting, and templates.
 ## 🔗 Issue Dependencies & Assignment Order
 
 To maximize GitHub Copilot effectiveness, follow this dependency-based assignment order:
