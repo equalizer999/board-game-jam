@@ -9,6 +9,7 @@
 [![Backend CI](https://github.com/equalizer999/board-game-jam/actions/workflows/ci.yml/badge.svg)](https://github.com/equalizer999/board-game-jam/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/equalizer999/board-game-jam/branch/main/graph/badge.svg)](https://codecov.io/gh/equalizer999/board-game-jam)
 
+minor change
 
 > 📖 **Documentation:** For detailed information about issue dependencies and assignment order, see [docs/DEPENDENCY_SETUP.md](docs/DEPENDENCY_SETUP.md)
 
