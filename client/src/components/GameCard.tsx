@@ -20,7 +20,7 @@ export function GameCard({ game, onClick }: GameCardProps) {
   };
 
   const getCategoryColor = () => categoryColors[game.category] || '#6b7280';
-  
+
   // Generate a test ID based on the game title
   const testId = game.title.toLowerCase().replace(/\s+/g, '-');
 

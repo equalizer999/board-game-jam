@@ -4,10 +4,7 @@ import { useForm } from 'react-hook-form';
 import { DateTimePicker } from '../components/DateTimePicker';
 import { TableSelector } from '../components/TableSelector';
 import { ReservationSummary } from '../components/ReservationSummary';
-import {
-  useTableAvailability,
-  useCreateReservation,
-} from '../api/reservations';
+import { useTableAvailability, useCreateReservation } from '../api/reservations';
 import { CreateReservationRequest } from '../types/reservation';
 
 interface ReservationFormData {
@@ -28,12 +25,7 @@ export default function NewReservation() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const {
-    register,
-    watch,
-    setValue,
-    handleSubmit,
-  } = useForm<ReservationFormData>({
+  const { register, watch, setValue, handleSubmit } = useForm<ReservationFormData>({
     defaultValues: {
       customerId: 'customer-1', // TODO: Replace with actual authenticated user ID
       tableId: '',
@@ -65,15 +57,13 @@ export default function NewReservation() {
   const createReservation = useCreateReservation();
 
   // Find selected table from available tables
-  const selectedTable = availableTables?.find(
-    (table) => table.id === selectedTableId
-  ) || null;
+  const selectedTable = availableTables?.find((table) => table.id === selectedTableId) || null;
 
   // Update tableId when moving to step 3 if not already selected
   useEffect(() => {
     if (currentStep === 3 && availableTables && availableTables.length > 0 && !selectedTableId) {
       // Auto-select the first suitable table
-      const suitableTable = availableTables.find(t => t.seatingCapacity >= partySize);
+      const suitableTable = availableTables.find((t) => t.seatingCapacity >= partySize);
       if (suitableTable) {
         setValue('tableId', suitableTable.id);
       }
@@ -170,11 +160,14 @@ export default function NewReservation() {
           }}
         >
           <div style={{ fontSize: '72px', marginBottom: '24px' }}>✅</div>
-          <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '16px', color: '#1f2937' }}>
+          <h2
+            style={{ fontSize: '28px', fontWeight: '700', marginBottom: '16px', color: '#1f2937' }}
+          >
             Reservation Confirmed!
           </h2>
           <p style={{ fontSize: '16px', color: '#6b7280', marginBottom: '24px' }}>
-            Your table has been successfully reserved. You will be redirected to your reservations page.
+            Your table has been successfully reserved. You will be redirected to your reservations
+            page.
           </p>
           <div
             style={{

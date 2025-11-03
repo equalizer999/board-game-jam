@@ -79,7 +79,13 @@ export const useUpdateReservation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, reservation }: { id: string; reservation: UpdateReservationRequest }) => {
+    mutationFn: async ({
+      id,
+      reservation,
+    }: {
+      id: string;
+      reservation: UpdateReservationRequest;
+    }) => {
       const { data } = await apiClient.put<Reservation>(`/reservations/${id}`, reservation);
       return data;
     },

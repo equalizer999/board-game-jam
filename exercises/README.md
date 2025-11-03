@@ -51,7 +51,7 @@ Before starting the exercises, ensure:
    ```
 
 4. **Swagger is accessible:**
-   - Navigate to: https://localhost:5001/swagger
+   - Navigate to: http://localhost:5000/swagger
    - Verify API endpoints are documented
 
 ---

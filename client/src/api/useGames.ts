@@ -17,8 +17,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 3,
     copiesInUse: 0,
-    dailyRentalFee: 5.00,
-    description: 'Collect resources and build settlements on the island of Catan. Trade with other players and expand your territory to become the dominant settler.',
+    dailyRentalFee: 5.0,
+    description:
+      'Collect resources and build settlements on the island of Catan. Trade with other players and expand your territory to become the dominant settler.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -34,8 +35,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 2,
     copiesInUse: 1,
-    dailyRentalFee: 4.50,
-    description: 'Build train routes across North America in this classic board game. Collect cards and claim routes to complete destination tickets.',
+    dailyRentalFee: 4.5,
+    description:
+      'Build train routes across North America in this classic board game. Collect cards and claim routes to complete destination tickets.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -51,8 +53,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Cooperative',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 5.00,
-    description: 'Work together to save humanity from global disease outbreaks. Each player has a unique role with special abilities to help cure diseases.',
+    dailyRentalFee: 5.0,
+    description:
+      'Work together to save humanity from global disease outbreaks. Each player has a unique role with special abilities to help cure diseases.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -68,8 +71,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Party',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 3.00,
-    description: 'Team word-guessing game with spies and secret agents. Give one-word clues to help your team identify agents while avoiding the assassin.',
+    dailyRentalFee: 3.0,
+    description:
+      'Team word-guessing game with spies and secret agents. Give one-word clues to help your team identify agents while avoiding the assassin.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -85,8 +89,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Abstract',
     copiesOwned: 1,
     copiesInUse: 0,
-    dailyRentalFee: 4.00,
-    description: 'Draft colorful tiles to decorate the palace walls. Create beautiful patterns while managing your resources efficiently.',
+    dailyRentalFee: 4.0,
+    description:
+      'Draft colorful tiles to decorate the palace walls. Create beautiful patterns while managing your resources efficiently.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -102,8 +107,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 2,
     copiesInUse: 2,
-    dailyRentalFee: 6.00,
-    description: 'Build a diverse collection of birds in your wildlife preserves. Each bird has unique abilities that combo with others.',
+    dailyRentalFee: 6.0,
+    description:
+      'Build a diverse collection of birds in your wildlife preserves. Each bird has unique abilities that combo with others.',
     imageUrl: '',
     isAvailable: false,
   },
@@ -119,8 +125,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Party',
     copiesOwned: 3,
     copiesInUse: 1,
-    dailyRentalFee: 2.50,
-    description: 'A strategic card game about kittens, explosions, and sometimes goats. Draw cards until someone explodes.',
+    dailyRentalFee: 2.5,
+    description:
+      'A strategic card game about kittens, explosions, and sometimes goats. Draw cards until someone explodes.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -136,8 +143,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 5.50,
-    description: 'Build your civilization through three ages. Draft cards to develop your city and achieve victory.',
+    dailyRentalFee: 5.5,
+    description:
+      'Build your civilization through three ages. Draft cards to develop your city and achieve victory.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -153,8 +161,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 4.50,
-    description: 'Collect gems and develop your gem trade routes. Build prestige and become the most renowned jeweler.',
+    dailyRentalFee: 4.5,
+    description:
+      'Collect gems and develop your gem trade routes. Build prestige and become the most renowned jeweler.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -170,8 +179,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Party',
     copiesOwned: 1,
     copiesInUse: 0,
-    dailyRentalFee: 3.50,
-    description: 'Use beautiful, dreamlike illustrations to tell stories. Guess which card matches the storyteller\'s clue.',
+    dailyRentalFee: 3.5,
+    description:
+      "Use beautiful, dreamlike illustrations to tell stories. Guess which card matches the storyteller's clue.",
     imageUrl: '',
     isAvailable: true,
   },
@@ -187,8 +197,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Strategy',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 4.00,
-    description: 'Build the medieval landscape of Carcassonne tile by tile. Place followers to score points on roads, cities, and fields.',
+    dailyRentalFee: 4.0,
+    description:
+      'Build the medieval landscape of Carcassonne tile by tile. Place followers to score points on roads, cities, and fields.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -204,8 +215,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Cooperative',
     copiesOwned: 1,
     copiesInUse: 0,
-    dailyRentalFee: 3.50,
-    description: 'Work together to collect treasures before the island sinks. Strategic cooperation is key to survival.',
+    dailyRentalFee: 3.5,
+    description:
+      'Work together to collect treasures before the island sinks. Strategic cooperation is key to survival.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -221,8 +233,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Family',
     copiesOwned: 2,
     copiesInUse: 0,
-    dailyRentalFee: 4.00,
-    description: 'Become a giant monster and fight for control of Tokyo. Roll dice, gain energy, and evolve with powerful mutations.',
+    dailyRentalFee: 4.0,
+    description:
+      'Become a giant monster and fight for control of Tokyo. Roll dice, gain energy, and evolve with powerful mutations.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -238,8 +251,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Family',
     copiesOwned: 2,
     copiesInUse: 1,
-    dailyRentalFee: 2.50,
-    description: 'Pass sushi cards and collect the best combinations. Quick and fun card drafting for the whole family.',
+    dailyRentalFee: 2.5,
+    description:
+      'Pass sushi cards and collect the best combinations. Quick and fun card drafting for the whole family.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -255,8 +269,9 @@ const MOCK_GAMES: GameDto[] = [
     category: 'Abstract',
     copiesOwned: 1,
     copiesInUse: 0,
-    dailyRentalFee: 3.00,
-    description: 'Place your colored pieces on the board, each touching another of your pieces at the corners only.',
+    dailyRentalFee: 3.0,
+    description:
+      'Place your colored pieces on the board, each touching another of your pieces at the corners only.',
     imageUrl: '',
     isAvailable: true,
   },
@@ -299,7 +314,7 @@ export interface GameFilters {
 async function fetchGames(filters?: GameFilters): Promise<GameDto[]> {
   try {
     const params = new URLSearchParams();
-    
+
     if (filters?.category !== undefined) {
       params.append('category', filters.category.toString());
     }
@@ -324,74 +339,76 @@ async function fetchGames(filters?: GameFilters): Promise<GameDto[]> {
 
     const url = `${API_BASE_URL}/api/v1/games?${params.toString()}`;
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch games');
     }
-    
+
     let games = await response.json();
-    
+
     // Client-side filtering for search and complexity range
     // (API doesn't support these filters yet)
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();
-      games = games.filter((game: GameDto) => 
-        game.title.toLowerCase().includes(searchLower) ||
-        game.description?.toLowerCase().includes(searchLower) ||
-        game.publisher.toLowerCase().includes(searchLower)
+      games = games.filter(
+        (game: GameDto) =>
+          game.title.toLowerCase().includes(searchLower) ||
+          game.description?.toLowerCase().includes(searchLower) ||
+          game.publisher.toLowerCase().includes(searchLower)
       );
     }
-    
+
     if (filters?.minComplexity !== undefined) {
       games = games.filter((game: GameDto) => game.complexity >= filters.minComplexity!);
     }
-    
+
     if (filters?.maxComplexity !== undefined) {
       games = games.filter((game: GameDto) => game.complexity <= filters.maxComplexity!);
     }
-    
+
     return games;
   } catch (error) {
     // Fallback to mock data if backend is unavailable
     console.warn('Backend unavailable, using mock data:', error);
     let games = [...MOCK_GAMES];
-    
+
     // Apply filters to mock data
     if (filters?.category !== undefined) {
       const categoryNames = ['Strategy', 'Party', 'Family', 'Cooperative', 'Abstract'];
       const categoryName = categoryNames[filters.category];
-      games = games.filter(g => g.category === categoryName);
+      games = games.filter((g) => g.category === categoryName);
     }
-    
+
     if (filters?.minPlayerCount !== undefined) {
-      games = games.filter(g => g.maxPlayers >= filters.minPlayerCount!);
+      games = games.filter((g) => g.maxPlayers >= filters.minPlayerCount!);
     }
-    
+
     if (filters?.maxPlayerCount !== undefined) {
-      games = games.filter(g => g.minPlayers <= filters.maxPlayerCount!);
+      games = games.filter((g) => g.minPlayers <= filters.maxPlayerCount!);
     }
-    
+
     if (filters?.minComplexity !== undefined) {
-      games = games.filter(g => g.complexity >= filters.minComplexity!);
+      games = games.filter((g) => g.complexity >= filters.minComplexity!);
     }
-    
+
     if (filters?.maxComplexity !== undefined) {
-      games = games.filter(g => g.complexity <= filters.maxComplexity!);
+      games = games.filter((g) => g.complexity <= filters.maxComplexity!);
     }
-    
+
     if (filters?.search) {
       const searchLower = filters.search.toLowerCase();
-      games = games.filter(g => 
-        g.title.toLowerCase().includes(searchLower) ||
-        g.description?.toLowerCase().includes(searchLower) ||
-        g.publisher.toLowerCase().includes(searchLower)
+      games = games.filter(
+        (g) =>
+          g.title.toLowerCase().includes(searchLower) ||
+          g.description?.toLowerCase().includes(searchLower) ||
+          g.publisher.toLowerCase().includes(searchLower)
       );
     }
-    
+
     if (filters?.availableOnly) {
-      games = games.filter(g => g.isAvailable);
+      games = games.filter((g) => g.isAvailable);
     }
-    
+
     return games;
   }
 }
@@ -402,16 +419,16 @@ async function fetchGames(filters?: GameFilters): Promise<GameDto[]> {
 async function fetchGame(id: string): Promise<GameDto> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/v1/games/${id}`);
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch game');
     }
-    
+
     return response.json();
   } catch (error) {
     // Fallback to mock data if backend is unavailable
     console.warn('Backend unavailable, using mock data:', error);
-    const game = MOCK_GAMES.find(g => g.id === id);
+    const game = MOCK_GAMES.find((g) => g.id === id);
     if (!game) {
       throw new Error('Game not found');
     }
