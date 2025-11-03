@@ -9,12 +9,12 @@ public record AddOrderItemRequest
     /// Menu item ID to add
     /// </summary>
     public Guid MenuItemId { get; init; }
-    
+
     /// <summary>
     /// Quantity to add
     /// </summary>
     public int Quantity { get; init; }
-    
+
     /// <summary>
     /// Optional special instructions for this item
     /// </summary>

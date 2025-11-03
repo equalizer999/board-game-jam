@@ -131,8 +131,8 @@ public static class MenuEndpoints
                 })
                 .FirstOrDefaultAsync();
 
-            return menuItem is null 
-                ? TypedResults.NotFound() 
+            return menuItem is null
+                ? TypedResults.NotFound()
                 : TypedResults.Ok(menuItem);
         })
         .WithName("GetMenuItemById")

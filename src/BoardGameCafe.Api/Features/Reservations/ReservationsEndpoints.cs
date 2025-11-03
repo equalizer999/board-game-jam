@@ -127,14 +127,14 @@ public static class ReservationsEndpoints
 
         // Check for conflicts
         var conflictResult = await CheckReservationConflicts(
-            db, 
-            request.TableId, 
-            request.ReservationDate, 
-            request.StartTime, 
+            db,
+            request.TableId,
+            request.ReservationDate,
+            request.StartTime,
             request.EndTime,
             null,
             ct);
-        
+
         if (conflictResult is not null)
             return TypedResults.Conflict(conflictResult);
 
@@ -191,14 +191,14 @@ public static class ReservationsEndpoints
 
         // Validate the update
         var validationResult = await ValidateReservationUpdate(
-            db, 
-            tableId, 
-            date, 
-            startTime, 
-            endTime, 
+            db,
+            tableId,
+            date,
+            startTime,
+            endTime,
             partySize,
             ct);
-        
+
         if (validationResult is not null)
             return TypedResults.BadRequest(validationResult);
 
@@ -211,7 +211,7 @@ public static class ReservationsEndpoints
             endTime,
             id,
             ct);
-        
+
         if (conflictResult is not null)
             return TypedResults.Conflict(conflictResult);
 
@@ -346,14 +346,14 @@ public static class ReservationsEndpoints
         // Get existing reservations for this date
         var dateOnly = date.Date;
         var existingReservations = await db.Reservations
-            .Where(r => r.ReservationDate == dateOnly 
-                && r.Status != ReservationStatus.Cancelled 
+            .Where(r => r.ReservationDate == dateOnly
+                && r.Status != ReservationStatus.Cancelled
                 && r.Status != ReservationStatus.NoShow)
             .ToListAsync(ct);
 
         // Filter out tables with conflicts
         var availableTables = new List<AvailableTableDto>();
-        
+
         foreach (var table in suitableTables)
         {
             var hasConflict = existingReservations
@@ -364,7 +364,7 @@ public static class ReservationsEndpoints
             {
                 var duration = endTime - startTime;
                 var hours = (decimal)duration.TotalHours;
-                
+
                 availableTables.Add(new AvailableTableDto
                 {
                     Id = table.Id,
@@ -398,8 +398,8 @@ public static class ReservationsEndpoints
             CreatedAt = reservation.CreatedAt,
             SpecialRequests = reservation.SpecialRequests,
             TableNumber = reservation.Table?.TableNumber ?? string.Empty,
-            CustomerName = reservation.Customer != null 
-                ? $"{reservation.Customer.FirstName} {reservation.Customer.LastName}" 
+            CustomerName = reservation.Customer != null
+                ? $"{reservation.Customer.FirstName} {reservation.Customer.LastName}"
                 : string.Empty
         };
     }
@@ -554,7 +554,7 @@ public static class ReservationsEndpoints
         CancellationToken ct)
     {
         var dateOnly = date.Date;
-        
+
         // Query for overlapping reservations with buffer
         var conflictingReservations = await db.Reservations
             .Where(r => r.TableId == tableId
@@ -564,7 +564,7 @@ public static class ReservationsEndpoints
                 && (excludeReservationId == null || r.Id != excludeReservationId))
             .ToListAsync(ct);
 
-        var hasConflict = conflictingReservations.Any(r => 
+        var hasConflict = conflictingReservations.Any(r =>
             HasTimeOverlap(startTime, endTime, r.StartTime, r.EndTime));
 
         if (hasConflict)

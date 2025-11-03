@@ -27,7 +27,7 @@ public class ReservationsApiTests : IClassFixture<ReservationsApiTestFixture>, I
     public async Task InitializeAsync()
     {
         _client = _factory.CreateClient();
-        
+
         // Create a scope to seed test data for this test
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();
@@ -47,7 +47,7 @@ public class ReservationsApiTests : IClassFixture<ReservationsApiTestFixture>, I
             LastName = "Doe",
             JoinedDate = DateTime.UtcNow
         };
-        
+
         var customer2 = new Customer
         {
             Id = Guid.NewGuid(),
@@ -513,7 +513,7 @@ public class ReservationsApiTests : IClassFixture<ReservationsApiTestFixture>, I
     {
         // Arrange
         var tomorrow = DateTime.UtcNow.Date.AddDays(1);
-        
+
         // Act
         var response = await _client.GetAsync(
             $"/api/v1/reservations/availability?date={tomorrow:yyyy-MM-dd}&startTime=14:00:00&endTime=16:00:00&partySize=4");

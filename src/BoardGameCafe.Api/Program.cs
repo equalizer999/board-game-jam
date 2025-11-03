@@ -36,13 +36,13 @@ builder.Services.AddScoped<OrderCalculationService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Board Game Café API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Board Game Café API",
         Version = "v1",
         Description = "API for managing board game café reservations, games, and customers"
     });
-    
+
     // Enable XML comments
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);

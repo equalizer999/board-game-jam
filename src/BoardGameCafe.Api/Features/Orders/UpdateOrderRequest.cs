@@ -20,7 +20,7 @@ public record OrderItemUpdate
     /// Order item ID to update
     /// </summary>
     public Guid OrderItemId { get; init; }
-    
+
     /// <summary>
     /// New quantity (0 to remove the item)
     /// </summary>

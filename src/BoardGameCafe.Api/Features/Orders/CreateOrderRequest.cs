@@ -9,7 +9,7 @@ public record CreateOrderRequest
     /// Customer ID who is placing the order
     /// </summary>
     public Guid CustomerId { get; init; }
-    
+
     /// <summary>
     /// Optional reservation ID to link the order to a reservation
     /// </summary>

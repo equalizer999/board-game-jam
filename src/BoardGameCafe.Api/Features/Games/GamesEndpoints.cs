@@ -45,7 +45,7 @@ public static class GamesEndpoints
             if (filter.PlayerCount.HasValue)
             {
                 // Exact player count: game must support this number
-                query = query.Where(g => g.MinPlayers <= filter.PlayerCount.Value 
+                query = query.Where(g => g.MinPlayers <= filter.PlayerCount.Value
                     && g.MaxPlayers >= filter.PlayerCount.Value);
             }
             else
@@ -70,7 +70,7 @@ public static class GamesEndpoints
             // Apply pagination
             var page = filter.Page ?? 1;
             var pageSize = filter.PageSize ?? 10;
-            
+
             var totalCount = await query.CountAsync();
             var games = await query
                 .OrderBy(g => g.Title)
@@ -138,8 +138,8 @@ public static class GamesEndpoints
                 })
                 .FirstOrDefaultAsync();
 
-            return game is null 
-                ? TypedResults.NotFound() 
+            return game is null
+                ? TypedResults.NotFound()
                 : TypedResults.Ok(game);
         })
         .WithName("GetGameById")

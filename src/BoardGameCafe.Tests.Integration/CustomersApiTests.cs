@@ -22,7 +22,7 @@ public class CustomersApiTests : IClassFixture<ReservationsApiTestFixture>, IAsy
     public async Task InitializeAsync()
     {
         _client = _factory.CreateClient();
-        
+
         // Clean up and seed test data
         using var scope = _factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<BoardGameCafeDbContext>();

@@ -182,11 +182,11 @@ public class DomainEntityTests
             CustomerId = Guid.NewGuid(),
             Items = new List<OrderItem>
             {
-                new OrderItem 
-                { 
-                    Quantity = 1, 
+                new OrderItem
+                {
+                    Quantity = 1,
                     UnitPrice = 10.00m,
-                    MenuItem = menuItem 
+                    MenuItem = menuItem
                 }
             }
         };
@@ -216,11 +216,11 @@ public class DomainEntityTests
             CustomerId = Guid.NewGuid(),
             Items = new List<OrderItem>
             {
-                new OrderItem 
-                { 
-                    Quantity = 2, 
+                new OrderItem
+                {
+                    Quantity = 2,
                     UnitPrice = 7.50m,
-                    MenuItem = menuItem 
+                    MenuItem = menuItem
                 }
             }
         };
@@ -258,17 +258,17 @@ public class DomainEntityTests
             CustomerId = Guid.NewGuid(),
             Items = new List<OrderItem>
             {
-                new OrderItem 
-                { 
-                    Quantity = 1, 
+                new OrderItem
+                {
+                    Quantity = 1,
                     UnitPrice = 15.00m,
-                    MenuItem = foodItem 
+                    MenuItem = foodItem
                 },
-                new OrderItem 
-                { 
-                    Quantity = 2, 
+                new OrderItem
+                {
+                    Quantity = 2,
                     UnitPrice = 9.00m,
-                    MenuItem = alcoholItem 
+                    MenuItem = alcoholItem
                 }
             }
         };
@@ -451,17 +451,17 @@ public class DomainEntityTests
             Customer = customer,
             Items = new List<OrderItem>
             {
-                new OrderItem 
-                { 
-                    Quantity = 1, 
+                new OrderItem
+                {
+                    Quantity = 1,
                     UnitPrice = 20.00m,
-                    MenuItem = foodItem 
+                    MenuItem = foodItem
                 },
-                new OrderItem 
-                { 
-                    Quantity = 2, 
+                new OrderItem
+                {
+                    Quantity = 2,
                     UnitPrice = 8.00m,
-                    MenuItem = alcoholItem 
+                    MenuItem = alcoholItem
                 }
             }
         };

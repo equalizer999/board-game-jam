@@ -34,14 +34,14 @@ public class GameAvailabilityService
     public decimal CalculateLateFee(DateTime dueBackAt, DateTime? returnedAt = null)
     {
         var actualReturnTime = returnedAt ?? DateTime.UtcNow;
-        
+
         if (actualReturnTime <= dueBackAt)
         {
             return 0; // Not late
         }
 
         var overdueDuration = actualReturnTime - dueBackAt;
-        
+
         // Apply grace period
         if (overdueDuration.TotalMinutes <= GracePeriodMinutes)
         {
@@ -64,14 +64,14 @@ public class GameAvailabilityService
     public bool IsOverdue(DateTime dueBackAt, DateTime? currentTime = null)
     {
         var checkTime = currentTime ?? DateTime.UtcNow;
-        
+
         if (checkTime <= dueBackAt)
         {
             return false;
         }
 
         var overdueDuration = checkTime - dueBackAt;
-        
+
         // Only consider overdue after grace period
         return overdueDuration.TotalMinutes > GracePeriodMinutes;
     }
