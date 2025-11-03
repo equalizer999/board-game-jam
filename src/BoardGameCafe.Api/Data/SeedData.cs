@@ -103,7 +103,7 @@ public static class SeedData
             
             // Additional Family Games
             new Game { Id = Guid.Parse("44444444-4444-4444-4444-444444444453"), Title = "Love Letter", Publisher = "Z-Man Games", MinPlayers = 2, MaxPlayers = 6, PlayTimeMinutes = 20, AgeRating = 10, Complexity = 1.2m, Category = GameCategory.Family, CopiesOwned = 2, CopiesInUse = 0, DailyRentalFee = 3.00m, Description = "Quick card game of deduction and risk" },
-            new Game { Id = Guid.Parse("44444444-4444-4444-4444-444444444454"), Title = "Forbidden Island", Publisher = "Gamewright", MinPlayers = 2, MaxPlayers = 4, PlayTimeMinutes = 30, AgeRating = 10, Complexity = 1.7m, Category = GameCategory.Cooperative, CopiesOwned = 2, CopiesInUse = 0, DailyRentalFee = 4.00m, Description = "Cooperative treasure hunt on a sinking island" },
+            new Game { Id = Guid.Parse("44444444-4444-4444-4444-444444444454"), Title = "Skull", Publisher = "Lui-même", MinPlayers = 3, MaxPlayers = 6, PlayTimeMinutes = 15, AgeRating = 10, Complexity = 1.2m, Category = GameCategory.Family, CopiesOwned = 2, CopiesInUse = 0, DailyRentalFee = 3.00m, Description = "Bluffing game with coasters" },
             
             // Additional Party Game
             new Game { Id = Guid.Parse("22222222-2222-2222-2222-222222222231"), Title = "One Night Werewolf", Publisher = "Bezier Games", MinPlayers = 3, MaxPlayers = 10, PlayTimeMinutes = 10, AgeRating = 8, Complexity = 1.4m, Category = GameCategory.Party, CopiesOwned = 2, CopiesInUse = 0, DailyRentalFee = 4.00m, Description = "Fast-paced social deduction game" }
