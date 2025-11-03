@@ -114,7 +114,7 @@ jobs:
             -reporttypes:"TextSummary"
           
           # Extract line coverage percentage using awk for portability
-          COVERAGE=$(grep "Line coverage:" coverage/report/Summary.txt | sed 's/.*Line coverage: \([0-9.]*\)%.*/\1/')
+          COVERAGE=$(grep "Line coverage:" coverage/report/Summary.txt | sed 's/.*Line coverage: \([0-9]*\(\.[0-9]*\)\?\)%.*/\1/')
           
           echo "Current coverage: ${COVERAGE}%"
           
@@ -237,7 +237,7 @@ jobs:
           echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          if [ "${{ job.status }}" == "failure" ]; then
+          if [ "${{ job.status }}" = "failure" ]; then
             echo "❌ Code formatting or compiler warnings detected" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Run \`dotnet format\` to fix formatting issues" >> $GITHUB_STEP_SUMMARY
