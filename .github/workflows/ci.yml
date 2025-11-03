@@ -1,0 +1,306 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  build-backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            src/**/bin/Release
+            src/**/obj/Release
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore NuGet cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run unit tests with code coverage
+        run: |
+          dotnet test src/BoardGameCafe.Tests.Unit \
+            --configuration Release \
+            --no-restore \
+            --logger "trx;LogFileName=unit-test-results.trx" \
+            --logger "console;verbosity=detailed" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./coverage \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: coverage/unit-test-results.trx
+          retention-days: 7
+
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage-reports
+          path: coverage/**/coverage.opencover.xml
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage/**/coverage.opencover.xml
+          flags: unittests
+          name: unit-tests-coverage
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Check code coverage threshold
+        run: |
+          # Install ReportGenerator
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          
+          # Generate coverage report
+          reportgenerator \
+            -reports:"coverage/**/coverage.opencover.xml" \
+            -targetdir:"coverage/report" \
+            -reporttypes:"TextSummary"
+          
+          # Extract line coverage percentage
+          COVERAGE=$(grep "Line coverage:" coverage/report/Summary.txt | grep -oP '\d+(\.\d+)?%' | head -1 | sed 's/%//')
+          
+          echo "Current coverage: ${COVERAGE}%"
+          
+          # Check if coverage meets threshold
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "❌ Code coverage is below 70% threshold (current: ${COVERAGE}%)"
+            exit 1
+          fi
+          
+          echo "✅ Code coverage meets 70% threshold (current: ${COVERAGE}%)"
+
+      - name: Add test summary
+        if: always()
+        run: |
+          echo "## Unit Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f coverage/report/Summary.txt ]; then
+            echo "### Coverage Summary" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat coverage/report/Summary.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build-backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore NuGet cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run integration tests
+        run: |
+          dotnet test src/BoardGameCafe.Tests.Integration \
+            --configuration Release \
+            --no-restore \
+            --logger "trx;LogFileName=integration-test-results.trx" \
+            --logger "console;verbosity=detailed" \
+            --results-directory ./test-results
+        env:
+          ASPNETCORE_ENVIRONMENT: Testing
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: test-results/integration-test-results.trx
+          retention-days: 7
+
+      - name: Add test summary
+        if: always()
+        run: |
+          echo "## Integration Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Integration tests run with SQLite in-memory database" >> $GITHUB_STEP_SUMMARY
+
+  lint-backend:
+    name: Lint Backend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore NuGet cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Check code formatting
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+
+      - name: Build with warnings as errors
+        run: dotnet build --no-restore --configuration Release -p:TreatWarningsAsErrors=true
+
+      - name: Add lint summary
+        if: always()
+        run: |
+          echo "## Linting Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ job.status }}" == "failure" ]; then
+            echo "❌ Code formatting or compiler warnings detected" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Run \`dotnet format\` to fix formatting issues" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ All linting checks passed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [build-backend, unit-tests, integration-tests, lint-backend]
+    if: always()
+
+    steps:
+      - name: Generate summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const jobs = [
+              { name: 'Build Backend', result: '${{ needs.build-backend.result }}' },
+              { name: 'Unit Tests', result: '${{ needs.unit-tests.result }}' },
+              { name: 'Integration Tests', result: '${{ needs.integration-tests.result }}' },
+              { name: 'Lint Backend', result: '${{ needs.lint-backend.result }}' }
+            ];
+            
+            const passed = jobs.filter(j => j.result === 'success');
+            const failed = jobs.filter(j => j.result === 'failure');
+            
+            let summary = '## 🚀 Backend CI Summary\n\n';
+            
+            if (failed.length === 0) {
+              summary += '✅ **All checks passed!**\n\n';
+            } else {
+              summary += `❌ **${failed.length} check(s) failed**\n\n`;
+            }
+            
+            summary += '### Results\n\n';
+            jobs.forEach(job => {
+              const icon = job.result === 'success' ? '✅' : 
+                          job.result === 'failure' ? '❌' : 
+                          job.result === 'skipped' ? '⏭️' : '⚠️';
+              summary += `${icon} ${job.name}: ${job.result}\n`;
+            });
+            
+            core.summary.addRaw(summary);
+            await core.summary.write();
+
+      - name: Check overall status
+        run: |
+          if [[ "${{ needs.build-backend.result }}" == "failure" ]] || \
+             [[ "${{ needs.unit-tests.result }}" == "failure" ]] || \
+             [[ "${{ needs.integration-tests.result }}" == "failure" ]] || \
+             [[ "${{ needs.lint-backend.result }}" == "failure" ]]; then
+            echo "One or more CI checks failed"
+            exit 1
+          fi
+          echo "All CI checks passed successfully"
