@@ -71,8 +71,8 @@ public static class CustomersEndpoints
                 return TypedResults.NotFound();
             }
 
-            customer.FirstName = request.FirstName;
-            customer.LastName = request.LastName;
+            customer.FirstName = request.FirstName ?? customer.FirstName;
+            customer.LastName = request.LastName ?? customer.LastName;
             customer.Phone = request.Phone;
 
             await db.SaveChangesAsync();
