@@ -81,8 +81,8 @@ A **Board Game Café Management System** featuring:
 
 ```bash
 # Clone repository
-git clone https://github.com/equalizer999/board-game-jam-plan.git
-cd board-game-jam-plan
+git clone https://github.com/equalizer999/board-game-jam.git
+cd board-game-jam
 
 # Restore backend
 cd src/BoardGameCafe.Api
