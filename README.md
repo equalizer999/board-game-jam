@@ -81,8 +81,8 @@ A **Board Game Café Management System** featuring:
 
 ```bash
 # Clone repository
-git clone https://github.com/equalizer999/board-game-jam-plan.git
-cd board-game-jam-plan
+git clone https://github.com/equalizer999/board-game-jam.git
+cd board-game-jam
 
 # Restore backend
 cd src/BoardGameCafe.Api
@@ -231,44 +231,42 @@ Issues are tagged with:
 
 ## 🤖 Assigning Issues to GitHub Copilot
 
-This repository is designed for **GitHub Copilot Coding Agent** handoff. You can delegate well-defined issues to Copilot, which will autonomously create pull requests with implementation.
+This repository is designed for **GitHub Copilot Coding Agent** to autonomously implement issues. Copilot analyzes problem statements, generates code, runs tests, and creates pull requests.
 
-### Quick Start
+### Quick Start Example
 
-**Method 1: Comment on Issue**
+**Step 1:** Navigate to an issue (e.g., [Issue #5 - Create Game Domain Entity](https://github.com/equalizer999/board-game-jam/issues/5))
+
+**Step 2:** Assign to Copilot using one of these methods:
+
+**Method 1 - Comment Assignment:**
 ```bash
-# Navigate to any issue → Add comment:
-@copilot please implement this issue
+# In the issue comment:
+@copilot please implement this issue following the acceptance criteria
 ```
 
-**Method 2: Assign via UI**
-1. Open the issue
-2. Click "Assignees" → Search for "copilot"
-3. Assign the issue
-4. Copilot automatically starts working
+**Method 2 - Direct Assignment:**
+- Click "Assignees" → Search for "copilot" → Assign
 
-### What Happens Next?
+**Step 3:** Monitor Progress
+- Copilot creates a PR within 5-15 minutes
+- Review the implementation
+- Approve & merge, or request changes
 
-1. **Copilot analyzes** the issue (2-5 minutes)
-2. **Copilot generates code** following acceptance criteria (5-15 minutes)
-3. **Copilot creates a PR** with implementation
-4. **You review and merge** (or request changes)
+### 📖 Detailed Guide
 
-### Best Practices
+For best practices on writing Copilot-friendly issues, troubleshooting, and maximizing effectiveness, see:
 
-- ✅ **Clear problem statements** - Single, well-defined tasks
-- ✅ **Explicit acceptance criteria** - Testable checkboxes
-- ✅ **Technical constraints** - File paths, libraries, patterns
-- ✅ **Dependencies complete** - Follow issue dependency order (see below)
+**[Complete Copilot Agent Assignment Guide](docs/copilot-agent-assignment-guide.md)**
 
-### Learn More
-
-📖 **[Complete Copilot Assignment Guide](docs/copilot-agent-assignment-guide.md)** - Detailed guide covering:
-- Writing Copilot-friendly issues
-- Good vs bad problem statement examples
-- Monitoring and reviewing Copilot's work
-- Troubleshooting common issues
-- Tips for maximizing effectiveness
+Topics covered:
+- ✅ How to structure problem statements and acceptance criteria
+- ✅ Examples of good vs bad issue descriptions
+- ✅ Providing context and technical constraints
+- ✅ Monitoring Copilot's progress and reviewing PRs
+- ✅ Troubleshooting common issues
+- ✅ Copilot capabilities and limitations
+- ✅ Tips for maximum effectiveness
 ## 🔗 Issue Dependencies & Assignment Order
 
 To maximize GitHub Copilot effectiveness, follow this dependency-based assignment order:
