@@ -1,114 +1,71 @@
-# Exercise 2: Web API Testing with Swagger and GitHub Copilot
+# Exercise 2: API Testing with GitHub Copilot
 
-**Duration:** 8-12 minutes  
-**Difficulty:** Beginner to Intermediate  
-**Focus:** Using Copilot to explore and test REST APIs via Swagger/OpenAPI documentation
+## Overview
+This exercise demonstrates how to use GitHub Copilot to generate integration tests for REST API endpoints using Swagger/OpenAPI documentation.
+
+**Duration:** 8 minutes  
+**Focus:** REST endpoint testing, HTTP client testing, contract validation
 
 ---
 
 ## Learning Objectives
-
-By the end of this exercise, you will:
-- Use Swagger UI to explore API endpoints
-- Write integration tests for REST APIs
-- Use Copilot to generate HTTP request tests
-- Validate API contracts (request/response schemas)
-- Test error scenarios (400, 404, 409 status codes)
+- Generate API integration tests from Swagger documentation
+- Test HTTP endpoints with WebApplicationFactory
+- Validate request/response contracts
+- Test error scenarios (400, 404, 409)
 
 ---
 
-## Prerequisites
+## Target API: Games REST Endpoints
 
-- ✅ Backend API running (`dotnet run` in `src/BoardGameCafe.Api`)
-- ✅ Swagger UI accessible at `https://localhost:5001/swagger`
-- ✅ Issue #10 (Games API) and Issue #4 (Reservations API) completed
-- ✅ Integration test project created
+**Base URL:** `/api/v1/games`  
+**Swagger URL:** `https://localhost:5001/swagger`
 
----
-
-## Scenario
-
-The Board Game Café has REST APIs for managing games, reservations, and orders. You need to write integration tests to ensure:
-- Endpoints return correct status codes
-- Response data matches expected schema
-- Validation rules are enforced
-- Error handling works properly
+**Endpoints:**
+- `GET /api/v1/games` - List games with filters
+- `GET /api/v1/games/{id}` - Get single game
+- `POST /api/v1/games` - Create game (admin)
+- `PUT /api/v1/games/{id}` - Update game (admin)
+- `DELETE /api/v1/games/{id}` - Delete game (admin)
 
 ---
 
-## Part 1: Explore APIs with Swagger
+## Exercise Steps
 
-### TODO 1.1: Review Games API
+### Step 1: Explore Swagger Documentation
 
-**Your task**: Open Swagger and explore the Games API endpoints.
-
-**Steps**:
-1. Navigate to `https://localhost:5001/swagger`
-2. Expand **Games** section
-3. Review available endpoints:
-   - `GET /api/v1/games` - List games with filters
-   - `GET /api/v1/games/{id}` - Get single game
-   - `POST /api/v1/games` - Create game
-   - `PUT /api/v1/games/{id}` - Update game
-   - `DELETE /api/v1/games/{id}` - Delete game
-
-**Observation Questions**:
-- What query parameters are available for filtering? (`category`, `minPlayers`, `maxPlayers`, `isAvailable`)
-- What properties are in the `GameDto` schema?
-- What status codes can each endpoint return?
-
-### TODO 1.2: Test Endpoint Manually
-
-**Your task**: Use Swagger UI to test `GET /api/v1/games`.
-
-**Steps**:
-1. Click **GET /api/v1/games**
-2. Click **Try it out**
-3. Leave filters empty
-4. Click **Execute**
-
-**Expected Response**:
-```json
-{
-  "games": [
-    {
-      "id": "uuid-here",
-      "title": "Catan",
-      "publisher": "Catan Studio",
-      "minPlayers": 3,
-      "maxPlayers": 4,
-      "category": "Strategy",
-      "isAvailable": true,
-      "dailyRentalFee": 5.00
-    },
-    // ... more games
-  ],
-  "totalCount": 5,
-  "page": 1,
-  "pageSize": 10
-}
+1. Start the API:
+```bash
+cd src/BoardGameCafe.Api
+dotnet run
 ```
 
-**Status Code**: `200 OK`
+2. Open Swagger UI: `https://localhost:5001/swagger`
+
+3. Explore the `Games` endpoints:
+   - Click "GET /api/v1/games"
+   - View request parameters (category, minPlayers, maxPlayers)
+   - View response schema (GameDto)
+   - Try "Execute" to see sample data
+
+**TODO:** Take note of:
+- Request parameter types and formats
+- Response status codes (200, 400, 404)
+- DTO property names and types
 
 ---
 
-## Part 2: Write Integration Tests
+### Step 2: Generate Test Class with WebApplicationFactory
 
-### TODO 2.1: Test GET All Games
-
-**Your task**: Use Copilot to generate an integration test for listing games.
-
-**Copilot Prompt**:
-```csharp
-// Integration test for GET /api/v1/games
-// Setup: Seed database with 5 games
-// Act: Send GET request to /api/v1/games
-// Assert: Status 200, response contains 5 games
-// Use WebApplicationFactory and HttpClient
+**Copilot Prompt:**
+```
+// Create integration test class for Games API endpoints
+// Use WebApplicationFactory<Program> for in-memory testing
+// Use HttpClient for API calls
+// Test class name: GamesApiTests
 ```
 
-**Expected Test Structure**:
+**Expected Output:**
 ```csharp
 public class GamesApiTests : IClassFixture<WebApplicationFactory<Program>>
 {
@@ -118,373 +75,93 @@ public class GamesApiTests : IClassFixture<WebApplicationFactory<Program>>
     {
         _client = factory.CreateClient();
     }
-    
-    [Fact]
-    public async Task GetGames_WithNoFilters_ReturnsAllGames()
-    {
-        // Arrange
-        // (Database seeded via migrations)
-        
-        // Act
-        var response = await _client.GetAsync("/api/v1/games");
-        
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        
-        var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<GamesListResponse>(content);
-        
-        result.Games.Should().HaveCountGreaterThan(0);
-        result.Games.Should().AllSatisfy(g => 
-        {
-            g.Title.Should().NotBeNullOrEmpty();
-            g.MinPlayers.Should().BeGreaterThan(0);
-            g.MaxPlayers.Should().BeGreaterOrEqualTo(g.MinPlayers);
-        });
-    }
 }
 ```
 
-**Run Test**:
-```bash
-dotnet test --filter "FullyQualifiedName~GamesApiTests"
+**File:** `tests/BoardGameCafe.Tests.Integration/Api/GamesApiTests.cs`
+
+---
+
+### Step 3: Test GET /api/v1/games (List Games)
+
+**TODO:** Use Copilot to generate test for listing games
+
+**Scenarios:**
+- Get all games (no filters)
+- Filter by category
+- Filter by player count
+- Multiple filters combined
+
+**Copilot Prompt:**
+```
+// Generate test: GET /api/v1/games returns 200 OK with list of games
+// Assert: status code is 200
+// Assert: response contains array of GameDto objects
+// Assert: each game has Id, Title, Publisher properties
+// Use System.Net.Http.Json for deserialization
 ```
 
-### TODO 2.2: Test Query Filters
-
-**Your task**: Test filtering games by category.
-
-**Copilot Prompt**:
-```csharp
-// Test: GET /api/v1/games?category=Strategy
-// Assert: All returned games have category "Strategy"
-// Assert: Count matches expected (seed data has 2 strategy games)
-```
-
-**Expected**:
+**Expected Test:**
 ```csharp
 [Fact]
-public async Task GetGames_FilterByCategory_ReturnsOnlyMatchingGames()
+public async Task GetGames_ReturnsOkWithGames()
 {
-    // Arrange
-    var category = "Strategy";
-    
     // Act
-    var response = await _client.GetAsync($"/api/v1/games?category={category}");
+    var response = await _client.GetAsync("/api/v1/games");
     
     // Assert
     response.StatusCode.Should().Be(HttpStatusCode.OK);
-    
-    var result = await response.Content.ReadFromJsonAsync<GamesListResponse>();
-    
-    result.Games.Should().NotBeEmpty();
-    result.Games.Should().AllSatisfy(g => 
-        g.Category.Should().Be(category));
-}
-```
-
-### TODO 2.3: Test Player Count Filter
-
-**Your task**: Use Copilot to test the `minPlayers` and `maxPlayers` filters.
-
-**Copilot Prompt**:
-```csharp
-// Test: GET /api/v1/games?minPlayers=2&maxPlayers=4
-// Assert: All games support 2-4 players
-// Theory with InlineData for different player count ranges
-```
-
-**Practice**: Generate tests for:
-- `minPlayers=2&maxPlayers=2` (exactly 2 players)
-- `minPlayers=4&maxPlayers=8` (4-8 players)
-- `minPlayers=1&maxPlayers=10` (solo to party)
-
----
-
-## Part 3: Test POST Endpoint
-
-### TODO 3.1: Test Creating a Game
-
-**Your task**: Write test for creating a new game.
-
-**Copilot Prompt**:
-```csharp
-// Integration test: POST /api/v1/games
-// Arrange: CreateGameRequest with valid data
-// Act: POST to endpoint
-// Assert: 
-//   - Status 201 Created
-//   - Location header set
-//   - Response contains created game with Id
-//   - Can GET the created game by Id
-```
-
-**Expected**:
-```csharp
-[Fact]
-public async Task CreateGame_WithValidData_ReturnsCreatedGame()
-{
-    // Arrange
-    var request = new CreateGameRequest
-    {
-        Title = "Wingspan",
-        Publisher = "Stonemaier Games",
-        MinPlayers = 1,
-        MaxPlayers = 5,
-        PlayTimeMinutes = 70,
-        AgeRating = 10,
-        Complexity = 2.5m,
-        Category = "Strategy",
-        CopiesOwned = 3,
-        DailyRentalFee = 8.00m,
-        Description = "Beautiful bird-themed engine-building game",
-        ImageUrl = "https://example.com/wingspan.jpg"
-    };
-    
-    // Act
-    var response = await _client.PostAsJsonAsync("/api/v1/games", request);
-    
-    // Assert
-    response.StatusCode.Should().Be(HttpStatusCode.Created);
-    response.Headers.Location.Should().NotBeNull();
-    
-    var game = await response.Content.ReadFromJsonAsync<GameDto>();
-    game.Id.Should().NotBeEmpty();
-    game.Title.Should().Be("Wingspan");
-    game.IsAvailable.Should().BeTrue();
-    
-    // Verify can retrieve by Id
-    var getResponse = await _client.GetAsync(response.Headers.Location);
-    getResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-}
-```
-
-### TODO 3.2: Test Validation
-
-**Your task**: Test that invalid requests are rejected.
-
-**Copilot Prompt**:
-```csharp
-// Test: POST /api/v1/games with invalid data
-// Scenarios:
-//   - Title missing → 400 Bad Request
-//   - MinPlayers > MaxPlayers → 400 Bad Request
-//   - Negative price → 400 Bad Request
-//   - PlayTime = 0 → 400 Bad Request
-// Use Theory with InlineData
-```
-
-**Expected Pattern**:
-```csharp
-[Theory]
-[InlineData("", "Missing title")]
-[InlineData(null, "Null title")]
-public async Task CreateGame_WithInvalidTitle_ReturnsBadRequest(
-    string title, 
-    string reason)
-{
-    // Arrange
-    var request = new CreateGameRequest
-    {
-        Title = title,
-        Publisher = "Publisher",
-        MinPlayers = 2,
-        MaxPlayers = 4
-        // ... other required fields
-    };
-    
-    // Act
-    var response = await _client.PostAsJsonAsync("/api/v1/games", request);
-    
-    // Assert
-    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    var games = await response.Content.ReadFromJsonAsync<List<GameDto>>();
+    games.Should().NotBeNull();
+    games.Should().NotBeEmpty();
 }
 ```
 
 ---
 
-## Part 4: Test Reservations API
+### Step 4: Test POST /api/v1/games (Create Game)
 
-### TODO 4.1: Test Availability Query
+**TODO:** Use Copilot to generate test for creating a new game
 
-**Your task**: Test the reservation availability endpoint.
-
-**Reference Swagger**: `GET /api/v1/reservations/availability`
-
-**Copilot Prompt**:
-```csharp
-// Integration test: GET /api/v1/reservations/availability
-// Query params: date=2025-01-15, time=18:00, duration=2, partySize=4
-// Assert: Returns list of available tables
-// Assert: All tables have seatingCapacity >= partySize
-// Assert: No conflicting reservations
+**Copilot Prompt:**
 ```
-
-**Expected**:
-```csharp
-[Fact]
-public async Task GetAvailability_ForValidDateTime_ReturnsAvailableTables()
-{
-    // Arrange
-    var date = DateTime.UtcNow.AddDays(7).ToString("yyyy-MM-dd");
-    var time = "18:00";
-    var duration = 2;
-    var partySize = 4;
-    
-    // Act
-    var response = await _client.GetAsync(
-        $"/api/v1/reservations/availability?date={date}&time={time}&duration={duration}&partySize={partySize}");
-    
-    // Assert
-    response.StatusCode.Should().Be(HttpStatusCode.OK);
-    
-    var tables = await response.Content.ReadFromJsonAsync<List<AvailableTableDto>>();
-    
-    tables.Should().NotBeEmpty();
-    tables.Should().AllSatisfy(t => 
-        t.SeatingCapacity.Should().BeGreaterOrEqualTo(partySize));
-}
-```
-
-### TODO 4.2: Test Reservation Conflict
-
-**Your task**: Test that double-booking is prevented.
-
-**Copilot Prompt**:
-```csharp
-// Integration test: POST /api/v1/reservations (conflict scenario)
-// Setup: Create reservation for Table 1, 2024-01-15 18:00-20:00
-// Act: Try to create overlapping reservation (same table, 19:00-21:00)
-// Assert: 409 Conflict status
-// Assert: Error message mentions "already reserved"
+// Generate test: POST /api/v1/games creates new game
+// Create CreateGameRequest DTO with valid data
+// Assert: status code 201 Created
+// Assert: Location header contains new game ID
+// Assert: response body contains created game
 ```
 
 ---
 
-## Part 5: Test Error Scenarios
+### Step 5: Test Validation (400 Bad Request)
 
-### TODO 5.1: Test 404 Not Found
+**TODO:** Use Copilot to generate tests for request validation
 
-**Your task**: Test getting a non-existent game.
+**Invalid scenarios:**
+- Title is empty or null
+- MinPlayers > MaxPlayers
+- Negative CopiesOwned
 
-**Copilot Prompt**:
-```csharp
-// Test: GET /api/v1/games/{nonExistentId}
-// Assert: 404 Not Found
-// Assert: Error message helpful
+**Copilot Prompt:**
 ```
-
-**Expected**:
-```csharp
-[Fact]
-public async Task GetGame_WithNonExistentId_ReturnsNotFound()
-{
-    // Arrange
-    var nonExistentId = Guid.NewGuid();
-    
-    // Act
-    var response = await _client.GetAsync($"/api/v1/games/{nonExistentId}");
-    
-    // Assert
-    response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-}
+// Generate test: POST /api/v1/games with invalid data returns 400
+// Test cases: empty title, MinPlayers > MaxPlayers, negative price
+// Assert: status code 400 Bad Request
 ```
-
-### TODO 5.2: Test 400 Bad Request
-
-**Your task**: Test invalid query parameters.
-
-**Copilot Prompt**:
-```csharp
-// Test: GET /api/v1/games?minPlayers=-1
-// Assert: 400 Bad Request (negative player count invalid)
-```
-
----
-
-## Part 6: Test Response Schema Validation
-
-### TODO 6.1: Validate OpenAPI Contract
-
-**Your task**: Use Copilot to verify response matches OpenAPI schema.
-
-**Copilot Prompt**:
-```csharp
-// Test: Validate GameDto schema from OpenAPI spec
-// Properties required: Id, Title, Publisher, MinPlayers, MaxPlayers, IsAvailable
-// Properties optional: Description, ImageUrl
-// Use FluentAssertions to verify schema compliance
-```
-
-**Bonus**: Use libraries like `Swashbuckle.AspNetCore.Annotations` or `NJsonSchema` to programmatically validate against OpenAPI spec.
-
----
-
-## Reflection Questions
-
-1. **Swagger Exploration**: How helpful was Swagger for understanding API contracts before writing tests?
-
-2. **Integration vs Unit**: What's the difference between integration tests (this exercise) and unit tests (Exercise 1)?
-
-3. **Status Codes**: Which HTTP status codes did you test? Are there others you should cover (401, 403, 500)?
-
-4. **Test Data**: How did you handle test data setup? Did you use in-memory database? Seed data?
-
-5. **Copilot Effectiveness**: Did Copilot generate correct HTTP client code? Did it know ASP.NET testing patterns?
 
 ---
 
 ## Success Criteria
 
-- [ ] All integration tests pass
-- [ ] Tested successful scenarios (200, 201 status codes)
-- [ ] Tested error scenarios (400, 404, 409)
-- [ ] Validated response schemas
-- [ ] Tests isolated and repeatable
-- [ ] Used WebApplicationFactory for test server
-
----
-
-## Bonus Challenges
-
-### Challenge 1: Test PUT Endpoint
-```csharp
-// Test: PUT /api/v1/games/{id}
-// Scenarios: Update game title, update price, partial update
-```
-
-### Challenge 2: Test DELETE Endpoint
-```csharp
-// Test: DELETE /api/v1/games/{id}
-// Scenarios: Soft delete (IsAvailable=false), cannot delete if in use
-```
-
-### Challenge 3: Test Pagination
-```csharp
-// Test: GET /api/v1/games?page=1&pageSize=10
-// Test: GET /api/v1/games?page=2&pageSize=5
-// Assert: Correct page data returned
-```
-
-### Challenge 4: Performance Test
-```csharp
-// Test: GET /api/v1/games should respond within 200ms
-// Use Stopwatch or BenchmarkDotNet
-```
+You've completed this exercise when:
+1. ✅ All CRUD operations have passing tests
+2. ✅ Error scenarios (400, 404, 409) are covered
+3. ✅ Tests use Swagger docs as source of truth
+4. ✅ You can generate new API tests quickly with Copilot
 
 ---
 
 ## Next Steps
 
-- Exercise 3: UI Testing with Playwright
-- Exercise 4: Bug Hunting and Regression Tests
-
----
-
-**Instructor Notes**:
-- Demo Swagger UI exploration first
-- Show how to use "Try it out" feature
-- Explain WebApplicationFactory setup
-- Discuss test database strategies (in-memory vs SQLite)
-- Review HTTP status code meanings
-- Compare integration vs unit testing trade-offs
+Continue to [Exercise 3: UI Testing](./03-ui-testing.md) to learn E2E testing with Playwright.
