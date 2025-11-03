@@ -1,401 +1,204 @@
-# Workshop Exercises: Testing with GitHub Copilot
+# Workshop Exercises: GitHub Copilot Testing Demonstrations
 
-Welcome to the Board Game Café workshop exercises! These hands-on exercises guide you through using GitHub Copilot to generate comprehensive tests across the testing pyramid.
+## Overview
 
----
+This folder contains **hands-on exercises** for the 60-minute Board Game Café workshop, demonstrating GitHub Copilot's testing capabilities across different domains.
 
-## 📋 Overview
-
-These exercises are designed for a **60-minute workshop** focused on GitHub Copilot's testing capabilities. Each exercise builds on the previous one and aligns with the workshop agenda.
-
-**Total Duration**: 45-65 minutes  
-**Difficulty Progression**: Beginner → Intermediate → Advanced
-
----
-
-## 🎯 Learning Path
-
-```mermaid
-graph LR
-    E1[Exercise 1:<br/>Unit Testing] --> E2[Exercise 2:<br/>API Testing]
-    E2 --> E3[Exercise 3:<br/>UI Testing]
-    E3 --> E4[Exercise 4:<br/>Bug Hunting]
-    
-    style E1 fill:#E6F3FF,stroke:#0066CC,stroke-width:2px
-    style E2 fill:#FFE6F0,stroke:#CC0066,stroke-width:2px
-    style E3 fill:#FFF0E6,stroke:#FF6600,stroke-width:2px
-    style E4 fill:#FFE6E6,stroke:#CC0000,stroke-width:2px
-```
+Each exercise includes:
+- 📝 Learning objectives
+- 🎯 Step-by-step prompts for Copilot
+- ✅ Verification checklists
+- 💡 Tips and best practices
 
 ---
 
-## 📚 Exercise List
+## Exercise Structure
 
-### [Exercise 1: Unit Testing with GitHub Copilot](./01-unit-testing.md)
-**Duration**: 10-15 minutes | **Difficulty**: ⭐ Beginner
+| Exercise | Duration | Focus Area | Key Skills |
+|----------|----------|------------|------------|
+| [01-unit-testing.md](./01-unit-testing.md) | 10 min | Backend business logic | xUnit, FluentAssertions, test data builders |
+| [02-api-testing.md](./02-api-testing.md) | 8 min | REST API integration tests | Swagger contracts, HTTP testing, WebApplicationFactory |
+| [03-ui-testing.md](./03-ui-testing.md) | 7 min | E2E browser automation | Playwright, Page Object Model, cross-browser testing |
+| [04-bug-hunting.md](./04-bug-hunting.md) | 10 min | Debugging & regression tests | Bug reproduction, regression suites, edge case testing |
 
-**Focus**: Generate unit tests for service layer business logic
-
-**You Will Learn**:
-- Generate unit tests using Copilot prompts
-- Structure tests with Arrange-Act-Assert pattern
-- Use FluentAssertions for readable assertions
-- Create parameterized tests with `[Theory]`
-
-**Prerequisites**:
-- ✅ Backend API running
-- ✅ xUnit and FluentAssertions installed
-
-**Key Topics**:
-- Order calculation service testing
-- Tax calculation (8% food, 10% alcohol)
-- Member discounts (Bronze/Silver/Gold tiers)
-- Edge case handling
-
-**Success Criteria**:
-- [ ] 10+ unit tests created
-- [ ] Code coverage >80%
-- [ ] All edge cases tested
-- [ ] Tests use FluentAssertions
+**Total Duration:** ~35 minutes of core exercises + 25 minutes for Q&A and exploration
 
 ---
 
-### [Exercise 2: Web API Testing with Swagger](./02-api-testing.md)
-**Duration**: 8-12 minutes | **Difficulty**: ⭐⭐ Beginner-Intermediate
+## Prerequisites
 
-**Focus**: Explore and test REST APIs using Swagger and integration tests
+Before starting the exercises, ensure:
 
-**You Will Learn**:
-- Navigate Swagger UI for API exploration
-- Write integration tests for HTTP endpoints
-- Validate API contracts and schemas
-- Test error scenarios (400, 404, 409)
+1. **Backend is running:**
+   ```bash
+   cd src/BoardGameCafe.Api
+   dotnet restore
+   dotnet run
+   ```
 
-**Prerequisites**:
-- ✅ Swagger UI at `https://localhost:5001/swagger`
-- ✅ Games and Reservations APIs implemented
+2. **Frontend is running:**
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
 
-**Key Topics**:
-- GET/POST/PUT/DELETE endpoint testing
-- Query parameter filtering
-- Request/response validation
-- Status code verification
+3. **Playwright is installed (for Exercise 3):**
+   ```bash
+   cd client
+   npx playwright install
+   ```
 
-**Success Criteria**:
-- [ ] All integration tests pass
-- [ ] Success and error scenarios covered
-- [ ] Response schemas validated
-- [ ] Tests isolated and repeatable
-
----
-
-### [Exercise 3: UI Testing with Playwright](./03-ui-testing.md)
-**Duration**: 15-20 minutes | **Difficulty**: ⭐⭐⭐ Intermediate
-
-**Focus**: End-to-end UI testing across browsers using Playwright
-
-**You Will Learn**:
-- Create Page Object Models
-- Write cross-browser E2E tests
-- Handle async UI interactions
-- Capture screenshots on failure
-
-**Prerequisites**:
-- ✅ Frontend running at `http://localhost:5173`
-- ✅ Playwright installed (`npx playwright install`)
-
-**Key Topics**:
-- Game catalog browsing and filtering
-- Reservation workflow testing
-- Modal interactions
-- Cross-browser testing (Chrome, Firefox, Safari)
-
-**Success Criteria**:
-- [ ] Page Object Models for all pages
-- [ ] Complete reservation flow test passes
-- [ ] Tests pass on 3 browsers
-- [ ] Screenshots on failure configured
+4. **Swagger is accessible:**
+   - Navigate to: https://localhost:5001/swagger
+   - Verify API endpoints are documented
 
 ---
 
-### [Exercise 4: Bug Hunting and Regression Testing](./04-bug-hunting.md)
-**Duration**: 12-18 minutes | **Difficulty**: ⭐⭐⭐⭐ Intermediate-Advanced
+## Quick Start
 
-**Focus**: Find bugs, write regression tests, debug with Copilot
+### For Workshop Instructors
 
-**You Will Learn**:
-- Reproduce and isolate bugs
-- Write failing tests first
-- Debug async and race conditions
-- Use Copilot for debugging assistance
-
-**Prerequisites**:
-- ✅ Exercises 1-3 completed
-- ✅ Familiarity with codebase
-
-**Key Topics**:
-- **Bug #1**: Midnight reservation timezone issue
-- **Bug #2**: Double discount race condition
-- **Bug #3**: Game availability logic error
-- **Bug #4**: Past date validation missing
-- **Bug #5**: Order item duplication
-
-**Success Criteria**:
-- [ ] All 5 bugs identified
-- [ ] Failing test for each bug
-- [ ] All bugs fixed
-- [ ] 2+ regression tests per bug
-
----
-
-## 🚀 Getting Started
-
-### Quick Setup
-
-```bash
-# 1. Start backend API
-cd src/BoardGameCafe.Api
-dotnet run
-
-# 2. Start frontend (new terminal)
-cd client
-npm run dev
-
-# 3. Verify Swagger
-# Open: https://localhost:5001/swagger
-
-# 4. Run existing tests
-dotnet test
-cd client && npm test
-```
-
-### Workshop Flow
-
-**Recommended approach for 60-minute workshop**:
+**Live Demo Flow (60 minutes):**
 
 | Time | Activity | Exercise |
 |------|----------|----------|
-| 0-5 min | Intro & Setup | Verify environment |
-| 5-20 min | **Unit Testing** | Exercise 1 |
-| 20-32 min | **API Testing** | Exercise 2 |
-| 32-52 min | **UI Testing** | Exercise 3 |
-| 52-65 min | **Bug Hunting** | Exercise 4 |
+| 0-5 min | Welcome & Setup | Verify environments running |
+| 5-15 min | Unit Testing Demo | Exercise 1: Steps 1-5 |
+| 15-23 min | API Testing Demo | Exercise 2: Steps 1-5 |
+| 23-30 min | UI Testing Demo | Exercise 3: Steps 1-4 |
+| 30-40 min | Bug Hunting Demo | Exercise 4: Fix 2 bugs |
+| 40-50 min | CI/CD Integration | Show GitHub Actions running tests |
+| 50-60 min | Q&A & Wrap-up | Open discussion |
 
-**Self-paced approach**:
-- Complete exercises in order at your own speed
-- Skip bonus challenges initially
-- Return for bonus challenges after completing all 4 exercises
+**Instructor Tips:**
+- Start each exercise with a quick overview (1 min)
+- Demonstrate 2-3 key prompts live
+- Let Copilot generate code on screen
+- Highlight when Copilot suggestions are helpful vs. need refinement
+- Keep exercises moving - don't get stuck on one test
 
----
+### For Self-Paced Learning
 
-## 💡 Using GitHub Copilot Effectively
-
-### Best Practices for Exercise Completion
-
-**1. Start with Clear Prompts**
-```csharp
-// ✅ GOOD: Specific and actionable
-// Test: CalculateSubtotal with single item should return quantity * unit price
-// Arrange: 1 item, quantity 2, price $10
-// Assert using FluentAssertions
-
-// ❌ BAD: Vague
-// Write a test for the subtotal thing
-```
-
-**2. Iterate on Results**
-- Accept Copilot's suggestion
-- Review the generated code
-- Refine the prompt if needed
-- Regenerate or manually adjust
-
-**3. Use Copilot Chat**
-```
-User: "I'm getting a 409 Conflict error. What does this mean for reservation tests?"
-Copilot: "409 indicates the reservation time conflicts with an existing booking..."
-```
-
-**4. Ask for Explanations**
-```
-User: "Explain this test assertion: result.Should().BeGreaterThan(0)"
-Copilot: "FluentAssertions provides readable syntax for asserting result is positive..."
-```
-
-### Keyboard Shortcuts
-
-- **Accept suggestion**: `Tab`
-- **Next suggestion**: `Alt + ]`
-- **Previous suggestion**: `Alt + [`
-- **Open Copilot Chat**: `Ctrl + I` (Windows/Linux) or `Cmd + I` (Mac)
+**Recommended Path:**
+1. Complete exercises in order (1 → 2 → 3 → 4)
+2. Spend full time on each exercise
+3. Try all Copilot prompts
+4. Run all tests to verify your work
+5. Experiment with your own variations
 
 ---
 
-## 📊 Assessment Criteria
+## Exercise Summaries
 
-### Individual Exercise Success
-Each exercise has specific success criteria listed in its file.
+### Exercise 1: Unit Testing (10 min)
+**File:** [01-unit-testing.md](./01-unit-testing.md)
 
-### Overall Workshop Success
+Generate comprehensive unit tests for `OrderCalculationService`:
+- Tax calculation tests (8% food, 10% alcohol)
+- Member discount tests (Bronze/Silver/Gold tiers)
+- Loyalty points redemption tests
+- Edge case handling (zeros, nulls, boundaries)
 
-After completing all exercises, you should have:
-
-- [ ] **20+ unit tests** covering service layer logic
-- [ ] **15+ integration tests** for REST APIs
-- [ ] **10+ E2E tests** for UI workflows
-- [ ] **5+ regression tests** from bug fixes
-- [ ] Tests passing on **3 browsers** (Chrome, Firefox, Safari)
-- [ ] **>70% code coverage** on tested components
-
-### Copilot Effectiveness Assessment
-
-Track how well Copilot helped you:
-
-| Metric | Target |
-|--------|--------|
-| First-pass test success | >60% |
-| Prompts needing refinement | <40% |
-| Time saved vs manual | >50% |
-| Tests requiring manual fixes | <30% |
+**Key Takeaway:** Use Copilot to quickly generate test suites with `[Theory]` and `[InlineData]` for parameterized testing.
 
 ---
 
-## 🎓 Learning Outcomes
+### Exercise 2: API Testing (8 min)
+**File:** [02-api-testing.md](./02-api-testing.md)
 
-By completing these exercises, you will:
+Create integration tests for Games REST API:
+- Test CRUD operations (Create, Read, Update, Delete)
+- Validate Swagger contracts
+- Test query filters (category, player count, availability)
+- Test error scenarios (400, 404, 409 status codes)
 
-✅ **Understand the testing pyramid**
-- Unit tests (fast, isolated, many)
-- Integration tests (moderate speed, some setup)
-- E2E tests (slow, comprehensive, fewer)
-
-✅ **Master Copilot for testing**
-- Effective prompt engineering
-- Reviewing generated tests
-- Iterating on suggestions
-
-✅ **Apply best practices**
-- Arrange-Act-Assert pattern
-- Meaningful test names
-- Edge case coverage
-- Regression test importance
-
-✅ **Debug with AI assistance**
-- Root cause analysis
-- Fix suggestions
-- Test generation for bugs
+**Key Takeaway:** Use Swagger as the source of truth for API contracts and let Copilot generate matching integration tests.
 
 ---
 
-## 🔧 Troubleshooting
+### Exercise 3: UI Testing (7 min)
+**File:** [03-ui-testing.md](./03-ui-testing.md)
 
-### Common Issues
+Build E2E tests with Playwright:
+- Create Page Object Models for game catalog, reservations
+- Test user workflows (browse games, make reservation)
+- Run tests across 3 browsers (Chrome, Firefox, Safari)
+- Add stable test selectors with data-testid
 
-**Tests fail due to missing seed data**
+**Key Takeaway:** Use Copilot to generate Page Object Models that encapsulate page interactions for reusable, maintainable tests.
+
+---
+
+### Exercise 4: Bug Hunting (10 min)
+**File:** [04-bug-hunting.md](./04-bug-hunting.md)
+
+Find and fix intentional bugs:
+- Reproduce bugs with failing tests
+- Use Copilot to locate bug in code
+- Apply fixes
+- Create regression test suites
+
+**Bugs available:**
+- Midnight reservation timezone issue
+- Double discount negative total
+- Game cache invalidation
+- (5 more bugs in separate branches)
+
+**Key Takeaway:** Write failing tests first to prove bugs exist, then use Copilot to suggest fixes, then verify with passing tests.
+
+---
+
+## Running the Tests
+
+All exercises include verification steps. Run these commands to ensure everything works:
+
 ```bash
-cd src/BoardGameCafe.Api
-dotnet ef database update
-# Seed data is applied on API startup
-```
+# Unit tests (Exercise 1)
+cd tests/BoardGameCafe.Tests.Unit
+dotnet test
 
-**Playwright browser not installed**
-```bash
+# Integration tests (Exercise 2)
+cd tests/BoardGameCafe.Tests.Integration
+dotnet test
+
+# E2E tests (Exercise 3)
 cd client
-npx playwright install
-```
+npx playwright test
 
-**Copilot not suggesting tests**
-- Ensure GitHub Copilot extension is active
-- Check your subscription status
-- Try more explicit prompts
-- Use Copilot Chat for guidance
-
-**API not running**
-```bash
-# Check port 5001 is not in use
-netstat -ano | findstr :5001  # Windows
-lsof -i :5001                  # Mac/Linux
-
-# If in use, change port in appsettings.json
+# Regression tests (Exercise 4)
+dotnet test --filter "BugRegressionTests"
 ```
 
 ---
 
-## 📖 Additional Resources
+## Resources
 
-### Documentation
-- [Copilot Prompts Guide](../docs/copilot-prompts-guide.md) - Effective prompting techniques
-- [Copilot Agent Assignment Guide](../docs/copilot-agent-assignment-guide.md) - Using Copilot for implementation
-- [API Testing Guide](../docs/api-testing-guide.md) - Swagger and REST testing
-- [Bug Hunting Guide](../docs/bug-hunting-guide.md) - Finding and fixing bugs
-
-### Testing Frameworks
-- [xUnit Documentation](https://xunit.net/)
-- [FluentAssertions](https://fluentassertions.com/)
-- [Playwright for .NET](https://playwright.dev/dotnet/)
-- [ASP.NET Core Integration Testing](https://docs.microsoft.com/aspnet/core/test/integration-tests)
-
-### GitHub Copilot
-- [GitHub Copilot Documentation](https://docs.github.com/copilot)
-- [Copilot Best Practices](https://github.blog/2023-06-20-how-to-write-better-prompts-for-github-copilot/)
+- **Copilot Prompts Guide:** [../docs/copilot-prompts-guide.md](../docs/copilot-prompts-guide.md)
+- **Copilot Agent Assignment Guide:** [../docs/copilot-agent-assignment-guide.md](../docs/copilot-agent-assignment-guide.md)
+- **API Testing Guide:** [../docs/api-testing-guide.md](../docs/api-testing-guide.md)
+- **Bug Hunting Guide:** [../docs/bug-hunting-guide.md](../docs/bug-hunting-guide.md)
 
 ---
 
-## 🎉 Bonus Challenges
+## Feedback
 
-After completing all 4 exercises, try these advanced challenges:
+After completing the exercises, we'd love to hear:
+- Which exercise was most valuable?
+- Which Copilot prompts worked best?
+- What would you add or change?
+- How will you apply this in your work?
 
-### Challenge 1: Performance Testing
-Add performance benchmarks using BenchmarkDotNet:
-```csharp
-[Benchmark]
-public void OrderCalculation_1000Orders()
-{
-    // Benchmark order calculation performance
-}
-```
-
-### Challenge 2: Property-Based Testing
-Use FsCheck for property-based testing:
-```csharp
-[Property]
-public Property Subtotal_AlwaysPositive(PositiveInt quantity, PositiveDecimal price)
-{
-    // Property: subtotal should never be negative
-}
-```
-
-### Challenge 3: Mutation Testing
-Run Stryker.NET to verify test quality:
-```bash
-dotnet tool install -g dotnet-stryker
-dotnet stryker
-```
-
-### Challenge 4: Visual Regression Testing
-Add Percy or Chromatic for visual regression:
-```typescript
-await percySnapshot(page, 'Game Catalog - Desktop');
-```
+**Share your experience:** Open a GitHub Discussion in this repository!
 
 ---
 
-## 🤝 Contributing
+## Next Steps
 
-Found an issue or improvement in the exercises?
-1. Create an issue describing the problem
-2. Submit a PR with the fix
-3. Help improve the workshop for others!
+After completing all exercises:
+1. ✅ Review the [Copilot Agent Assignment Guide](../docs/copilot-agent-assignment-guide.md)
+2. ✅ Try assigning GitHub issues to Copilot (Issues #5, #10, #27)
+3. ✅ Explore the [Roadmap](../docs/ROADMAP.md) for the full implementation plan
+4. ✅ Build your own features with Copilot assistance
 
----
-
-## 📝 Feedback
-
-After completing the exercises, please provide feedback:
-- What worked well?
-- What was confusing?
-- How could the exercises be improved?
-- Rate Copilot's helpfulness (1-5)
-
----
-
-**Ready to start?** Begin with [Exercise 1: Unit Testing](./01-unit-testing.md) 🚀
+Happy testing! 🚀

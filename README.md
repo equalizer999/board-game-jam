@@ -231,26 +231,44 @@ Issues are tagged with:
 
 ## 🤖 Assigning Issues to GitHub Copilot
 
-This repository is designed for **GitHub Copilot Coding Agent** handoff to accelerate development.
+This repository is designed for **GitHub Copilot Coding Agent** handoff. You can delegate well-defined issues to Copilot, which will autonomously create pull requests with implementation.
 
-### Quick Start Example
+### Quick Start
 
-1. **Select an Issue**: Navigate to an issue like [#3 (Create Game Domain Entity)](https://github.com/equalizer999/board-game-jam/issues/3)
-2. **Assign to Copilot**: Comment `@copilot please implement this issue` or use the Assignees dropdown
-3. **Monitor Progress**: Copilot analyzes the issue and creates a PR (typically within 5-15 minutes)
-4. **Review Changes**: Check the PR for code quality, test coverage, and acceptance criteria
-5. **Merge or Iterate**: Approve and merge, or request changes with specific feedback
-6. **Verify Completion**: Issue auto-closes when PR is merged
+**Method 1: Comment on Issue**
+```bash
+# Navigate to any issue → Add comment:
+@copilot please implement this issue
+```
+
+**Method 2: Assign via UI**
+1. Open the issue
+2. Click "Assignees" → Search for "copilot"
+3. Assign the issue
+4. Copilot automatically starts working
+
+### What Happens Next?
+
+1. **Copilot analyzes** the issue (2-5 minutes)
+2. **Copilot generates code** following acceptance criteria (5-15 minutes)
+3. **Copilot creates a PR** with implementation
+4. **You review and merge** (or request changes)
 
 ### Best Practices
 
-- ✅ **Write Clear Issues**: Single-purpose tasks with specific acceptance criteria
-- ✅ **Provide Context**: Link to dependencies and reference existing code patterns
-- ✅ **Specify File Paths**: Don't make Copilot guess where code belongs
-- ✅ **Include Testing Requirements**: State expected test coverage and scenarios
-- ✅ **Review Thoroughly**: Check that all acceptance criteria are met before merging
+- ✅ **Clear problem statements** - Single, well-defined tasks
+- ✅ **Explicit acceptance criteria** - Testable checkboxes
+- ✅ **Technical constraints** - File paths, libraries, patterns
+- ✅ **Dependencies complete** - Follow issue dependency order (see below)
 
-📖 **For detailed guidance, see [Copilot Agent Assignment Guide](docs/copilot-agent-assignment-guide.md)** - comprehensive best practices, examples, troubleshooting, and templates.
+### Learn More
+
+📖 **[Complete Copilot Assignment Guide](docs/copilot-agent-assignment-guide.md)** - Detailed guide covering:
+- Writing Copilot-friendly issues
+- Good vs bad problem statement examples
+- Monitoring and reviewing Copilot's work
+- Troubleshooting common issues
+- Tips for maximizing effectiveness
 ## 🔗 Issue Dependencies & Assignment Order
 
 To maximize GitHub Copilot effectiveness, follow this dependency-based assignment order:
