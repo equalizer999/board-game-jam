@@ -53,8 +53,14 @@ export class ReservationPage {
    * Select a date for reservation
    */
   async selectDate(date: string) {
+    await this.datePickerInput.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.datePickerInput).toBeEnabled();
     await this.datePickerInput.click();
-    await this.page.getByTestId(`calendar-date-${date}`).click();
+    
+    const calendarDate = this.page.getByTestId(`calendar-date-${date}`);
+    await calendarDate.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(calendarDate).toBeEnabled();
+    await calendarDate.click();
   }
 
   /**
@@ -98,6 +104,8 @@ export class ReservationPage {
    */
   async selectTable(tableNumber: number) {
     const tableCard = this.page.getByTestId(`table-card-${tableNumber}`);
+    await tableCard.waitFor({ state: 'visible', timeout: 10000 });
+    await expect(tableCard).toBeEnabled();
     await tableCard.click();
     
     // Verify table is selected
@@ -109,6 +117,8 @@ export class ReservationPage {
    */
   async selectFirstAvailableTable() {
     const firstTable = this.tableCards.first();
+    await firstTable.waitFor({ state: 'visible', timeout: 10000 });
+    await expect(firstTable).toBeEnabled();
     await firstTable.click();
   }
 
@@ -116,8 +126,13 @@ export class ReservationPage {
    * Fill customer information
    */
   async fillCustomerInfo(name: string, email: string, phone: string) {
+    await this.customerNameInput.waitFor({ state: 'visible', timeout: 5000 });
     await this.customerNameInput.fill(name);
+    
+    await this.customerEmailInput.waitFor({ state: 'visible', timeout: 5000 });
     await this.customerEmailInput.fill(email);
+    
+    await this.customerPhoneInput.waitFor({ state: 'visible', timeout: 5000 });
     await this.customerPhoneInput.fill(phone);
   }
 
@@ -132,6 +147,8 @@ export class ReservationPage {
    * Submit reservation form
    */
   async submitReservation() {
+    await this.confirmReservationButton.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.confirmReservationButton).toBeEnabled();
     await this.confirmReservationButton.click();
   }
 

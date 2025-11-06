@@ -84,15 +84,15 @@ test.describe('Reservation Booking Flow', () => {
     await page.getByRole('button', { name: 'Next' }).click();
     
     // Step 3: Select table
-    // Wait for tables to load
-    await page.waitForTimeout(1000); // Give time for API call
-    
-    // Check if tables are available or no tables message
+    // Wait for tables to load with explicit timeout
     const selectTableHeading = page.getByText('Select a Table');
-    await expect(selectTableHeading).toBeVisible();
+    await expect(selectTableHeading).toBeVisible({ timeout: 10000 });
+    
+    // Wait for table buttons to be available
+    const tableButton = page.locator('button[data-testid^="table-"]').first();
+    await expect(tableButton).toBeVisible({ timeout: 10000 });
     
     // Try to find and click a table (if available)
-    const tableButton = page.locator('button[data-testid^="table-"]').first();
     const tableCount = await tableButton.count();
     
     if (tableCount > 0) {
@@ -190,8 +190,11 @@ test.describe('Reservation Booking Flow', () => {
     await page.getByRole('button', { name: 'Next' }).click();
     
     // Step 3 - Select table (if available)
-    await page.waitForTimeout(1000);
+    const selectTableHeading = page.getByText('Select a Table');
+    await expect(selectTableHeading).toBeVisible({ timeout: 10000 });
+    
     const tableButton = page.locator('button[data-testid^="table-"]').first();
+    await expect(tableButton).toBeVisible({ timeout: 10000 });
     const tableCount = await tableButton.count();
     
     if (tableCount > 0) {
@@ -251,7 +254,9 @@ test.describe('Reservation Booking Flow', () => {
     await page.getByTestId('end-time').selectOption('16:00:00');
     await page.getByRole('button', { name: 'Next' }).click();
     
-    await page.waitForTimeout(1000);
+    // Wait for table selection screen with explicit timeout
+    const selectTableHeading = page.getByText('Select a Table');
+    await expect(selectTableHeading).toBeVisible({ timeout: 10000 });
     
     // Check if any tables show amenities
     const windowSeatLabel = page.getByText('🪟 Window');

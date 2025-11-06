@@ -60,36 +60,63 @@ export class GameCatalogPage {
    * Filter games by category
    */
   async filterByCategory(category: string) {
+    await this.categoryFilter.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.categoryFilter).toBeEnabled();
     await this.categoryFilter.click();
-    await this.page.getByTestId(`category-option-${category.toLowerCase()}`).click();
-    // Wait for filter to apply
-    await this.page.waitForTimeout(500);
+    
+    const categoryOption = this.page.getByTestId(`category-option-${category.toLowerCase()}`);
+    await categoryOption.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(categoryOption).toBeEnabled();
+    await categoryOption.click();
+    
+    // Wait for filter to apply by waiting for network idle
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
    * Filter games by player count
    */
   async filterByPlayerCount(minPlayers: number, maxPlayers: number) {
+    await this.playerCountFilter.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.playerCountFilter).toBeEnabled();
     await this.playerCountFilter.click();
-    await this.page.getByTestId(`player-count-${minPlayers}-${maxPlayers}`).click();
-    await this.page.waitForTimeout(500);
+    
+    const playerCountOption = this.page.getByTestId(`player-count-${minPlayers}-${maxPlayers}`);
+    await playerCountOption.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(playerCountOption).toBeEnabled();
+    await playerCountOption.click();
+    
+    // Wait for filter to apply by waiting for network idle
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
    * Filter games by complexity
    */
   async filterByComplexity(complexity: string) {
+    await this.complexityFilter.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.complexityFilter).toBeEnabled();
     await this.complexityFilter.click();
-    await this.page.getByTestId(`complexity-${complexity.toLowerCase()}`).click();
-    await this.page.waitForTimeout(500);
+    
+    const complexityOption = this.page.getByTestId(`complexity-${complexity.toLowerCase()}`);
+    await complexityOption.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(complexityOption).toBeEnabled();
+    await complexityOption.click();
+    
+    // Wait for filter to apply by waiting for network idle
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
    * Search for games by title or description
    */
   async searchGames(searchTerm: string) {
+    await this.searchInput.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(this.searchInput).toBeEnabled();
     await this.searchInput.fill(searchTerm);
-    await this.page.waitForTimeout(500);
+    
+    // Wait for search to apply by waiting for network idle
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
@@ -97,6 +124,8 @@ export class GameCatalogPage {
    */
   async clickGameCard(gameTitle: string) {
     const gameCard = this.page.getByTestId(`game-card-${gameTitle.toLowerCase().replace(/\s+/g, '-')}`);
+    await gameCard.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(gameCard).toBeEnabled();
     await gameCard.click();
   }
 
@@ -121,6 +150,8 @@ export class GameCatalogPage {
    */
   async closeDetailModal() {
     const closeButton = this.page.getByTestId('close-modal-button');
+    await closeButton.waitFor({ state: 'visible', timeout: 5000 });
+    await expect(closeButton).toBeEnabled();
     await closeButton.click();
   }
 
