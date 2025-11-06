@@ -32,6 +32,7 @@ builder.Services.AddHealthChecks();
 
 // Add services
 builder.Services.AddScoped<OrderCalculationService>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
