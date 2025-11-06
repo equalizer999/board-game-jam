@@ -48,7 +48,8 @@ You should see all 8 branches listed.
 Use the templates in `GITHUB_ISSUES_TEMPLATE.md` to create 8 GitHub Issues.
 
 **For each bug:**
-1. Go to https://github.com/equalizer999/board-game-jam/issues/new
+1. Go to your repository's issues page: https://github.com/{owner}/{repo}/issues/new
+   (Replace {owner}/{repo} with your repository path, e.g., equalizer999/board-game-jam)
 2. Copy the issue content from GITHUB_ISSUES_TEMPLATE.md
 3. Add the appropriate labels (bug-demo, severity level, category)
 4. Note the issue number assigned

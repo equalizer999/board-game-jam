@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Script to push all bug demonstration branches to remote repository
 # Note: This requires push permissions to the repository
 
