@@ -120,10 +120,21 @@ export class GameCatalogPage {
   }
 
   /**
-   * Click on a game card by title
+   * Click on a game card by title or index
+   * @param gameIdentifier Either the game title (string) or the card index (number)
    */
-  async clickGameCard(gameTitle: string) {
-    const gameCard = this.page.getByTestId(`game-card-${gameTitle.toLowerCase().replace(/\s+/g, '-')}`);
+  async clickGameCard(gameIdentifier: string | number) {
+    let gameCard: Locator;
+    
+    if (typeof gameIdentifier === 'number') {
+      // Click by index
+      gameCard = this.gameCards.nth(gameIdentifier);
+    } else {
+      // Click by title using the custom data-testid-title attribute
+      const testId = gameIdentifier.toLowerCase().replace(/\s+/g, '-');
+      gameCard = this.page.locator(`[data-testid="game-card"][data-testid-title="${testId}"]`);
+    }
+    
     await gameCard.waitFor({ state: 'visible', timeout: 5000 });
     await expect(gameCard).toBeEnabled();
     await gameCard.click();
