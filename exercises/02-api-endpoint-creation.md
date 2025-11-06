@@ -277,7 +277,7 @@ Test these scenarios:
 
 **TODO:** Use Copilot to generate tests for the new endpoint
 
-**File:** `src/BoardGameCafe.Tests.Integration/GamesApiTests.cs`
+**File:** `src/BoardGameCafe.Tests.Integration/Features/Games/GamesEndpointsTests.cs`
 
 **Copilot Prompt:**
 ```csharp
