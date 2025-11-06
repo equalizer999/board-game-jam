@@ -171,18 +171,18 @@ All exercises include verification steps. Run these commands to ensure everythin
 
 ```bash
 # Unit tests (Exercise 1)
-cd tests/BoardGameCafe.Tests.Unit
+cd src/BoardGameCafe.Tests.Unit
 dotnet test
 
 # Integration tests (Exercise 2)
-cd tests/BoardGameCafe.Tests.Integration
+cd src/BoardGameCafe.Tests.Integration
 dotnet test
 
 # E2E tests (Exercise 3)
 cd client
 npx playwright test
 
-# Regression tests (Exercise 4)
+# Regression tests (Exercise 5)
 dotnet test --filter "BugRegressionTests"
 ```
 

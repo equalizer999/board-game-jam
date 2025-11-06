@@ -79,40 +79,51 @@ cat src/BoardGameCafe.Tests.Unit/Builders/ReservationBuilder.cs
 
 ---
 
-### Step 2: Create OrderBuilder Skeleton
+### Step 2: Review the Existing OrderBuilder
 
-**TODO:** Use Copilot to generate a new OrderBuilder class
+**NOTE:** The `OrderBuilder` has already been implemented in this repository as a reference. Your task is to:
+1. Study the existing OrderBuilder implementation
+2. Understand the builder pattern and fluent API design
+3. (Optional) Add additional convenience methods if you want to extend it
+
+```bash
+# View the existing OrderBuilder
+cat src/BoardGameCafe.Tests.Unit/Builders/OrderBuilder.cs
+```
+
+**Key patterns to notice:**
+- Private fields for all properties
+- `With*()` methods that return `this` for chaining
+- `Build()` method that creates the final object
+- Convenience methods like `AsCompletedOrder()`, `AsPendingOrder()`
+- Implicit operator for automatic conversion
+
+---
+
+### Step 3: (Optional) Extend OrderBuilder with Additional Methods
+
+**TODO:** If you want to practice, use Copilot to add new convenience methods to OrderBuilder
+
+**Additional convenience methods you could add:**
+- `WithFoodItems()` - Add typical food items
+- `WithAlcoholItems()` - Add alcoholic beverages  
+- `WithGoldMemberDiscount()` - Apply gold tier discount
+- `AsReadyForPayment()` - Set all required fields for payment
 
 **Copilot Prompt:**
 ```csharp
-// Create test data builder for Order entity using fluent API
-// File: src/BoardGameCafe.Tests.Unit/Builders/OrderBuilder.cs
-// Pattern: same as ReservationBuilder
-// Include: WithCustomer(), WithItems(), WithTotal(), Build()
-```
-
-**Expected class structure:**
-```csharp
-public class OrderBuilder
-{
-    private Guid _id = Guid.NewGuid();
-    private Guid _customerId = Guid.NewGuid();
-    private decimal _subtotal = 100m;
-    // ... more fields
-    
-    public OrderBuilder WithCustomer(Customer customer) { ... }
-    public OrderBuilder WithSubtotal(decimal amount) { ... }
-    public Order Build() { ... }
-}
+// Add new convenience method to OrderBuilder
+// Example: WithFoodItems() that adds typical food items to the order
+// Should set multiple fields to create a realistic food order scenario
 ```
 
 ---
 
-### Step 3: Add Fluent Builder Methods
+### Step 4: Understanding Builder Methods
 
-**TODO:** Use Copilot to add chainable methods
+Since OrderBuilder already exists, review these key methods:
 
-**Methods to create:**
+**Fluent Builder Methods (already implemented):**
 - `WithId(Guid id)` - Set order ID
 - `WithCustomer(Customer customer)` - Set customer
 - `WithSubtotal(decimal amount)` - Set subtotal
@@ -121,139 +132,25 @@ public class OrderBuilder
 - `WithTotal(decimal amount)` - Set total
 - `WithStatus(OrderStatus status)` - Set status
 
-**Copilot Prompt:**
-```csharp
-// Generate fluent builder methods for OrderBuilder
-// Each method should set the corresponding field and return this
-// Follow the pattern from ReservationBuilder
-```
-
-**Expected method:**
-```csharp
-public OrderBuilder WithSubtotal(decimal amount)
-{
-    _subtotal = amount;
-    return this;
-}
-```
-
----
-
-### Step 4: Add Convenience Methods
-
-**TODO:** Use Copilot to add expressive convenience methods
-
-**Scenarios to support:**
+**Convenience Methods (already implemented):**
 - `AsCompletedOrder()` - Set status to Completed
 - `AsPendingOrder()` - Set status to Pending
-- `WithSmallTotal()` - Set total to $20
-- `WithLargeTotal()` - Set total to $500
-- `WithMemberDiscount()` - Apply typical member discount
-
-**Copilot Prompt:**
-```csharp
-// Generate convenience methods for common order scenarios
-// Examples: AsCompletedOrder(), WithSmallTotal(), WithMemberDiscount()
-// These should set multiple fields to create realistic test scenarios
-```
-
-**Expected method:**
-```csharp
-public OrderBuilder AsCompletedOrder()
-{
-    _status = OrderStatus.Completed;
-    _completedAt = DateTime.UtcNow;
-    return this;
-}
-```
 
 ---
 
-### Step 5: Add Collection Builder Methods
+### Step 5: Use the Builder in Tests
 
-**TODO:** Use Copilot to add methods for building order items
+**TODO:** Find tests that use OrderBuilder to see examples
 
-**Method to create:**
-```csharp
-public OrderBuilder WithItems(params OrderItem[] items)
-public OrderBuilder WithMenuItem(string name, decimal price, int quantity = 1)
-```
-
-**Copilot Prompt:**
-```csharp
-// Generate methods to add order items to the builder
-// WithItems() should accept multiple OrderItem objects
-// WithMenuItem() should create an OrderItem and add it
-// Both should return this for chaining
-```
-
----
-
-### Step 6: Add Build() and Implicit Operator
-
-**TODO:** Use Copilot to generate the final build methods
-
-**Copilot Prompt:**
-```csharp
-// Generate Build() method that creates Order from builder fields
-// Generate implicit operator to convert OrderBuilder to Order automatically
-// Follow ReservationBuilder pattern
-```
-
-**Expected:**
-```csharp
-public Order Build()
-{
-    return new Order
-    {
-        Id = _id,
-        CustomerId = _customerId,
-        Subtotal = _subtotal,
-        // ... all other fields
-    };
-}
-
-public static implicit operator Order(OrderBuilder builder) => builder.Build();
-```
-
----
-
-### Step 7: Use the Builder in Tests
-
-**TODO:** Refactor existing tests to use OrderBuilder
-
-**Find a test that creates an Order:**
+**Find a test that uses OrderBuilder:**
 ```bash
-# Search for test files that create Order objects
-grep -r "new Order" src/BoardGameCafe.Tests.Unit/
+# Search for test files that use OrderBuilder
+grep -r "OrderBuilder" src/BoardGameCafe.Tests.Unit/
 ```
 
-**Copilot Prompt:**
+**Example usage from existing tests:**
 ```csharp
-// Refactor this test to use OrderBuilder instead of new Order()
-// Make the test more readable by using fluent methods
-// Only specify properties that matter for this test
-```
-
-**Before:**
-```csharp
-[Fact]
-public void CalculateTotal_WithDiscount_ReducesTotal()
-{
-    var order = new Order
-    {
-        Id = Guid.NewGuid(),
-        Subtotal = 100m,
-        DiscountAmount = 10m,
-        TaxAmount = 8m,
-        TotalAmount = 98m
-    };
-    // test continues...
-}
-```
-
-**After:**
-```csharp
+// Using OrderBuilder in a test
 [Fact]
 public void CalculateTotal_WithDiscount_ReducesTotal()
 {
@@ -261,19 +158,24 @@ public void CalculateTotal_WithDiscount_ReducesTotal()
         .WithSubtotal(100m)
         .WithDiscount(10m)
         .Build();
+    
     // test continues...
+    order.TotalAmount.Should().Be(98m);
 }
 ```
+
+Notice how the builder makes the test intent clear - we only specify what matters (subtotal and discount), and the builder provides sensible defaults for everything else.
 
 ---
 
 ## Expected Test Coverage
 
 After completing all steps:
-- **OrderBuilder class** with 10+ fluent methods
-- **At least 3 convenience methods** for common scenarios
-- **Implicit operator** for automatic conversion
-- **2-3 existing tests refactored** to use the builder
+- **OrderBuilder class** already exists with 10+ fluent methods
+- **Multiple convenience methods** already implemented (AsCompletedOrder, AsPendingOrder, etc.)
+- **Implicit operator** already exists for automatic conversion
+- **Understanding** of builder pattern and how it improves test readability
+- **(Optional)** Extended the builder with additional methods if you chose to practice
 
 ---
 
@@ -294,12 +196,14 @@ dotnet test --filter "FullyQualifiedName~OrderBuilder"
 
 ## Verification Checklist
 
-- [ ] OrderBuilder class created
-- [ ] All fluent methods return `this` for chaining
-- [ ] Convenience methods make tests more expressive
-- [ ] Build() method creates valid Order objects
-- [ ] Implicit operator works (can assign builder to Order variable)
-- [ ] At least 2 tests refactored to use builder
+- [ ] Reviewed ReservationBuilder class structure
+- [ ] Reviewed OrderBuilder implementation
+- [ ] Understand all fluent methods and how they return `this` for chaining
+- [ ] Understand convenience methods and how they make tests more expressive
+- [ ] Reviewed Build() method and how it creates valid Order objects
+- [ ] Understand implicit operator and how it enables automatic conversion
+- [ ] Found examples of OrderBuilder usage in existing tests
+- [ ] (Optional) Added new convenience methods to extend the builder
 - [ ] All tests still pass
 
 ---
@@ -374,12 +278,13 @@ Create builders for:
 ## Success Criteria
 
 You've completed this exercise when:
-1. ✅ OrderBuilder class is fully functional
-2. ✅ Builder has at least 10 fluent methods
-3. ✅ At least 3 convenience methods exist
-4. ✅ 2+ existing tests refactored to use builder
-5. ✅ All tests pass
-6. ✅ You understand how builders improve test readability
+1. ✅ Reviewed and understand OrderBuilder class functionality
+2. ✅ Understand builder pattern with at least 10 fluent methods
+3. ✅ Understand the convenience methods that exist
+4. ✅ Found and reviewed tests that use the builder
+5. ✅ (Optional) Extended the builder with new methods
+6. ✅ All tests pass
+7. ✅ You understand how builders improve test readability
 
 ---
 
