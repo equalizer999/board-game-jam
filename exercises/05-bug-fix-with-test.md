@@ -1,4 +1,4 @@
-# Exercise 4: Bug Hunting & Regression Testing with GitHub Copilot
+# Exercise 5: Bug Hunting & Regression Testing with GitHub Copilot
 
 ## Overview
 This exercise demonstrates how to use GitHub Copilot to find intentional bugs, write regression tests, and verify fixes.
@@ -115,7 +115,7 @@ You've completed this exercise when:
 
 ## Wrap Up
 
-You've completed all 4 workshop exercises! 🎉
+You've completed all 5 workshop exercises! 🎉
 
 **Next Steps:**
 - Review the [Copilot Agent Assignment Guide](../docs/copilot-agent-assignment-guide.md)

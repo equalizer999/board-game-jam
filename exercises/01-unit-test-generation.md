@@ -18,7 +18,7 @@ This exercise demonstrates how to use GitHub Copilot to generate comprehensive u
 
 ## Target Code: Order Calculation Service
 
-**File:** `src/BoardGameCafe.Domain/Services/OrderCalculationService.cs`
+**File:** `src/BoardGameCafe.Api/Features/Orders/OrderCalculationService.cs`
 
 This service calculates order totals with:
 - Tax calculation (8% on food, 10% on alcohol)
@@ -39,7 +39,7 @@ This service calculates order totals with:
 ```
 
 **Expected Output:**
-- Test class in `tests/BoardGameCafe.Tests.Unit/Services/OrderCalculationServiceTests.cs`
+- Test class in `src/BoardGameCafe.Tests.Unit/Services/OrderCalculationServiceTests.cs`
 - Basic test setup with proper namespaces
 - Constructor for test fixtures
 
@@ -155,7 +155,7 @@ After completing all steps:
 
 ```bash
 # Navigate to test project
-cd tests/BoardGameCafe.Tests.Unit
+cd src/BoardGameCafe.Tests.Unit
 
 # Run all unit tests
 dotnet test

@@ -117,4 +117,68 @@ public class OrderCalculationService
             _ => 0m
         };
     }
+
+    /// <summary>
+    /// Calculates tax for order items based on their categories
+    /// Food items: 8% tax, Alcohol items: 10% tax
+    /// </summary>
+    /// <param name="items">Order items</param>
+    /// <returns>Total tax amount</returns>
+    public decimal CalculateTax(List<OrderItem> items)
+    {
+        decimal foodTax = 0;
+        decimal alcoholTax = 0;
+
+        foreach (var item in items)
+        {
+            if (item.MenuItem == null) continue;
+
+            var itemTotal = item.Quantity * item.UnitPrice;
+            if (item.MenuItem.Category == MenuCategory.Alcohol)
+            {
+                alcoholTax += itemTotal * AlcoholTaxRate;
+            }
+            else
+            {
+                foodTax += itemTotal * FoodTaxRate;
+            }
+        }
+
+        return foodTax + alcoholTax;
+    }
+
+    /// <summary>
+    /// Calculates member discount based on subtotal and membership tier
+    /// Bronze: 5%, Silver: 10%, Gold: 15%
+    /// </summary>
+    /// <param name="subtotal">Order subtotal</param>
+    /// <param name="tier">Customer membership tier</param>
+    /// <returns>Discount amount</returns>
+    public decimal CalculateDiscount(decimal subtotal, MembershipTier tier)
+    {
+        var discountRate = GetMemberDiscountPercentage(tier);
+        return subtotal * discountRate;
+    }
+
+    /// <summary>
+    /// Applies loyalty points to an order and validates customer has sufficient points
+    /// </summary>
+    /// <param name="customer">Customer redeeming points</param>
+    /// <param name="pointsToRedeem">Number of points to redeem</param>
+    /// <returns>Discount amount from loyalty points</returns>
+    /// <exception cref="InvalidOperationException">Thrown when customer has insufficient points</exception>
+    public decimal ApplyLoyaltyPoints(Customer customer, int pointsToRedeem)
+    {
+        if (pointsToRedeem < 0)
+        {
+            throw new ArgumentException("Points to redeem cannot be negative", nameof(pointsToRedeem));
+        }
+
+        if (!ValidateLoyaltyPointsRedemption(customer, pointsToRedeem))
+        {
+            throw new InvalidOperationException($"Customer does not have enough loyalty points. Has: {customer.LoyaltyPoints}, Needs: {pointsToRedeem}");
+        }
+
+        return CalculateLoyaltyPointsDiscount(pointsToRedeem);
+    }
 }
